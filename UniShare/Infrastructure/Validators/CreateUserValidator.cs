@@ -8,5 +8,6 @@ public class CreateUserValidator:AbstractValidator<CreateUserRequest>
     {
         RuleFor(x=> x.Fullname).NotNull().NotEmpty().MinimumLength(3).WithMessage("FullName must be at least 3 characters long.");
         RuleFor(x => x.Email).NotNull().NotEmpty().EmailAddress().WithMessage("A valid email is required.");
+        RuleFor(x => x.Password).NotNull().NotEmpty().MinimumLength(6).WithMessage("Password must be at least 6 characters long.");
     }
 }

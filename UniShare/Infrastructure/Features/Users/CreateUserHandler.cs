@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.VisualBasic.CompilerServices;
 using UniShare.Infrastructure.Persistence;
+using BCrypt.Net;
 namespace UniShare.Infrastructure.Features.Users;
 
 public class CreateUserHandler
@@ -25,7 +26,10 @@ public class CreateUserHandler
             throw new ValidationException(validationResult.Errors);
         }
 
-        var user = new User(Guid.NewGuid(), request.Fullname, request.Email, Role.User, DateTime.UtcNow);
+        // Hash the password using BCrypt
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        
+        var user = new User(Guid.NewGuid(), request.Fullname, request.Email, passwordHash, Role.User, DateTime.UtcNow);
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
         _logger.LogInformation("User created successfully with ID: {UserId}", user.Id);

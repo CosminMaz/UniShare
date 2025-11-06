@@ -26,6 +26,7 @@ public class UniShareContext : DbContext
                 .HasColumnType("uuid");
             entity.Property(e => e.FullName).HasColumnName("full_name");
             entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
             entity.Property(e => e.Role).HasColumnName("role");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
         });

@@ -6,5 +6,5 @@ public enum Role
     User
 }
 
-public record User(Guid Id, string FullName, string Email, Role Role, DateTime CreatedAt);
+public record User(Guid Id, string FullName, string Email, string PasswordHash, Role Role, DateTime CreatedAt);
 
