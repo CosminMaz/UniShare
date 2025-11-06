@@ -61,8 +61,12 @@ TEAM:
 
 ### After setup Postres with Docker 
     
-* In the root run: 
+1. **To get the docker id**
+    ```bash
+    docker ps -a
+    ```
+2. **In the root run** 
 
     ```bash
-    sudo docker exec -i 3b47d2f06fd1 psql -U postgres -d mydatabase < database.sql        
+    sudo docker exec -i your-postgres-docker-id psql -U postgres -d mydatabase < database.sql        
     ```
