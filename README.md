@@ -61,7 +61,7 @@ TEAM:
 
 ### After setup Postres with Docker 
     
-1. **To get the docker id**
+1. **Get the docker id**
     ```bash
     docker ps -a
     ```
