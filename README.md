@@ -59,8 +59,10 @@ TEAM:
 
 # TO POPULATE THE DATABSE 
 
-### After setup postres with docker 
-    * In the root run: 
-        ```bash
-        sudo docker exec -i 3b47d2f06fd1 psql -U postgres -d mydatabase < database.sql        
-        ```
+### After setup Postres with Docker 
+    
+* In the root run: 
+
+    ```bash
+    sudo docker exec -i 3b47d2f06fd1 psql -U postgres -d mydatabase < database.sql        
+    ```
