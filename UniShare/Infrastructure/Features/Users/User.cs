@@ -7,3 +7,4 @@ public enum Role
 }
 
 public record User(Guid Id, string FullName, string Email, Role Role, DateTime CreatedAt);
+

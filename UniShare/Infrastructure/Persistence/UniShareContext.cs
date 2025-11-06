@@ -21,7 +21,9 @@ public class UniShareContext : DbContext
         {
             entity.ToTable("users");
             // map columns explicitly to snake_case to match common Postgres conventions
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasColumnType("uuid");
             entity.Property(e => e.FullName).HasColumnName("full_name");
             entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.Role).HasColumnName("role");
