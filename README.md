@@ -57,3 +57,16 @@ TEAM:
         docker-compose down
         ```
 
+# TO POPULATE THE DATABSE 
+
+### After setup Postres with Docker 
+    
+1. **Get the docker id**
+    ```bash
+    docker ps -a
+    ```
+2. **In the root run** 
+
+    ```bash
+    sudo docker exec -i your-postgres-docker-id psql -U postgres -d mydatabase < database.sql        
+    ```
