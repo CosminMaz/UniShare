@@ -1,0 +1,57 @@
+# Build folders
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.rsuser
+
+# IDE folders
+.vs/
+.idea/
+
+# Rider / IntelliJ logs and settings
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Environment and config
+.env
+*.local.json
+
+# Logs
+*.log
+logs/
+LogFiles/
+
+# Compiled DLLs and packages
+*.dll
+*.exe
+*.pdb
+*.cache
+*.db
+*.db-shm
+*.db-wal
+
+# Backup and temporary files
+*.tmp
+*.bak
+*.swp
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Test results
+TestResults/
+coverage/
+
+# Publish output
+publish/
