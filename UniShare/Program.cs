@@ -1,7 +1,8 @@
 using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
@@ -29,6 +30,10 @@ builder.Services.AddHealthChecks();
 builder.Services.AddScoped<CreateUserHandler>();
 builder.Services.AddScoped<GetAllUsersHandler>(); // Register GetAllUsersHandler
 builder.Services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+builder.Services.AddScoped<CreateItemHandler>();
+builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
@@ -64,5 +69,17 @@ app.MapGet("/users", async ([FromServices] GetAllUsersHandler handler) =>
     return await handler.Handle();
 })
 .WithName("GetAllUsers");
+
+app.MapPost("/items", async (CreateItemRequest request, [FromServices] CreateItemHandler handler) =>
+{
+    return await handler.Handle(request);
+})
+.WithName("CreateItem");
+
+app.MapGet("/items", async (IMediator mediator) =>
+{
+    return await mediator.Send(new GetAllItems.Query());
+})
+.WithName("GetAllItems");
 
 app.Run();

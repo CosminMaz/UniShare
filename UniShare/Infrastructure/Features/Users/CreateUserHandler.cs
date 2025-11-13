@@ -1,7 +1,7 @@
 using FluentValidation;
-using Microsoft.VisualBasic.CompilerServices;
+using Microsoft.Extensions.Logging;
 using UniShare.Infrastructure.Persistence;
-using BCrypt.Net;
+
 namespace UniShare.Infrastructure.Features.Users;
 
 public class CreateUserHandler
@@ -20,18 +20,27 @@ public class CreateUserHandler
     public async Task<IResult> Handle(CreateUserRequest request)
     {
         _logger.LogInformation("Creating new user with Name: {Fullname} and Email: {Email}", request.Fullname, request.Email);
+
         var validationResult = await _validator.ValidateAsync(request);
+
         if (!validationResult.IsValid)
         {
-            throw new ValidationException(validationResult.Errors);
+            var errors = validationResult.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+
+            return Results.ValidationProblem(errors);
         }
 
-        // Hash the password using BCrypt
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-        
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
         var user = new User(Guid.NewGuid(), request.Fullname, request.Email, passwordHash, Role.User, DateTime.UtcNow);
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+
         _logger.LogInformation("User created successfully with ID: {UserId}", user.Id);
 
         return Results.Created($"/users/{user.Id}", user);
