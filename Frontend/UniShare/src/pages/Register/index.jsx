@@ -17,7 +17,7 @@ export default function RegisterPage() {
     setError('')
     setSuccess(false)
 
-    // Validare frontend
+    // Frontend validation
     if (password !== confirmPassword) {
       setError('Parolele nu coincid')
       return
@@ -51,7 +51,7 @@ export default function RegisterPage() {
       if (!response.ok) {
         const body = await response.json().catch(() => ({}))
         
-        // Tratează erorile de validare din backend
+        // Treat the errors from the backend
         if (response.status === 400 && body.errors) {
           const errorMessages = Object.values(body.errors).flat()
           throw new Error(errorMessages.join(', ') || 'Date invalide')
@@ -62,7 +62,7 @@ export default function RegisterPage() {
 
       setSuccess(true)
       
-      // Redirect la login după 2 secunde
+      // Redirect to login page after 2 seconds
       setTimeout(() => {
         window.location.href = '/login'
       }, 2000)

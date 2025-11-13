@@ -35,6 +35,19 @@ builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
+// CORS: allow the frontend dev server (Vite) during development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +65,9 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
+
+// Enable CORS for the frontend (applies to all endpoints)
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
