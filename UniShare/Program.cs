@@ -31,6 +31,7 @@ builder.Services.AddScoped<CreateUserHandler>();
 builder.Services.AddScoped<GetAllUsersHandler>(); // Register GetAllUsersHandler
 builder.Services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
 builder.Services.AddScoped<CreateItemHandler>();
+builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
@@ -81,5 +82,11 @@ app.MapGet("/items", async (IMediator mediator) =>
     return await mediator.Send(new GetAllItems.Query());
 })
 .WithName("GetAllItems");
+
+app.MapPost("/api/auth/login", async (LoginRequest request, [FromServices] LoginHandler handler) =>
+{
+    return await handler.Handle(request);
+})
+.WithName("Login");
 
 app.Run();
