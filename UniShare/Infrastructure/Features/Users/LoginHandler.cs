@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Users;
@@ -29,11 +28,10 @@ public class LoginHandler
         // TODO: Replace with real JWT generation.
         var token = $"temp-token-{user.Id}";
 
-        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Role);
+        var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Role.ToString());
 
         _logger.LogInformation("User {UserId} logged in successfully", user.Id);
 
         return Results.Ok(new LoginResponse(token, userDto));
     }
 }
-
