@@ -1,5 +1,5 @@
 using FluentValidation;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Users;
@@ -33,6 +33,12 @@ public class CreateUserHandler
                 );
 
             return Results.ValidationProblem(errors);
+        }
+
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (existingUser is not null)
+        {
+            return Results.Problem("A user with this email already exists.", statusCode: 409);
         }
 
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
