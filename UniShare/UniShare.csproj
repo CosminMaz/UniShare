@@ -27,6 +27,7 @@
     <ItemGroup>
       <Folder Include="Api\" />
       <Folder Include="Domain\" />
+      <Folder Include="Common\" />
     </ItemGroup>
 
     <ItemGroup>

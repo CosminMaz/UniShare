@@ -7,6 +7,7 @@ using Moq;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
+using UniShare.Common;
 
 namespace UniShare.tests.Features.Users;
 
@@ -18,6 +19,7 @@ public class CreateUserHandlerTests : IDisposable
 
     public CreateUserHandlerTests()
     {
+        Log.Info("Setting up CreateUserHandlerTests...");
         var options = new DbContextOptionsBuilder<UniShareContext>()
             .UseInMemoryDatabase(databaseName: "TestDatabase_CreateUser")
             .Options;
