@@ -4,24 +4,16 @@ using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Users;
 
-public class CreateUserHandler
+public class CreateUserHandler(
+    UniShareContext context,
+    ILogger<CreateUserHandler> logger,
+    IValidator<CreateUserRequest> validator)
 {
-    private readonly UniShareContext _context;
-    private readonly ILogger<CreateUserHandler> _logger;
-    private readonly IValidator<CreateUserRequest> _validator;
-
-    public CreateUserHandler(UniShareContext context, ILogger<CreateUserHandler> logger, IValidator<CreateUserRequest> validator)
-    {
-        _context = context;
-        _logger = logger;
-        _validator = validator;
-    }
-
     public async Task<IResult> Handle(CreateUserRequest request)
     {
-        _logger.LogInformation("Creating new user with Name: {Fullname} and Email: {Email}", request.Fullname, request.Email);
+        logger.LogInformation("Creating new user with Name: {Fullname} and Email: {Email}", request.Fullname, request.Email);
 
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
         {
@@ -35,7 +27,7 @@ public class CreateUserHandler
             return Results.ValidationProblem(errors);
         }
 
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser is not null)
         {
             return Results.Problem("A user with this email already exists.", statusCode: 409);
@@ -44,10 +36,10 @@ public class CreateUserHandler
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
         var user = new User(Guid.NewGuid(), request.Fullname, request.Email, passwordHash, Role.User, DateTime.UtcNow);
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User created successfully with ID: {UserId}", user.Id);
+        logger.LogInformation("User created successfully with ID: {UserId}", user.Id);
 
         return Results.Created($"/users/{user.Id}", user);
     }
