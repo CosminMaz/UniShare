@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
@@ -14,8 +15,8 @@ namespace UniShare.tests.Features.Users;
 public class CreateUserHandlerTests : IDisposable
 {
     private readonly UniShareContext _context;
-    private readonly Mock<IValidator<CreateUserRequest>> _validatorMock;
-    private readonly CreateUserHandler _handler;
+    private readonly Mock<IValidator<RegisterUserRequest>> _validatorMock;
+    private readonly RegisterUserHandler _handler;
 
     public CreateUserHandlerTests()
     {
@@ -24,9 +25,9 @@ public class CreateUserHandlerTests : IDisposable
             .UseInMemoryDatabase(databaseName: "TestDatabase_CreateUser")
             .Options;
         _context = new UniShareContext(options);
-        var loggerMock = new Mock<ILogger<CreateUserHandler>>();
-        _validatorMock = new Mock<IValidator<CreateUserRequest>>();
-        _handler = new CreateUserHandler(_context, loggerMock.Object, _validatorMock.Object);
+        var loggerMock = new Mock<ILogger<RegisterUserHandler>>();
+        _validatorMock = new Mock<IValidator<RegisterUserRequest>>();
+        _handler = new RegisterUserHandler(_context, loggerMock.Object, _validatorMock.Object);
     }
 
     public void Dispose()
@@ -39,7 +40,7 @@ public class CreateUserHandlerTests : IDisposable
     public async Task Handle_WithValidRequest_ReturnsCreatedResult()
     {
         // Arrange
-        var request = new CreateUserRequest("Test User", "test@example.com", "password123");
+        var request = new RegisterUserRequest("Test User", "test@example.com", "password123");
         _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 
@@ -60,7 +61,7 @@ public class CreateUserHandlerTests : IDisposable
     public async Task Handle_WithInvalidRequest_ReturnsValidationProblem()
     {
         // Arrange
-        var request = new CreateUserRequest("", "", "");
+        var request = new RegisterUserRequest("", "", "");
         var validationFailures = new List<ValidationFailure>
         {
             new("Fullname", "Fullname is required."),
@@ -85,7 +86,7 @@ public class CreateUserHandlerTests : IDisposable
         _context.Users.Add(existingUser);
         await _context.SaveChangesAsync();
 
-        var request = new CreateUserRequest("New User", "test@example.com", "password123");
+        var request = new RegisterUserRequest("New User", "test@example.com", "password123");
         _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new ValidationResult());
 

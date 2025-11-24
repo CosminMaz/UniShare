@@ -2,7 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
 
-namespace UniShare.Infrastructure.Features.Items;
+namespace UniShare.Infrastructure.Features.Items.GetAll;
 
 public static class GetAllItems
 {

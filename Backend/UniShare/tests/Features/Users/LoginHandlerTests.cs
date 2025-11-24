@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;

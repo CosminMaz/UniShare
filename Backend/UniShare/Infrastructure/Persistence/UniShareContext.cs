@@ -4,12 +4,8 @@ using UniShare.Infrastructure.Features.Users;
 
 namespace UniShare.Infrastructure.Persistence;
 
-public class UniShareContext : DbContext
+public class UniShareContext(DbContextOptions<UniShareContext> options) : DbContext(options)
 {
-    public UniShareContext(DbContextOptions<UniShareContext> options) : base(options)
-    {
-    }
-
     // It will be made with a proper dto record
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;

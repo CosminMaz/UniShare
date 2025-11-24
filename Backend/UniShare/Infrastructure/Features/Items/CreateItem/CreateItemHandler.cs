@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UniShare.Infrastructure.Persistence;
 
-namespace UniShare.Infrastructure.Features.Items;
+namespace UniShare.Infrastructure.Features.Items.CreateItem;
 
 public class CreateItemHandler
 {

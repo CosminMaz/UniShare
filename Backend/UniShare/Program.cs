@@ -2,7 +2,11 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UniShare.Infrastructure.Features.Items.CreateItem;
+using UniShare.Infrastructure.Features.Items.GetAll;
 using UniShare.Infrastructure.Features.Items;
+using UniShare.Infrastructure.Features.Users.Login;
+using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
@@ -27,9 +31,9 @@ else
 builder.Services.AddHealthChecks();
 
 // Add services to the container.
-builder.Services.AddScoped<CreateUserHandler>();
+builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<GetAllUsersHandler>(); // Register GetAllUsersHandler
-builder.Services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+builder.Services.AddScoped<IValidator<RegisterUserRequest>, CreateUserValidator>();
 builder.Services.AddScoped<CreateItemHandler>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
@@ -71,38 +75,20 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-// Health check
-app.MapHealthChecks("/health");
 
-app.MapPost("/users", async (CreateUserRequest request, [FromServices] CreateUserHandler handler) =>
-{
-    // The handler returns the correct IResult (Results.Created)
-    return await handler.Handle(request);
-})
-.WithName("CreateUser");
-
-app.MapGet("/users", async ([FromServices] GetAllUsersHandler handler) =>
-{
-    return await handler.Handle();
-})
+app.MapGet("/users", async ([FromServices] GetAllUsersHandler handler) => await handler.Handle())
 .WithName("GetAllUsers");
 
-app.MapPost("/items", async (CreateItemRequest request, [FromServices] CreateItemHandler handler) =>
-{
-    return await handler.Handle(request);
-})
+app.MapPost("/items", async (CreateItemRequest request, [FromServices] CreateItemHandler handler) => await handler.Handle(request))
 .WithName("CreateItem");
 
-app.MapGet("/items", async (IMediator mediator) =>
-{
-    return await mediator.Send(new GetAllItems.Query());
-})
+app.MapGet("/items", async (IMediator mediator) => await mediator.Send(new GetAllItems.Query()))
 .WithName("GetAllItems");
 
-app.MapPost("/api/auth/login", async (LoginRequest request, [FromServices] LoginHandler handler) =>
-{
-    return await handler.Handle(request);
-})
-.WithName("Login");
+app.MapPost("/api/auth/register", async (RegisterUserRequest request, [FromServices] RegisterUserHandler handler) => await handler.Handle(request))
+    .WithName("RegisterUser");
+
+app.MapPost("/api/auth/login", async (LoginRequest request, [FromServices] LoginHandler handler) => await handler.Handle(request))
+.WithName("LoginUser");
 
 app.Run();
