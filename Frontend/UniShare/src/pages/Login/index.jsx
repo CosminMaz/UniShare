@@ -53,19 +53,19 @@ export default function LoginPage() {
       <div className={styles.card}>
         <header className={styles.header}>
           <h1 className={styles.headerTitle}>UniShare</h1>
-          <p className={styles.headerSubtitle}>Platformă de împrumut între studenți</p>
+          <p className={styles.headerSubtitle}>Student lending platform</p>
         </header>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="email">
-              Email instituțional
+              Institutional Email
             </label>
             <input
               id="email"
               type="email"
               className={styles.input}
-              placeholder="prenume.nume@university.ro"
+              placeholder="example@university.ro"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -75,13 +75,13 @@ export default function LoginPage() {
 
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="password">
-              Parolă
+              Password
             </label>
             <input
               id="password"
               type="password"
               className={styles.input}
-              placeholder="Parola ta"
+              placeholder="Your password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
@@ -102,9 +102,9 @@ export default function LoginPage() {
 
           <footer className={styles.footer}>
             <p>
-              Nu ai cont?{' '}
+              No account?{' '}
               <a className={styles.footerLink} href="/register">
-                Înregistrează-te
+                Register
               </a>
             </p>
           </footer>
