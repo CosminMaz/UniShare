@@ -1,12 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
-using UniShare.Common;
-using System;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 
-namespace UniShare.Infrastructure.Features.Users;
-
+namespace UniShare.Infrastructure.Features.Users.Login;
 public class LoginHandler(UniShareContext context, ILogger<LoginHandler> logger)
 {
     public async Task<IResult> Handle(LoginRequest request)

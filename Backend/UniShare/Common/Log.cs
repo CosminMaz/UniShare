@@ -1,7 +1,3 @@
-
-using System;
-using System.IO;
-
 namespace UniShare.Common
 {
     public static class Log

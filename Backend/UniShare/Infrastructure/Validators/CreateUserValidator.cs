@@ -1,8 +1,8 @@
 using FluentValidation;
-using UniShare.Infrastructure.Features.Users;
+using UniShare.Infrastructure.Features.Users.Register;
 namespace UniShare.Infrastructure.Validators;
 
-public class CreateUserValidator:AbstractValidator<CreateUserRequest>
+public class CreateUserValidator:AbstractValidator<RegisterUserRequest>
 {
     public CreateUserValidator()
     {

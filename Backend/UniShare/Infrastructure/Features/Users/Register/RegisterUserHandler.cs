@@ -2,14 +2,14 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
 
-namespace UniShare.Infrastructure.Features.Users;
+namespace UniShare.Infrastructure.Features.Users.Register;
 
-public class CreateUserHandler(
+public class RegisterUserHandler(
     UniShareContext context,
-    ILogger<CreateUserHandler> logger,
-    IValidator<CreateUserRequest> validator)
+    ILogger<RegisterUserHandler> logger,
+    IValidator<RegisterUserRequest> validator)
 {
-    public async Task<IResult> Handle(CreateUserRequest request)
+    public async Task<IResult> Handle(RegisterUserRequest request)
     {
         logger.LogInformation("Creating new user with Name: {Fullname} and Email: {Email}", request.Fullname, request.Email);
 
