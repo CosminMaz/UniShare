@@ -78,8 +78,8 @@ export default function RegisterPage() {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.successMessage}>
-            <h2>Cont creat cu succes!</h2>
-            <p>Ești redirecționat către pagina de login...</p>
+            <h2>Account created successfully!</h2>
+            <p>You are redirected to the login page...</p>
           </div>
         </div>
       </div>
@@ -91,19 +91,19 @@ export default function RegisterPage() {
       <div className={styles.card}>
         <header className={styles.header}>
           <h1 className={styles.headerTitle}>UniShare</h1>
-          <p className={styles.headerSubtitle}>Creează-ți contul</p>
+          <p className={styles.headerSubtitle}>Create account</p>
         </header>
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="fullname">
-              Nume complet
+              Complete Name
             </label>
             <input
               id="fullname"
               type="text"
               className={styles.input}
-              placeholder="Prenume Nume"
+              placeholder="FirstName LastName"
               value={fullname}
               onChange={(event) => setFullname(event.target.value)}
               required
@@ -114,13 +114,13 @@ export default function RegisterPage() {
 
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="email">
-              Email instituțional
+              Institutional Email
             </label>
             <input
               id="email"
               type="email"
               className={styles.input}
-              placeholder="prenume.nume@university.ro"
+              placeholder="example@university.ro"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
@@ -130,13 +130,13 @@ export default function RegisterPage() {
 
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="password">
-              Parolă
+              Password
             </label>
             <input
               id="password"
               type="password"
               className={styles.input}
-              placeholder="Minim 6 caractere"
+              placeholder="At least 6 characters"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
@@ -147,13 +147,13 @@ export default function RegisterPage() {
 
           <div className={styles.formGroup}>
             <label className={styles.label} htmlFor="confirmPassword">
-              Confirmă parola
+              Confirm Password
             </label>
             <input
               id="confirmPassword"
               type="password"
               className={styles.input}
-              placeholder="Reintrodu parola"
+              placeholder="Re-enter the password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               required
@@ -169,14 +169,14 @@ export default function RegisterPage() {
           )}
 
           <button type="submit" className={styles.button} disabled={isLoading}>
-            {isLoading ? 'Se înregistrează...' : 'Înregistrare'}
+            {isLoading ? 'Registering...' : 'Register'}
           </button>
 
           <footer className={styles.footer}>
             <p>
-              Ai deja cont?{' '}
+              Already have an account?{' '}
               <a className={styles.footerLink} href="/login">
-                Autentifică-te
+                Login
               </a>
             </p>
           </footer>

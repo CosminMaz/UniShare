@@ -61,7 +61,7 @@ export default function DashboardPage() {
         <div className={styles.navContent}>
           <h1 className={styles.title}>UniShare</h1>
           <button className={styles.logoutBtn} onClick={handleLogout}>
-            Deconectare
+            Disconnect
           </button>
         </div>
       </nav>
@@ -69,17 +69,17 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <section className={styles.welcome}>
           <h2 className={styles.welcomeTitle}>
-            Bine ai venit, {user?.name || user?.email || 'Utilizator'}!
+            Welcome, {user?.name || user?.email || 'Utilizator'}!
           </h2>
           <p className={styles.welcomeSubtitle}>
-            Bună! Esti conectat la platforma UniShare
+            Hello! You are connected on UniShare.
           </p>
         </section>
 
         <section className={styles.itemsSection}>
           <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Articole disponibile</h3>
-            <button className={styles.addItemBtn}>+ Adaugă articol</button>
+            <h3 className={styles.sectionTitle}>Items available</h3>
+            <button className={styles.addItemBtn}>+ Add Item</button>
           </div>
 
           {error && (
@@ -89,10 +89,10 @@ export default function DashboardPage() {
           )}
 
           {isLoading ? (
-            <div className={styles.loadingMessage}>Se încarcă articolele...</div>
+            <div className={styles.loadingMessage}>Loading Items...</div>
           ) : items.length === 0 ? (
             <div className={styles.emptyMessage}>
-              Nu sunt articole disponibile în acest moment.
+              There are no items available at this time.
             </div>
           ) : (
             <div className={styles.itemsGrid}>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
                     <span className={styles.itemOwner}>
                       {item.ownerName || 'Utilizator necunoscut'}
                     </span>
-                    <button className={styles.borrowBtn}>Imprumută</button>
+                    <button className={styles.borrowBtn}>Borrow</button>
                   </div>
                 </div>
               ))}
@@ -119,14 +119,14 @@ export default function DashboardPage() {
 
         {user && (
           <section className={styles.userInfo}>
-            <h3 className={styles.infoTitle}>Informații personale</h3>
+            <h3 className={styles.infoTitle}>Personal Information</h3>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Email:</span>
                 <span className={styles.infoValue}>{user.email}</span>
               </div>
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Nume:</span>
+                <span className={styles.infoLabel}>Name:</span>
                 <span className={styles.infoValue}>{user.name || 'N/A'}</span>
               </div>
             </div>
