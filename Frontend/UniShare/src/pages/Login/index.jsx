@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import styles from './Login.module.css'
+import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
 
@@ -15,21 +16,12 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+        email,
+        password,
       })
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}))
-        throw new Error(body?.message ?? 'Email sau parolă incorectă')
-      }
-
-      const data = await response.json()
-      const { token, user } = data
+      const { token, user } = response.data
 
       if (token) {
         localStorage.setItem('accessToken', token)
@@ -39,10 +31,14 @@ export default function LoginPage() {
         localStorage.setItem('currentUser', JSON.stringify(user))
       }
 
-      // TODO: Redirect to dashboard route when available
       window.location.href = '/dashboard'
     } catch (err) {
-      setError(err.message)
+      if (axios.isAxiosError(err) && err.response) {
+        // Use the error message from the API, or a default one
+        setError(err.response.data?.message ?? 'Email sau parolă incorectă')
+      } else {
+        setError(err.message || 'A apărut o eroare neașteptată.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -113,4 +109,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

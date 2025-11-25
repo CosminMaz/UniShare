@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import styles from './Register.module.css'
+import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
 
@@ -36,38 +37,29 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullname,
-          email,
-          password,
-        }),
+      await axios.post(`${API_BASE_URL}/api/auth/register`, {
+        fullname,
+        email,
+        password,
       })
 
-      if (!response.ok) {
-        const body = await response.json().catch(() => ({}))
-        
-        // Treat the errors from the backend
-        if (response.status === 400 && body.errors) {
-          const errorMessages = Object.values(body.errors).flat()
-          throw new Error(errorMessages.join(', ') || 'Date invalide')
-        }
-        
-        throw new Error(body?.title || body?.message || 'Eroare la înregistrare')
-      }
-
       setSuccess(true)
-      
+
       // Redirect to login page after 2 seconds
       setTimeout(() => {
         window.location.href = '/login'
       }, 2000)
     } catch (err) {
-      setError(err.message)
+      if (axios.isAxiosError(err) && err.response) {
+        const { data, status } = err.response
+        if (status === 400 && data.errors) {
+          setError(Object.values(data.errors).flat().join(', ') || 'Date invalide')
+        } else {
+          setError(data?.title || data?.message || 'Eroare la înregistrare')
+        }
+      } else {
+        setError(err.message || 'A apărut o eroare neașteptată.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -185,4 +177,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-

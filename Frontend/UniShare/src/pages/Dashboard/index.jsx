@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import styles from './Dashboard.module.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
@@ -27,22 +28,20 @@ export default function DashboardPage() {
   const fetchItems = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch(`${API_BASE_URL}/items`, {
-        method: 'GET',
+      const response = await axios.get(`${API_BASE_URL}/items`, {
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch items')
-      }
-
-      const data = await response.json()
+      const data = response.data
       setItems(Array.isArray(data) ? data : [])
     } catch (err) {
-      setError(err.message)
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data?.message ?? 'Failed to fetch items')
+      } else {
+        setError(err.message || 'An unexpected error occurred.')
+      }
       console.error('Error fetching items:', err)
     } finally {
       setIsLoading(false)
