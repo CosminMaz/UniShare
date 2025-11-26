@@ -5,27 +5,13 @@ using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Items.CreateItem;
 
-public class CreateItemHandler
+public class CreateItemHandler(
+    UniShareContext context,
+    IValidator<CreateItemRequest> validator)
 {
-    private readonly UniShareContext _context;
-    private readonly ILogger<CreateItemHandler> _logger;
-    private readonly IValidator<CreateItemRequest> _validator;
-
-    public CreateItemHandler(
-        UniShareContext context,
-        ILogger<CreateItemHandler> logger,
-        IValidator<CreateItemRequest> validator)
-    {
-        _context = context;
-        _logger = logger;
-        _validator = validator;
-    }
-
     public async Task<IResult> Handle(CreateItemRequest request)
     {
-        _logger.LogInformation("Creating item for owner {OwnerId} with title: {Title}", request.OwnerId, request.Title);
-
-        var validationResult = await _validator.ValidateAsync(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
             var errors = validationResult.Errors
@@ -38,7 +24,7 @@ public class CreateItemHandler
             return Results.ValidationProblem(errors);
         }
 
-        var ownerExists = await _context.Users.AnyAsync(u => u.Id == request.OwnerId);
+        var ownerExists = await context.Users.AnyAsync(u => u.Id == request.OwnerId);
         if (!ownerExists)
         {
             return Results.BadRequest(new
@@ -63,11 +49,9 @@ public class CreateItemHandler
             DateTime.UtcNow
         );
 
-        _context.Items.Add(item);
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation("Item created successfully with ID: {ItemId}", item.Id);
-
+        context.Items.Add(item);
+        await context.SaveChangesAsync();
+        
         return Results.Created($"/items/{item.Id}", item);
     }
 }

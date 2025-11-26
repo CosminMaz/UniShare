@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Users.Login;
-public class LoginHandler(UniShareContext context, ILogger<LoginHandler> logger)
+public class LoginHandler(UniShareContext context)
 {
     public async Task<IResult> Handle(LoginRequest request)
     {
@@ -11,7 +11,6 @@ public class LoginHandler(UniShareContext context, ILogger<LoginHandler> logger)
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
-            logger.LogWarning("Failed login attempt for {Email}", request.Email);
             return Results.Unauthorized();
         }
 
@@ -19,9 +18,6 @@ public class LoginHandler(UniShareContext context, ILogger<LoginHandler> logger)
         var token = $"temp-token-{user.Id}";
 
         var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Role.ToString());
-
-        logger.LogInformation("User {UserId} logged in successfully", user.Id);
-
         return Results.Ok(new LoginResponse(token, userDto));
     }
 }

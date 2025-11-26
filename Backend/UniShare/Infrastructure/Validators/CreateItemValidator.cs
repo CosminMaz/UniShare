@@ -1,5 +1,5 @@
 using FluentValidation;
-using UniShare.Infrastructure.Features.Items;
+using UniShare.Infrastructure.Features.Items.CreateItem;
 
 namespace UniShare.Infrastructure.Validators;
 

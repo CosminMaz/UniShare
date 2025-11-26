@@ -6,13 +6,10 @@ namespace UniShare.Infrastructure.Features.Users.Register;
 
 public class RegisterUserHandler(
     UniShareContext context,
-    ILogger<RegisterUserHandler> logger,
     IValidator<RegisterUserRequest> validator)
 {
     public async Task<IResult> Handle(RegisterUserRequest request)
     {
-        logger.LogInformation("Creating new user with Name: {Fullname} and Email: {Email}", request.Fullname, request.Email);
-
         var validationResult = await validator.ValidateAsync(request);
 
         if (!validationResult.IsValid)
@@ -38,9 +35,6 @@ public class RegisterUserHandler(
         var user = new User(Guid.NewGuid(), request.Fullname, request.Email, passwordHash, Role.User, DateTime.UtcNow);
         context.Users.Add(user);
         await context.SaveChangesAsync();
-
-        logger.LogInformation("User created successfully with ID: {UserId}", user.Id);
-
         return Results.Created($"/users/{user.Id}", user);
     }
 }
