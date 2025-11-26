@@ -27,7 +27,7 @@ public class CreateUserHandlerTests : IDisposable
         _context = new UniShareContext(options);
         var loggerMock = new Mock<ILogger<RegisterUserHandler>>();
         _validatorMock = new Mock<IValidator<RegisterUserRequest>>();
-        _handler = new RegisterUserHandler(_context, loggerMock.Object, _validatorMock.Object);
+        _handler = new RegisterUserHandler(_context, _validatorMock.Object);
     }
 
     public void Dispose()

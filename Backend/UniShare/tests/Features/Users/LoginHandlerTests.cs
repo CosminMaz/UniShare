@@ -20,7 +20,7 @@ public class LoginHandlerTests : IDisposable
             .Options;
         _context = new UniShareContext(options);
         var loggerMock = new Mock<ILogger<LoginHandler>>();
-        _handler = new LoginHandler(_context, loggerMock.Object);
+        _handler = new LoginHandler(_context);
     }
 
     public void Dispose()
