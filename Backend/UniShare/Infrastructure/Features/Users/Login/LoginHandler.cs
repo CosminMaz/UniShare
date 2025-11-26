@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Users.Login;
 public class LoginHandler(UniShareContext context)
@@ -11,6 +12,7 @@ public class LoginHandler(UniShareContext context)
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
+            Log.Error($"Invalid credentials for user with email: {request.Email}");
             return Results.Unauthorized();
         }
 
@@ -18,6 +20,7 @@ public class LoginHandler(UniShareContext context)
         var token = $"temp-token-{user.Id}";
 
         var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Role.ToString());
+        Log.Info($"User with id: {user.Id} logged in");
         return Results.Ok(new LoginResponse(token, userDto));
     }
 }

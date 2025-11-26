@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Users.Register;
 
@@ -20,13 +21,15 @@ public class RegisterUserHandler(
                     g => g.Key,
                     g => g.Select(e => e.ErrorMessage).ToArray()
                 );
-
+            
+            Log.Error("Validation failed for RegisterUserRequest");
             return Results.ValidationProblem(errors);
         }
 
         var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser is not null)
         {
+            Log.Error($"User with email: {request.Email} already exists");
             return Results.Problem("A user with this email already exists.", statusCode: 409);
         }
 
@@ -35,6 +38,7 @@ public class RegisterUserHandler(
         var user = new User(Guid.NewGuid(), request.Fullname, request.Email, passwordHash, Role.User, DateTime.UtcNow);
         context.Users.Add(user);
         await context.SaveChangesAsync();
+        Log.Info($"User with id: {user.Id} was registered");
         return Results.Created($"/users/{user.Id}", user);
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
-using UniShare.Infrastructure.Features.Users;
+using UniShare.Infrastructure.Features.Users.GetAll;
 
 namespace UniShare.Api;
 

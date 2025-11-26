@@ -4,10 +4,10 @@ using UniShare.Infrastructure.Features.Items.CreateItem;
 using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
-using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
 using UniShare.Api;
+using UniShare.Infrastructure.Features.Users.GetAll;
 
 var builder = WebApplication.CreateBuilder(args);
 

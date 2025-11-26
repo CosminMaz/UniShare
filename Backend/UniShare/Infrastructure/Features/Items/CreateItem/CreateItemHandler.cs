@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Items.CreateItem;
 
@@ -20,13 +21,15 @@ public class CreateItemHandler(
                     g => g.Key,
                     g => g.Select(e => e.ErrorMessage).ToArray()
                 );
-
+            
+            Log.Error("Validation failed for CreateItemRequest");
             return Results.ValidationProblem(errors);
         }
 
         var ownerExists = await context.Users.AnyAsync(u => u.Id == request.OwnerId);
         if (!ownerExists)
         {
+            Log.Error($"Owner with id: {request.OwnerId} does not exist");
             return Results.BadRequest(new
             {
                 errors = new
@@ -52,6 +55,7 @@ public class CreateItemHandler(
         context.Items.Add(item);
         await context.SaveChangesAsync();
         
+        Log.Info($"Item with id: {item.Id} was created");
         return Results.Created($"/items/{item.Id}", item);
     }
 }

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Items.GetAll;
 
@@ -8,18 +9,12 @@ public static class GetAllItems
 {
     public record Query : IRequest<IEnumerable<Item>>;
 
-    public class Handler : IRequestHandler<Query, IEnumerable<Item>>
+    public class Handler(UniShareContext context) : IRequestHandler<Query, IEnumerable<Item>>
     {
-        private readonly UniShareContext _context;
-
-        public Handler(UniShareContext context)
-        {
-            _context = context;
-        }
-
         public async Task<IEnumerable<Item>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await _context.Items.ToListAsync(cancellationToken);
+            Log.Info("All items were requested");
+            return await context.Items.ToListAsync(cancellationToken);
         }
     }
 }

@@ -1,3 +1,3 @@
-namespace UniShare.Infrastructure.Features.Users;
+namespace UniShare.Infrastructure.Features.Users.GetAll;
 
 public record GetAllUsersRequest();
