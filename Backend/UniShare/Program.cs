@@ -1,15 +1,13 @@
 using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Features.Items.CreateItem;
-using UniShare.Infrastructure.Features.Items.GetAll;
 using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
+using UniShare.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,20 +73,7 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-
-app.MapGet("/users", async ([FromServices] GetAllUsersHandler handler) => await handler.Handle())
-.WithName("GetAllUsers");
-
-app.MapPost("/items", async (CreateItemRequest request, [FromServices] CreateItemHandler handler) => await handler.Handle(request))
-.WithName("CreateItem");
-
-app.MapGet("/items", async (IMediator mediator) => await mediator.Send(new GetAllItems.Query()))
-.WithName("GetAllItems");
-
-app.MapPost("/api/auth/register", async (RegisterUserRequest request, [FromServices] RegisterUserHandler handler) => await handler.Handle(request))
-    .WithName("RegisterUser");
-
-app.MapPost("/api/auth/login", async (LoginRequest request, [FromServices] LoginHandler handler) => await handler.Handle(request))
-.WithName("LoginUser");
+app.MapItemEndpoints();
+app.MapUserEndpoints();
 
 app.Run();
