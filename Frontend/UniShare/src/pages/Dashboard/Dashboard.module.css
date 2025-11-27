@@ -125,10 +125,11 @@
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 0.75rem;
-  padding: 1.5rem;
+  padding: 0;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .itemCard:hover {
@@ -137,12 +138,29 @@
   transform: translateY(-4px);
 }
 
+.itemImage {
+  width: 100%;
+  height: 200px;
+  background: #e9ecef;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .itemHeader {
   display: flex;
   justify-content: space-between;
   align-items: start;
   margin-bottom: 0.75rem;
   gap: 0.5rem;
+  padding: 1.5rem 1.5rem 0 1.5rem;
 }
 
 .itemTitle {
@@ -165,18 +183,49 @@
 
 .itemDescription {
   color: #666;
-  margin: 0 0 1rem 0;
+  margin: 0;
+  padding: 0 1.5rem 0.75rem 1.5rem;
   font-size: 0.95rem;
   line-height: 1.4;
   flex: 1;
 }
 
-.itemFooter {
+.itemDetails {
+  padding: 1rem 1.5rem;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+  flex: 1;
+}
+
+.detailRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #e9ecef;
-  padding-top: 1rem;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.detailRow:not(:last-child) {
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.detailLabel {
+  color: #999;
+  font-weight: 600;
+}
+
+.detailValue {
+  color: #333;
+  font-weight: 500;
+}
+
+.itemFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 0.5rem;
 }
 
 .itemOwner {
@@ -185,20 +234,26 @@
 }
 
 .borrowBtn {
-  background: white;
-  color: #667eea;
-  border: 1px solid #667eea;
-  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .borrowBtn:hover {
-  background: #667eea;
-  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.borrowBtn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .loadingMessage,
