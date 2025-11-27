@@ -21,6 +21,12 @@ export default function DashboardPage() {
       }
     }
 
+    // Check if we need to refresh items (e.g., after adding a new item)
+    const shouldRefresh = localStorage.getItem('refreshItems') === 'true'
+    if (shouldRefresh) {
+      localStorage.removeItem('refreshItems')
+    }
+
     // Fetch items
     fetchItems()
   }, [])
@@ -78,7 +84,12 @@ export default function DashboardPage() {
         <section className={styles.itemsSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Items available</h3>
-            <button className={styles.addItemBtn}>+ Add Item</button>
+            <button 
+              className={styles.addItemBtn}
+              onClick={() => window.location.href = '/add-item'}
+            >
+              + Add Item
+            </button>
           </div>
 
           {error && (

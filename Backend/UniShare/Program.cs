@@ -1,15 +1,23 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Features.Items.CreateItem;
-using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
 using UniShare.Api;
 using UniShare.Infrastructure.Features.Users.GetAll;
+using UniShare.Common;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure JSON serializer to handle enum strings
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = null;
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+});
 
 // Database: prefer configured connection, but fall back to InMemory for local/dev/testing so Swagger works out-of-the-box
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -29,6 +37,7 @@ else
 builder.Services.AddHealthChecks();
 
 // Add services to the container.
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<GetAllUsersHandler>(); // Register GetAllUsersHandler
 builder.Services.AddScoped<IValidator<RegisterUserRequest>, CreateUserValidator>();
@@ -70,6 +79,9 @@ app.UseSwaggerUI();
 
 // Enable CORS for the frontend (applies to all endpoints)
 app.UseCors("AllowFrontend");
+
+// Enable authentication middleware
+app.UseAuthenticationMiddleware();
 
 app.UseHttpsRedirection();
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Features.Items;
+using UniShare.Infrastructure.Features.Reviews;
 using UniShare.Infrastructure.Features.Users;
 
 namespace UniShare.Infrastructure.Persistence;
@@ -9,6 +10,7 @@ public class UniShareContext(DbContextOptions<UniShareContext> options) : DbCont
     // It will be made with a proper dto record
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
+    public DbSet<Review> Reviews { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,11 +40,32 @@ public class UniShareContext(DbContextOptions<UniShareContext> options) : DbCont
             entity.Property(e => e.OwnerId).HasColumnName("owner_id");
             entity.Property(e => e.Title).HasColumnName("title");
             entity.Property(e => e.Description).HasColumnName("description");
-            entity.Property(e => e.Category).HasColumnName("category");
-            entity.Property(e => e.Condition).HasColumnName("condition");
+            entity.Property(e => e.Categ)
+                .HasColumnName("category")
+                .HasConversion<string>();
+            entity.Property(e => e.Cond)
+                .HasColumnName("condition")
+                .HasConversion<string>();
             entity.Property(e => e.DailyRate).HasColumnName("daily_rate");
             entity.Property(e => e.ImageUrl).HasColumnName("image_url");
             entity.Property(e => e.IsAvailable).HasColumnName("is_available");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+        });
+        
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.ToTable("reviews");
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasColumnType("uuid");
+            entity.Property(e => e.BookingId).HasColumnName("booking_id");
+            entity.Property(e => e.ReviewerId).HasColumnName("reviewer_id");
+            entity.Property(e => e.ItemId).HasColumnName("item_id");
+            entity.Property(e => e.Rating).HasColumnName("rating");
+            entity.Property(e => e.Comment).HasColumnName("comment");
+            entity.Property(e => e.RevType)
+                .HasColumnName("review_type")
+                .HasConversion<int>();
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
         });
     }
