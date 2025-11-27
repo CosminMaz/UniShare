@@ -49,8 +49,9 @@ public class CreateUserHandlerTests : IDisposable
 
         // Assert
         var createdResult = Assert.IsType<Created<User>>(result);
-        Assert.Equal(request.Fullname, createdResult.Value.FullName);
-        Assert.Equal(request.Email, createdResult.Value.Email);
+        Assert.NotNull(createdResult.Value);
+        Assert.Equal(request.Fullname, createdResult.Value!.FullName);
+        Assert.Equal(request.Email, createdResult.Value!.Email);
 
         var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         Assert.NotNull(userInDb);

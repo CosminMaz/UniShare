@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Features.Items.CreateItem;
+using UniShare.Infrastructure.Features.Reviews.CreateReview;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Persistence;
@@ -44,7 +45,10 @@ builder.Services.AddScoped<IValidator<RegisterUserRequest>, CreateUserValidator>
 builder.Services.AddScoped<CreateItemHandler>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
+builder.Services.AddScoped<IValidator<CreateReviewRequest>, CreateReviewValidator>();
+builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+
 
 // CORS: allow the frontend dev server (Vite) during development
 builder.Services.AddCors(options =>

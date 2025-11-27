@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -11,6 +13,7 @@ namespace UniShare.tests.Features.Users;
 public class LoginHandlerTests : IDisposable
 {
     private readonly UniShareContext _context;
+    private readonly Mock<IValidator<LoginRequest>> _validatorMock;
     private readonly LoginHandler _handler;
 
     public LoginHandlerTests()
@@ -20,7 +23,8 @@ public class LoginHandlerTests : IDisposable
             .Options;
         _context = new UniShareContext(options);
         var loggerMock = new Mock<ILogger<LoginHandler>>();
-        _handler = new LoginHandler(_context);
+        _validatorMock = new Mock<IValidator<LoginRequest>>();
+        _handler = new LoginHandler(_context, _validatorMock.Object);
     }
 
     public void Dispose()
@@ -40,14 +44,16 @@ public class LoginHandlerTests : IDisposable
         await _context.SaveChangesAsync();
 
         var request = new LoginRequest("test@example.com", password);
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
 
         // Act
         var result = await _handler.Handle(request);
 
         // Assert
         var okResult = Assert.IsType<Ok<LoginResponse>>(result);
-        var response = okResult.Value;
-        Assert.NotNull(response);
+        Assert.NotNull(okResult.Value);
+        var response = okResult.Value!;
         Assert.Equal($"temp-token-{user.Id}", response.Token);
         Assert.Equal(user.Id, response.User.Id);
         Assert.Equal(user.Email, response.User.Email);
@@ -60,6 +66,8 @@ public class LoginHandlerTests : IDisposable
     {
         // Arrange
         var request = new LoginRequest("nonexistent@example.com", "password");
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
 
         // Act
         var result = await _handler.Handle(request);
@@ -79,11 +87,34 @@ public class LoginHandlerTests : IDisposable
         await _context.SaveChangesAsync();
 
         var request = new LoginRequest("test@example.com", "wrongpassword");
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
 
         // Act
         var result = await _handler.Handle(request);
 
         // Assert
         Assert.IsType<UnauthorizedHttpResult>(result);
+    }
+
+    [Fact]
+    public async Task Handle_WithInvalidRequest_ReturnsValidationProblem()
+    {
+        // Arrange
+        var request = new LoginRequest("", "");
+        var validationFailures = new List<ValidationFailure>
+        {
+            new("Email", "A valid email is required."),
+            new("Password", "Password is required.")
+        };
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult(validationFailures));
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var validationProblemResult = Assert.IsType<ProblemHttpResult>(result);
+        Assert.Equal(StatusCodes.Status400BadRequest, validationProblemResult.StatusCode);
     }
 }
