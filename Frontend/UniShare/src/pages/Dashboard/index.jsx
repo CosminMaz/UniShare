@@ -11,30 +11,41 @@ export default function DashboardPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    // Get user from localStorage
     const storedUser = localStorage.getItem('currentUser')
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser))
+        const parsed = JSON.parse(storedUser)
+        console.log("User brut din localStorage:", parsed)
+        setUser(parsed)
       } catch (err) {
         console.error('Failed to parse user:', err)
       }
     }
 
-    // Fetch items
+
+    const shouldRefresh = localStorage.getItem('refreshItems') === 'true'
+    if (shouldRefresh) {
+      localStorage.removeItem('refreshItems')
+    }
+
     fetchItems()
   }, [])
+
+  useEffect(() => {
+    console.log('Items actualizate in state:', items)
+  }, [items])
 
   const fetchItems = async () => {
     try {
       setIsLoading(true)
       const response = await axios.get(`${API_BASE_URL}/items`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
       })
 
       const data = response.data
+      console.log('Items primite de la API:', data)
       setItems(Array.isArray(data) ? data : [])
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
@@ -68,7 +79,7 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <section className={styles.welcome}>
           <h2 className={styles.welcomeTitle}>
-            Welcome, {user?.name || user?.email || 'Utilizator'}!
+            Welcome, {user?.FullName || user?.Email || 'Utilizator'}!
           </h2>
           <p className={styles.welcomeSubtitle}>
             Hello! You are connected on UniShare.
@@ -78,7 +89,12 @@ export default function DashboardPage() {
         <section className={styles.itemsSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Items available</h3>
-            <button className={styles.addItemBtn}>+ Add Item</button>
+            <button
+              className={styles.addItemBtn}
+              onClick={() => (window.location.href = '/add-item')}
+            >
+              + Add Item
+            </button>
           </div>
 
           {error && (
@@ -95,20 +111,57 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className={styles.itemsGrid}>
-              {items.map((item) => (
-                <div key={item.id} className={styles.itemCard}>
+              {items.map(item => (
+                <div key={item.Id} className={styles.itemCard}>
+                  {(item.imageUrl || item.ImageUrl) && (
+                    <div className={styles.itemImage}>
+                      <img
+                        src={item.imageUrl || item.ImageUrl}
+                        alt={item.Title}
+                        onError={e => {
+                          e.target.src =
+                            'https://via.placeholder.com/200?text=No+Image'
+                        }}
+                      />
+                    </div>
+                  )}
                   <div className={styles.itemHeader}>
-                    <h4 className={styles.itemTitle}>{item.title || 'Fără titlu'}</h4>
-                    <span className={styles.itemBadge}>{item.category || 'General'}</span>
+                    <h4 className={styles.itemTitle}>
+                      {item.Title || 'Fara titlu'}
+                    </h4>
+                    <span className={styles.itemBadge}>
+                      {item.Categ || 'General'}
+                    </span>
                   </div>
                   <p className={styles.itemDescription}>
-                    {item.description || 'Fără descriere'}
+                    {item.Description || 'Fara descriere'}
                   </p>
+                  <div className={styles.itemDetails}>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Stare:</span>
+                      <span className={styles.detailValue}>
+                        {item.Cond || 'N/A'}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Pret/zi:</span>
+                      <span className={styles.detailValue}>
+                        {item.DailyRate
+                          ? `$${item.DailyRate.toFixed(2)}`
+                          : 'N/A'}
+                      </span>
+                    </div>
+                    <div className={styles.detailRow}>
+                      <span className={styles.detailLabel}>Adaugat:</span>
+                      <span className={styles.detailValue}>
+                        {item.CreatedAt
+                          ? new Date(item.CreatedAt).toLocaleDateString('ro-RO')
+                          : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
                   <div className={styles.itemFooter}>
-                    <span className={styles.itemOwner}>
-                      {item.ownerName || 'Utilizator necunoscut'}
-                    </span>
-                    <button className={styles.borrowBtn}>Borrow</button>
+                    <button className={styles.borrowBtn}>Imprumuta</button>
                   </div>
                 </div>
               ))}
@@ -122,11 +175,11 @@ export default function DashboardPage() {
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Email:</span>
-                <span className={styles.infoValue}>{user.email}</span>
+                <span className={styles.infoValue}>{user.Email}</span>
               </div>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Name:</span>
-                <span className={styles.infoValue}>{user.name || 'N/A'}</span>
+                <span className={styles.infoValue}>{user.FullName || 'N/A'}</span>
               </div>
             </div>
           </section>

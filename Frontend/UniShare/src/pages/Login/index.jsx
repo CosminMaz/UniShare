@@ -21,10 +21,13 @@ export default function LoginPage() {
         password,
       })
 
-      const { token, user } = response.data
+      
+      const rawData = response.data
+      const token = rawData.token ?? rawData.Token
+      const user = rawData.user ?? rawData.User
 
       if (token) {
-        localStorage.setItem('accessToken', token)
+        localStorage.setItem('token', token)
       }
 
       if (user) {

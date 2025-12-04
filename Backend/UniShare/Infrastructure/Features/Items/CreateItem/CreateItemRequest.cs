@@ -1,3 +1,3 @@
 namespace UniShare.Infrastructure.Features.Items.CreateItem;
 
-public record CreateItemRequest(Guid OwnerId,string Title, string Description, string Category, string Condition, decimal? DailyRate, string? ImageUrl);
+public record CreateItemRequest(string Title, string Description, Category Categ, Condition Cond, decimal? DailyRate, string? ImageUrl);

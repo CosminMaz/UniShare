@@ -2,6 +2,7 @@ import './App.css'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import DashboardPage from './pages/Dashboard'
+import AddItemPage from './pages/AddItemPage'
 
 function App() {
   const path = window.location.pathname
@@ -12,6 +13,10 @@ function App() {
 
   if (path === '/dashboard') {
     return <DashboardPage />
+  }
+
+  if (path === '/add-item') {
+    return <AddItemPage />
   }
 
   return <LoginPage />

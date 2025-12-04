@@ -10,8 +10,8 @@ namespace UniShare.Common
             try
             {
                 // Go up from bin/Debug/net9.0 to the project root
-                var projectRoot = Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.Parent.FullName;
-                var logDirectory = Path.Combine(projectRoot, "logs");
+                var projectRoot = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+                var logDirectory = projectRoot != null ? Path.Combine(projectRoot, "logs") : "logs";
                 LogFilePath = Path.Combine(logDirectory, "log.txt");
 
                 if (!Directory.Exists(logDirectory))
@@ -37,7 +37,7 @@ namespace UniShare.Common
             WriteLog("WARNING", message);
         }
 
-        public static void Error(string message, Exception ex = null)
+        public static void Error(string message, Exception? ex = null)
         {
             var errorMessage = ex != null ? $"{message} - Exception: {ex}" : message;
             WriteLog("ERROR", errorMessage);
