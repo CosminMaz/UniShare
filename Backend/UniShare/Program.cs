@@ -4,6 +4,8 @@ using UniShare.Infrastructure.Features.Items.CreateItem;
 using UniShare.Infrastructure.Features.Reviews.CreateReview;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
+using UniShare.Infrastructure.Features.Bookings.CreateBooking;
+using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Infrastructure.Validators;
 using UniShare.Api;
@@ -47,6 +49,10 @@ builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
 builder.Services.AddScoped<IValidator<CreateReviewRequest>, CreateReviewValidator>();
 builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+builder.Services.AddScoped<CreateBookingHandler>();
+builder.Services.AddScoped<ApproveBookingHandler>();
+builder.Services.AddScoped<IValidator<CreateBookingRequest>, CreateBookingValidator>();
+builder.Services.AddScoped<IValidator<ApproveBookingRequest>, ApproveBookingValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 
 
@@ -91,5 +97,6 @@ app.UseHttpsRedirection();
 
 app.MapItemEndpoints();
 app.MapUserEndpoints();
+app.MapBookingEndpoints();
 
 app.Run();

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
 using UniShare.Infrastructure.Features.Bookings.GetAll;
+using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 
 namespace UniShare.Api;
 
@@ -23,5 +24,35 @@ public static class BookingApi
                 async (IMediator mediator) =>
                     await mediator.Send(new GetAllBookings.Query()))
             .WithName("GetAllBookings");
+
+        app.MapPost("/bookings/{bookingId}/approve",
+                async (Guid bookingId,
+                        [FromBody] ApproveBookingBody body,
+                        [FromServices] ApproveBookingHandler handler) =>
+                {
+                    var approveRequest = new ApproveBookingRequest(bookingId, body.Approve);
+                    return await handler.Handle(approveRequest);
+                })
+            .WithName("ApproveBooking")
+            .Accepts<ApproveBookingBody>("application/json")
+            .Produces(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(403)
+            .Produces(404);
+
+        app.MapPost("/bookings/{bookingId}/reject",
+                async (Guid bookingId,
+                        [FromServices] ApproveBookingHandler handler) =>
+                {
+                    var rejectRequest = new ApproveBookingRequest(bookingId, false);
+                    return await handler.Handle(rejectRequest);
+                })
+            .WithName("RejectBooking")
+            .Produces(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(403)
+            .Produces(404);
     }
 }

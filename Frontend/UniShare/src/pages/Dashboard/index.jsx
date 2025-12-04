@@ -7,8 +7,19 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [items, setItems] = useState([])
+  const [bookings, setBookings] = useState([])
+  const [ownerBookings, setOwnerBookings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false)
   const [error, setError] = useState('')
+  const [bookingMessage, setBookingMessage] = useState('')
+  const [bookingRequestError, setBookingRequestError] = useState('')
+  const [bookingRequestMessage, setBookingRequestMessage] = useState('')
+  const [isBooking, setIsBooking] = useState(false)
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
@@ -29,6 +40,7 @@ export default function DashboardPage() {
     }
 
     fetchItems()
+    fetchBookings()
   }, [])
 
   useEffect(() => {
@@ -59,6 +71,241 @@ export default function DashboardPage() {
     }
   }
 
+  const fetchBookings = async () => {
+    try {
+      setIsLoadingBookings(true)
+      const token =
+        localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+      if (!token) return
+
+      const response = await axios.get(`${API_BASE_URL}/bookings`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const allBookings = Array.isArray(response.data) ? response.data : []
+      
+      // Filter to show only current user's bookings (as borrower and as owner)
+      const storedUser = localStorage.getItem('currentUser')
+      if (storedUser) {
+        const currentUser = JSON.parse(storedUser)
+        const userId = currentUser.Id ?? currentUser.id
+        const myBookings = allBookings.filter(
+          (booking) => booking.BorrowerId === userId || booking.borrowerId === userId
+        )
+        const myOwnerBookings = allBookings.filter(
+          (booking) => booking.OwnerId === userId || booking.ownerId === userId
+        )
+        setBookings(myBookings)
+        setOwnerBookings(myOwnerBookings)
+      } else {
+        setBookings(allBookings)
+        setOwnerBookings([])
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err)
+      // Don't show error for bookings, just log it
+    } finally {
+      setIsLoadingBookings(false)
+    }
+  }
+
+  const handleBorrowClick = (item) => {
+    const token =
+      localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+    if (!token) {
+      setError('You need to be logged in to make a booking.')
+      return
+    }
+
+    const today = new Date()
+    const defaultStart = today.toISOString().slice(0, 10)
+    const defaultEnd = new Date(
+      today.getTime() + 2 * 24 * 60 * 60 * 1000,
+    )
+      .toISOString()
+      .slice(0, 10)
+
+    setSelectedItem(item)
+    setStartDate(defaultStart)
+    setEndDate(defaultEnd)
+    setShowBookingModal(true)
+    setError('')
+    setBookingMessage('')
+  }
+
+  const handleBookingSubmit = async () => {
+    if (!selectedItem) return
+
+    const token =
+      localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+    if (!token) {
+      setError('You need to be logged in to make a booking.')
+      return
+    }
+
+    if (!startDate || !endDate) {
+      setError('Please select both start and end dates.')
+      return
+    }
+
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      setError('Invalid date format.')
+      return
+    }
+
+    if (end <= start) {
+      setError('End date must be after start date.')
+      return
+    }
+
+    try {
+      setIsBooking(true)
+      setError('')
+
+      const payload = {
+        ItemId: selectedItem.Id ?? selectedItem.id,
+        StartDate: start.toISOString(),
+        EndDate: end.toISOString(),
+      }
+
+      await axios.post(`${API_BASE_URL}/bookings`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      setBookingMessage(
+        'Booking request sent successfully! You can check with the owner for confirmation.',
+      )
+      setShowBookingModal(false)
+      setSelectedItem(null)
+      setStartDate('')
+      setEndDate('')
+      // Refresh bookings to show the new one
+      fetchBookings()
+    } catch (err) {
+      console.error('Error creating booking:', err)
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data
+        let msg = 'Failed to create booking.'
+
+        if (errorData?.errors) {
+          msg = Object.entries(errorData.errors)
+            .map(([key, values]) => `${key}: ${values.join(', ')}`)
+            .join('; ')
+        } else if (errorData?.message) {
+          msg = errorData.message
+        } else if (err.response.status === 401) {
+          msg = 'You are not authenticated. Please log in again.'
+        }
+
+        setError(msg)
+      } else {
+        setError(err.message || 'An unexpected error occurred while booking.')
+      }
+    } finally {
+      setIsBooking(false)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowBookingModal(false)
+    setSelectedItem(null)
+    setStartDate('')
+    setEndDate('')
+    setError('')
+  }
+
+  const handleApproveBooking = async (bookingId) => {
+    try {
+      setBookingRequestError('')
+      setBookingRequestMessage('')
+      
+      const token =
+        localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+      if (!token) {
+        setBookingRequestError('You need to be logged in.')
+        return
+      }
+
+      await axios.post(
+        `${API_BASE_URL}/bookings/${bookingId}/approve`,
+        { Approve: true },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      setBookingRequestMessage('Booking approved successfully!')
+      fetchBookings()
+      fetchItems() // Refresh items to update availability
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setBookingRequestMessage(''), 3000)
+    } catch (err) {
+      console.error('Error approving booking:', err)
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data
+        setBookingRequestError(errorData?.message || 'Failed to approve booking.')
+      } else {
+        setBookingRequestError(err.message || 'An unexpected error occurred.')
+      }
+    }
+  }
+
+  const handleRejectBooking = async (bookingId) => {
+    try {
+      setBookingRequestError('')
+      setBookingRequestMessage('')
+      
+      const token =
+        localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+      if (!token) {
+        setBookingRequestError('You need to be logged in.')
+        return
+      }
+
+      await axios.post(
+        `${API_BASE_URL}/bookings/${bookingId}/reject`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+
+      setBookingRequestMessage('Booking rejected.')
+      fetchBookings()
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setBookingRequestMessage(''), 3000)
+    } catch (err) {
+      console.error('Error rejecting booking:', err)
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data
+        setBookingRequestError(errorData?.message || 'Failed to reject booking.')
+      } else {
+        setBookingRequestError(err.message || 'An unexpected error occurred.')
+      }
+    }
+  }
+
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('currentUser')
@@ -79,7 +326,7 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <section className={styles.welcome}>
           <h2 className={styles.welcomeTitle}>
-            Welcome, {user?.FullName || user?.Email || 'Utilizator'}!
+            Welcome, {user?.FullName || user?.Email || 'User'}!
           </h2>
           <p className={styles.welcomeSubtitle}>
             Hello! You are connected on UniShare.
@@ -100,6 +347,12 @@ export default function DashboardPage() {
           {error && (
             <div className={styles.errorMessage} role="alert">
               {error}
+            </div>
+          )}
+
+          {bookingMessage && !error && (
+            <div className={styles.successMessage} role="status">
+              {bookingMessage}
             </div>
           )}
 
@@ -127,24 +380,24 @@ export default function DashboardPage() {
                   )}
                   <div className={styles.itemHeader}>
                     <h4 className={styles.itemTitle}>
-                      {item.Title || 'Fara titlu'}
+                      {item.Title || 'No title'}
                     </h4>
                     <span className={styles.itemBadge}>
                       {item.Categ || 'General'}
                     </span>
                   </div>
                   <p className={styles.itemDescription}>
-                    {item.Description || 'Fara descriere'}
+                    {item.Description || 'No description'}
                   </p>
                   <div className={styles.itemDetails}>
                     <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Stare:</span>
+                      <span className={styles.detailLabel}>Condition:</span>
                       <span className={styles.detailValue}>
                         {item.Cond || 'N/A'}
                       </span>
                     </div>
                     <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Pret/zi:</span>
+                      <span className={styles.detailLabel}>Price/day:</span>
                       <span className={styles.detailValue}>
                         {item.DailyRate
                           ? `$${item.DailyRate.toFixed(2)}`
@@ -152,19 +405,254 @@ export default function DashboardPage() {
                       </span>
                     </div>
                     <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Adaugat:</span>
+                      <span className={styles.detailLabel}>Added:</span>
                       <span className={styles.detailValue}>
                         {item.CreatedAt
-                          ? new Date(item.CreatedAt).toLocaleDateString('ro-RO')
+                          ? new Date(item.CreatedAt).toLocaleDateString('en-US')
                           : 'N/A'}
                       </span>
                     </div>
                   </div>
                   <div className={styles.itemFooter}>
-                    <button className={styles.borrowBtn}>Imprumuta</button>
+                    <button
+                      className={styles.borrowBtn}
+                      onClick={() => handleBorrowClick(item)}
+                      disabled={isBooking}
+                    >
+                      Borrow
+                    </button>
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </section>
+
+        {/* My Bookings Section */}
+        <section className={styles.bookingsSection}>
+          <h3 className={styles.sectionTitle}>My Bookings</h3>
+
+          {isLoadingBookings ? (
+            <div className={styles.loadingMessage}>Loading bookings...</div>
+          ) : bookings.length === 0 ? (
+            <div className={styles.emptyMessage}>
+              You don't have any bookings yet. Borrow an item to get started!
+            </div>
+          ) : (
+            <div className={styles.bookingsList}>
+              {bookings.map((booking) => {
+                // Find the item for this booking
+                const bookedItem = items.find(
+                  (item) =>
+                    item.Id === booking.ItemId || item.id === booking.ItemId
+                )
+
+                const statusColors = {
+                  Pending: '#ffc107',
+                  Approved: '#28a745',
+                  Active: '#17a2b8',
+                  Completed: '#6c757d',
+                  Canceled: '#dc3545',
+                  Rejected: '#dc3545',
+                }
+
+                const status = booking.Status || booking.status || 'Pending'
+                const statusColor = statusColors[status] || '#6c757d'
+
+                return (
+                  <div key={booking.Id || booking.id} className={styles.bookingCard}>
+                    <div className={styles.bookingHeader}>
+                      <div className={styles.bookingItemInfo}>
+                        <h4 className={styles.bookingItemTitle}>
+                          {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
+                        </h4>
+                        <span
+                          className={styles.bookingStatus}
+                          style={{ backgroundColor: statusColor }}
+                        >
+                          {status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.bookingDetails}>
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>Start Date:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.StartDate || booking.startDate
+                            ? new Date(
+                                booking.StartDate || booking.startDate,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>End Date:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.EndDate || booking.endDate
+                            ? new Date(
+                                booking.EndDate || booking.endDate,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                      {booking.TotalPrice !== undefined ||
+                      booking.totalPrice !== undefined ? (
+                        <div className={styles.bookingDetailRow}>
+                          <span className={styles.bookingDetailLabel}>Total Price:</span>
+                          <span className={styles.bookingDetailValue}>
+                            $
+                            {(
+                              booking.TotalPrice || booking.totalPrice || 0
+                            ).toFixed(2)}
+                          </span>
+                        </div>
+                      ) : null}
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>Requested:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.RequestedAt || booking.requestedAt
+                            ? new Date(
+                                booking.RequestedAt || booking.requestedAt,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* Booking Requests Section (where user is owner) */}
+        <section className={styles.bookingsSection}>
+          <h3 className={styles.sectionTitle}>Booking Requests</h3>
+          <p className={styles.sectionSubtitle}>
+            Requests for items you're lending out
+          </p>
+
+          {bookingRequestError && (
+            <div className={styles.errorMessage} role="alert">
+              {bookingRequestError}
+            </div>
+          )}
+
+          {bookingRequestMessage && !bookingRequestError && (
+            <div className={styles.successMessage} role="status">
+              {bookingRequestMessage}
+            </div>
+          )}
+
+          {isLoadingBookings ? (
+            <div className={styles.loadingMessage}>Loading requests...</div>
+          ) : ownerBookings.length === 0 ? (
+            <div className={styles.emptyMessage}>
+              No booking requests yet. When someone borrows your items, they'll appear here.
+            </div>
+          ) : (
+            <div className={styles.bookingsList}>
+              {ownerBookings.map((booking) => {
+                // Find the item for this booking
+                const bookedItem = items.find(
+                  (item) =>
+                    item.Id === booking.ItemId || item.id === booking.ItemId
+                )
+
+                const status = booking.Status || booking.status || 'Pending'
+                const isPending = status === 'Pending'
+
+                return (
+                  <div key={booking.Id || booking.id} className={styles.bookingCard}>
+                    <div className={styles.bookingHeader}>
+                      <div className={styles.bookingItemInfo}>
+                        <h4 className={styles.bookingItemTitle}>
+                          {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
+                        </h4>
+                        <span
+                          className={styles.bookingStatus}
+                          style={{
+                            backgroundColor:
+                              status === 'Pending'
+                                ? '#ffc107'
+                                : status === 'Approved'
+                                  ? '#28a745'
+                                  : status === 'Rejected'
+                                    ? '#dc3545'
+                                    : '#6c757d',
+                          }}
+                        >
+                          {status}
+                        </span>
+                      </div>
+                    </div>
+                    <div className={styles.bookingDetails}>
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>Start Date:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.StartDate || booking.startDate
+                            ? new Date(
+                                booking.StartDate || booking.startDate,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>End Date:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.EndDate || booking.endDate
+                            ? new Date(
+                                booking.EndDate || booking.endDate,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                      {booking.TotalPrice !== undefined ||
+                      booking.totalPrice !== undefined ? (
+                        <div className={styles.bookingDetailRow}>
+                          <span className={styles.bookingDetailLabel}>Total Price:</span>
+                          <span className={styles.bookingDetailValue}>
+                            $
+                            {(
+                              booking.TotalPrice || booking.totalPrice || 0
+                            ).toFixed(2)}
+                          </span>
+                        </div>
+                      ) : null}
+                      <div className={styles.bookingDetailRow}>
+                        <span className={styles.bookingDetailLabel}>Requested:</span>
+                        <span className={styles.bookingDetailValue}>
+                          {booking.RequestedAt || booking.requestedAt
+                            ? new Date(
+                                booking.RequestedAt || booking.requestedAt,
+                              ).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                    {isPending && (
+                      <div className={styles.bookingActions}>
+                        <button
+                          className={styles.approveBtn}
+                          onClick={() =>
+                            handleApproveBooking(booking.Id || booking.id)
+                          }
+                        >
+                          ✓ Approve
+                        </button>
+                        <button
+                          className={styles.rejectBtn}
+                          onClick={() =>
+                            handleRejectBooking(booking.Id || booking.id)
+                          }
+                        >
+                          ✗ Reject
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )}
         </section>
@@ -185,6 +673,102 @@ export default function DashboardPage() {
           </section>
         )}
       </main>
+
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className={styles.modalOverlay} onClick={handleCloseModal}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>
+                Book {selectedItem?.Title || 'Item'}
+              </h3>
+              <button
+                className={styles.modalCloseBtn}
+                onClick={handleCloseModal}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.modalBody}>
+              {error && (
+                <div className={styles.errorMessage} role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className={styles.formGroup}>
+                <label htmlFor="startDate" className={styles.modalLabel}>
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  id="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className={styles.modalInput}
+                  min={new Date().toISOString().slice(0, 10)}
+                  required
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="endDate" className={styles.modalLabel}>
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  id="endDate"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className={styles.modalInput}
+                  min={startDate || new Date().toISOString().slice(0, 10)}
+                  required
+                />
+              </div>
+
+              {selectedItem?.DailyRate && (
+                <div className={styles.priceInfo}>
+                  <span className={styles.priceLabel}>Estimated Total:</span>
+                  <span className={styles.priceValue}>
+                    $
+                    {(
+                      selectedItem.DailyRate *
+                      Math.max(
+                        1,
+                        Math.ceil(
+                          (new Date(endDate) - new Date(startDate)) /
+                            (1000 * 60 * 60 * 24),
+                        ),
+                      )
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={handleCloseModal}
+                disabled={isBooking}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalSubmitBtn}
+                onClick={handleBookingSubmit}
+                disabled={isBooking || !startDate || !endDate}
+              >
+                {isBooking ? 'Processing...' : 'Confirm Booking'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
