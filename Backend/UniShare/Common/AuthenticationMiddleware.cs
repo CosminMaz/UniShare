@@ -1,16 +1,7 @@
-using System.Security.Claims;
-
 namespace UniShare.Common;
 
-public class AuthenticationMiddleware
+public class AuthenticationMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    public AuthenticationMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
     public async Task InvokeAsync(HttpContext context)
     {
         // Extract bearer token from Authorization header
@@ -27,14 +18,14 @@ public class AuthenticationMiddleware
             }
         }
 
-        await _next(context);
+        await next(context);
     }
 }
 
 public static class AuthenticationMiddlewareExtensions
 {
-    public static IApplicationBuilder UseAuthenticationMiddleware(this IApplicationBuilder builder)
+    public static void UseAuthenticationMiddleware(this IApplicationBuilder builder)
     {
-        return builder.UseMiddleware<AuthenticationMiddleware>();
+        builder.UseMiddleware<AuthenticationMiddleware>();
     }
 }

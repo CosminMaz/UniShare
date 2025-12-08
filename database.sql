@@ -1,11 +1,5 @@
---
--- PostgreSQL database dump
---
-
-\restrict e073dqPOjEL4hcnPmnaVsDxDEAlhvcaFG3fP5fbvjoAg4i4dgb2DYEBb0FvaSrr
-
--- Dumped from database version 18.0 (Debian 18.0-1.pgdg13+3)
--- Dumped by pg_dump version 18.0 (Debian 18.0-1.pgdg13+3)
+-- PostgreSQL database import script for UniShare
+-- Cleaned and ready for Docker
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -20,24 +14,40 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 SET default_tablespace = '';
-
 SET default_table_access_method = heap;
 
---
--- Name: __EFMigrationsHistory; Type: TABLE; Schema: public; Owner: postgres
---
+-- Required for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+------------------------------------------------------
+-- TABLE: __EFMigrationsHistory
+------------------------------------------------------
 
 CREATE TABLE public."__EFMigrationsHistory" (
     "MigrationId" character varying(150) NOT NULL,
     "ProductVersion" character varying(32) NOT NULL
 );
 
-
 ALTER TABLE public."__EFMigrationsHistory" OWNER TO postgres;
 
---
--- Name: items; Type: TABLE; Schema: public; Owner: postgres
---
+------------------------------------------------------
+-- TABLE: users
+------------------------------------------------------
+
+CREATE TABLE public.users (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    full_name text NOT NULL,
+    email text NOT NULL,
+    password_hash text NOT NULL,
+    role integer NOT NULL,
+    created_at timestamp with time zone NOT NULL
+);
+
+ALTER TABLE public.users OWNER TO postgres;
+
+------------------------------------------------------
+-- TABLE: items
+------------------------------------------------------
 
 CREATE TABLE public.items (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -50,16 +60,36 @@ CREATE TABLE public.items (
     image_url text,
     is_available boolean DEFAULT true NOT NULL,
     created_at timestamp with time zone NOT NULL,
-    CONSTRAINT items_category_check CHECK ((category = ANY (ARRAY['Books'::text, 'Electronics'::text, 'Clothing'::text, 'Furniture'::text, 'Sports'::text, 'Other'::text]))),
-    CONSTRAINT items_condition_check CHECK ((condition = ANY (ARRAY['New'::text, 'LikeNew'::text, 'WellPreserved'::text, 'Acceptable'::text, 'Poor'::text])))
+    CONSTRAINT items_category_check CHECK ((category = ANY (ARRAY['Books','Electronics','Clothing','Furniture','Sports','Other']))),
+    CONSTRAINT items_condition_check CHECK ((condition = ANY (ARRAY['New','LikeNew','WellPreserved','Acceptable','Poor'])))
 );
-
 
 ALTER TABLE public.items OWNER TO postgres;
 
---
--- Name: reviews; Type: TABLE; Schema: public; Owner: postgres
---
+------------------------------------------------------
+-- TABLE: bookings
+------------------------------------------------------
+
+CREATE TABLE public.bookings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    item_id uuid NOT NULL,
+    borrower_id uuid NOT NULL,
+    owner_id uuid NOT NULL,
+    status text NOT NULL CHECK (status IN ('Pending','Approved','Active','Completed','Cancelled','Rejected')),
+    start_date timestamp with time zone NOT NULL,
+    end_date timestamp with time zone NOT NULL,
+    actual_return_date timestamp with time zone,
+    total_price numeric(10,2),
+    requested_at timestamp with time zone NOT NULL,
+    approved_at timestamp with time zone,
+    completed_at timestamp with time zone
+);
+
+ALTER TABLE public.bookings OWNER TO postgres;
+
+------------------------------------------------------
+-- TABLE: reviews
+------------------------------------------------------
 
 CREATE TABLE public.reviews (
     id uuid DEFAULT gen_random_uuid() NOT NULL,
@@ -72,92 +102,51 @@ CREATE TABLE public.reviews (
     created_at timestamp with time zone NOT NULL
 );
 
-
 ALTER TABLE public.reviews OWNER TO postgres;
 
---
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.users (
-    id uuid DEFAULT gen_random_uuid() NOT NULL,
-    full_name text NOT NULL,
-    email text NOT NULL,
-    password_hash text NOT NULL,
-    role integer NOT NULL,
-    created_at timestamp with time zone NOT NULL
-);
-
-
-ALTER TABLE public.users OWNER TO postgres;
-
---
--- Name: __EFMigrationsHistory PK___EFMigrationsHistory; Type: CONSTRAINT; Schema: public; Owner: postgres
---
+------------------------------------------------------
+-- CONSTRAINTS
+------------------------------------------------------
 
 ALTER TABLE ONLY public."__EFMigrationsHistory"
     ADD CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId");
 
-
---
--- Name: items items_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT items_pkey PRIMARY KEY (id);
-
-
---
--- Name: reviews reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
 
-
---
--- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_email_key UNIQUE (email);
-
-
---
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT bookings_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
-
---
--- Name: items items_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_email_key UNIQUE (email);
 
 ALTER TABLE ONLY public.items
     ADD CONSTRAINT items_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id);
 
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT bookings_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id);
 
---
--- Name: reviews reviews_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT bookings_borrower_id_fkey FOREIGN KEY (borrower_id) REFERENCES public.users(id);
+
+ALTER TABLE ONLY public.bookings
+    ADD CONSTRAINT bookings_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id);
 
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(id);
 
-
---
--- Name: reviews reviews_reviewer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY public.reviews
     ADD CONSTRAINT reviews_reviewer_id_fkey FOREIGN KEY (reviewer_id) REFERENCES public.users(id);
 
+ALTER TABLE ONLY public.reviews
+    ADD CONSTRAINT reviews_booking_id_fkey FOREIGN KEY (booking_id) REFERENCES public.bookings(id);
 
---
--- PostgreSQL database dump complete
---
-
-\unrestrict e073dqPOjEL4hcnPmnaVsDxDEAlhvcaFG3fP5fbvjoAg4i4dgb2DYEBb0FvaSrr
-
+------------------------------------------------------
+-- DONE 🚀
+------------------------------------------------------
