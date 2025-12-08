@@ -13,84 +13,94 @@ public class ApproveBookingHandler(
     {
         Log.Info($"ApproveBooking request received: BookingId={request.BookingId}, Approve={request.Approve}");
 
+        var ownerId = GetUserId();
+        if (ownerId is null)
+            return Results.Unauthorized();
+
+        var booking = await GetBooking(request.BookingId);
+        if (booking is null)
+            return Results.NotFound(new { message = "Booking not found." });
+
+        var authorizationResult = ValidateOwner(booking, ownerId.Value);
+        if (authorizationResult is not null)
+            return authorizationResult;
+
+        var statusValidation = ValidateBookingStatus(booking);
+        if (statusValidation is not null)
+            return statusValidation;
+
+        await ApplyDecisionAsync(booking, request.Approve);
+
+        var updatedBooking = await GetBookingReadonly(request.BookingId);
+        return Results.Ok(updatedBooking);
+    }
+
+    // ---------------------- HELPERS ----------------------
+
+    private Guid? GetUserId()
+    {
         var httpContext = httpContextAccessor.HttpContext;
         if (httpContext == null)
         {
             Log.Error("HttpContext is null");
-            return Results.Unauthorized();
+            return null;
         }
 
         httpContext.Items.TryGetValue("UserId", out var userIdObj);
-        if (userIdObj is not Guid ownerId)
-        {
-            Log.Error($"UserId not found in context or not a Guid. Value: {userIdObj}");
-            return Results.Unauthorized();
-        }
+        return userIdObj is Guid g ? g : null;
+    }
 
-        // Retrieve booking as a tracked entity
-        var booking = await context.Bookings
-            .FirstOrDefaultAsync(b => b.Id == request.BookingId);
+    private Task<Booking?> GetBooking(Guid id) =>
+        context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
 
-        if (booking == null)
-        {
-            Log.Error($"Booking with id: {request.BookingId} does not exist");
-            return Results.NotFound(new { message = "Booking not found." });
-        }
+    private Task<Booking?> GetBookingReadonly(Guid id) =>
+        context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
 
-        // Ensure the logged-in user is the owner of the item
-        if (booking.OwnerId != ownerId)
-        {
-            Log.Error($"User {ownerId} is not the owner of booking {request.BookingId}");
-            return Results.Forbid();
-        }
+    private static IResult? ValidateOwner(Booking booking, Guid ownerId)
+    {
+        if (booking.OwnerId == ownerId) return null;
+        Log.Error($"User {ownerId} is not the owner of booking {booking.Id}");
+        return Results.Forbid();
 
-        // Booking must be in Pending state before a decision can be made
-        if (booking.Status != Status.Pending)
-        {
-            Log.Error($"Booking {request.BookingId} is not in Pending status. Current status: {booking.Status}");
-            return Results.BadRequest(new { message = "Only pending bookings can be approved or rejected." });
-        }
+    }
 
+    private static IResult? ValidateBookingStatus(Booking booking)
+    {
+        if (booking.Status == Status.Pending) return null;
+        Log.Error($"Booking {booking.Id} is not pending. Current status: {booking.Status}");
+        return Results.BadRequest(new { message = "Only pending bookings can be approved or rejected." });
+
+    }
+
+    private async Task ApplyDecisionAsync(Booking booking, bool approve)
+    {
         var now = DateTime.UtcNow;
-        var newStatus = request.Approve ? Status.Approved : Status.Rejected;
+        var newStatus = approve ? Status.Approved : Status.Rejected;
 
-        // Create a new immutable instance with updated status and timestamps
-        var updatedBooking = booking with { Status = newStatus, ApprovedAt = request.Approve ? now : booking.ApprovedAt };
+        // Update booking
+        var updatedBooking = booking with
+        {
+            Status = newStatus,
+            ApprovedAt = approve ? now : booking.ApprovedAt
+        };
 
-        // Update tracked entity using EF Core value copying
         context.Entry(booking).CurrentValues.SetValues(updatedBooking);
 
-        // If approved, mark the associated item as unavailable
-        if (request.Approve)
-        {
-            var item = await context.Items.FirstOrDefaultAsync(i => i.Id == booking.ItemId);
-            if (item != null)
-            {
-                var updatedItem = new Item(
-                    item.Id,
-                    item.OwnerId,
-                    item.Title,
-                    item.Description,
-                    item.Categ,
-                    item.Cond,
-                    item.DailyRate,
-                    item.ImageUrl,
-                    false, // IsAvailable = false
-                    item.CreatedAt
-                );
-
-                context.Entry(item).CurrentValues.SetValues(updatedItem);
-            }
-        }
+        if (approve)
+            await MarkItemUnavailable(booking.ItemId);
 
         await context.SaveChangesAsync();
 
-        // Fetch updated booking without tracking for response clarity
-        var resultBooking = await context.Bookings
-            .AsNoTracking()
-            .FirstOrDefaultAsync(b => b.Id == request.BookingId);
+        Log.Info($"Booking {booking.Id} was {(approve ? "approved" : "rejected")}");
+    }
 
-        Log.Info($"Booking {request.BookingId} was {(request.Approve ? "approved" : "rejected")} by owner {ownerId}");
-        return Results.Ok(resultBooking);
+    private async Task MarkItemUnavailable(Guid itemId)
+    {
+        var item = await context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        if (item == null) return;
+
+        var updatedItem = item with { IsAvailable = false };
+
+        context.Entry(item).CurrentValues.SetValues(updatedItem);
     }
 }

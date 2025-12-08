@@ -25,46 +25,18 @@ public class CreateReviewHandler(
             return Results.ValidationProblem(errors);
         }
 
-        var reviewerExists = await context.Users.AnyAsync(u => u.Id == request.ReviewerId);
-        if (!reviewerExists)
+        var reviewerCheck = await ValidateEntityExists(context.Users, request.ReviewerId, "Reviewer");
+        if (reviewerCheck is not null)
         {
-            Log.Error($"Reviewer with id: {request.ReviewerId} does not exist");
-            return Results.BadRequest(new
-            {
-                errors = new
-                {
-                    ReviewerId = new[] { "Reviewer does not exist." }
-                }
-            });
+            return reviewerCheck;
         }
 
-        var itemExists = await context.Items.AnyAsync(i => i.Id == request.ItemId);
-        if (!itemExists)
+        var itemCheck = await ValidateEntityExists(context.Items, request.ItemId, "Item");
+        if (itemCheck is not null)
         {
-            Log.Error($"Item with id: {request.ItemId} does not exist");
-            return Results.BadRequest(new
-            {
-                errors = new
-                {
-                    ItemId = new[] { "Item does not exist." }
-                }
-            });
+            return itemCheck;
         }
-
-        /*
-        var bookingExists = await context.Bookings.AnyAsync(b => b.Id == request.BookingId);
-        if (!bookingExists)
-        {
-            Log.Error($"Booking with id: {request.BookingId} does not exist");
-            return Results.BadRequest(new
-            {
-                errors = new
-                {
-                    BookingId = new[] { "Booking does not exist." }
-                }
-            });
-        }
-        */
+     
         // TODO: enable booking existence check after Bookings API is implemented.
 
         var review = new Review(
@@ -83,5 +55,19 @@ public class CreateReviewHandler(
 
         Log.Info($"Review with id: {review.Id} was created");
         return Results.Created($"/reviews/{review.Id}", review);
+    }
+
+    private static async Task<IResult?> ValidateEntityExists<T>(IQueryable<T> queryable, Guid id, string entityName) where T : class
+    {
+        if (await queryable.AnyAsync(e => EF.Property<Guid>(e, "Id") == id)) return null;
+        Log.Error($"{entityName} with id: {id} does not exist");
+        return Results.BadRequest(new
+        {
+            errors = new Dictionary<string, string[]>
+            {
+                { $"{entityName}Id", [$"{entityName} does not exist."] }
+            }
+        });
+
     }
 }
