@@ -22,7 +22,6 @@ public class LoginHandlerTests : IDisposable
             .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
         _context = new UniShareContext(options);
-        var loggerMock = new Mock<ILogger<LoginHandler>>();
         _validatorMock = new Mock<IValidator<LoginRequest>>();
         _handler = new LoginHandler(_context, _validatorMock.Object);
     }

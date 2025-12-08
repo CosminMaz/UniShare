@@ -1,7 +1,4 @@
-using System.Security.Claims;
 using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Features.Bookings;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
