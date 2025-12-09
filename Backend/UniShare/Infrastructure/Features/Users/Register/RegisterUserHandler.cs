@@ -5,27 +5,12 @@ using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Users.Register;
 
-public class RegisterUserHandler(
-    UniShareContext context,
-    IValidator<RegisterUserRequest> validator)
+public class RegisterUserHandler(UniShareContext context, IValidator<RegisterUserRequest> validator)
 {
     public async Task<IResult> Handle(RegisterUserRequest request)
     {
-        var validationResult = await validator.ValidateAsync(request);
-
-        if (!validationResult.IsValid)
-        {
-            var errors = validationResult.Errors
-                .GroupBy(e => e.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-            
-            Log.Error("Validation failed for RegisterUserRequest");
-            return Results.ValidationProblem(errors);
-        }
-
+        await validator.ValidateAndThrowAsync(request);
+        
         var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser is not null)
         {
