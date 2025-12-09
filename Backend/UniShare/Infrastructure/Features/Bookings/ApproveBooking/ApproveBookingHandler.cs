@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Common;
-using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Persistence;
 
 namespace UniShare.Infrastructure.Features.Bookings.ApproveBooking;
