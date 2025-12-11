@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Common;
+using FluentValidation.Results;
 
 namespace UniShare.Infrastructure.Features.Users.Register;
 
@@ -9,7 +10,13 @@ public class RegisterUserHandler(UniShareContext context, IValidator<RegisterUse
 {
     public async Task<IResult> Handle(RegisterUserRequest request)
     {
-        await validator.ValidateAndThrowAsync(request);
+        ValidationResult validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            Log.Error("Validation failed for RegisterUserRequest");
+            return Results.ValidationProblem(validationResult.ToDictionary());
+        }
         
         var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
         if (existingUser is not null)

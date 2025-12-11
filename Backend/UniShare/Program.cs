@@ -4,6 +4,7 @@ using UniShare.Infrastructure.Features.Items.CreateItem;
 using UniShare.Infrastructure.Features.Reviews.CreateReview;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
+using UniShare.Infrastructure.Features.Items.Delete;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
 using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 using UniShare.Infrastructure.Persistence;
@@ -45,6 +46,7 @@ builder.Services.AddScoped<RegisterUserHandler>();
 builder.Services.AddScoped<GetAllUsersHandler>(); // Register GetAllUsersHandler
 builder.Services.AddScoped<IValidator<RegisterUserRequest>, CreateUserValidator>();
 builder.Services.AddScoped<CreateItemHandler>();
+builder.Services.AddScoped<DeleteItemHandler>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<IValidator<CreateItemRequest>, CreateItemValidator>();
 builder.Services.AddScoped<IValidator<CreateReviewRequest>, CreateReviewValidator>();
