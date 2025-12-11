@@ -25,18 +25,15 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 
 // Database: prefer configured connection, but fall back to InMemory for local/dev/testing so Swagger works out-of-the-box
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (!string.IsNullOrWhiteSpace(connectionString))
+if (string.IsNullOrWhiteSpace(connectionString))
 {
-    builder.Services.AddDbContext<UniShareContext>(options =>
-        options.UseNpgsql(connectionString)
-    );
+    throw new InvalidOperationException("Database connection string 'DefaultConnection' is not configured.");
 }
-else
-{
-    builder.Services.AddDbContext<UniShareContext>(options =>
-        options.UseInMemoryDatabase("UniShareDb")
-    );
-}
+
+builder.Services.AddDbContext<UniShareContext>(options =>
+    options.UseNpgsql(connectionString)
+);
+
 
 builder.Services.AddHealthChecks();
 
