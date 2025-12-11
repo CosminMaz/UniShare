@@ -161,5 +161,177 @@ public class DeleteItemHandlerTests : IDisposable
         // Assert
         Assert.IsType<UnauthorizedHttpResult>(result);
     }
+
+    [Fact]
+    public async Task Handle_With_Approved_Booking_ReturnsConflict()
+    {
+        // Arrange
+        var ownerId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        var booking = new Booking(
+            Guid.NewGuid(),
+            itemId,
+            Guid.NewGuid(),
+            ownerId,
+            Status.Approved,
+            DateTime.UtcNow.Date,
+            DateTime.UtcNow.Date.AddDays(1),
+            default,
+            0,
+            DateTime.UtcNow,
+            DateTime.UtcNow,
+            default);
+
+        var item = new Item(itemId, ownerId, "Title", "Desc", Category.Books, Condition.New, 10, null, true, DateTime.UtcNow);
+        _context.Items.Add(item);
+        _context.Bookings.Add(booking);
+        await _context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = ownerId;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(itemId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("Conflict", result.GetType().Name);
+        var itemStillThere = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        Assert.NotNull(itemStillThere);
+    }
+
+    [Fact]
+    public async Task Handle_With_Completed_Booking_ReturnsConflict()
+    {
+        // Arrange
+        var ownerId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        var booking = new Booking(
+            Guid.NewGuid(),
+            itemId,
+            Guid.NewGuid(),
+            ownerId,
+            Status.Completed,
+            DateTime.UtcNow.Date,
+            DateTime.UtcNow.Date.AddDays(1),
+            DateTime.UtcNow.Date.AddDays(1),
+            0,
+            DateTime.UtcNow,
+            DateTime.UtcNow,
+            DateTime.UtcNow);
+
+        var item = new Item(itemId, ownerId, "Title", "Desc", Category.Books, Condition.New, 10, null, true, DateTime.UtcNow);
+        _context.Items.Add(item);
+        _context.Bookings.Add(booking);
+        await _context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = ownerId;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(itemId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("Conflict", result.GetType().Name);
+        var itemStillThere = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        Assert.NotNull(itemStillThere);
+    }
+
+    [Fact]
+    public async Task Handle_With_Rejected_Booking_ReturnsConflict()
+    {
+        // Arrange
+        var ownerId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        var booking = new Booking(
+            Guid.NewGuid(),
+            itemId,
+            Guid.NewGuid(),
+            ownerId,
+            Status.Rejected,
+            DateTime.UtcNow.Date,
+            DateTime.UtcNow.Date.AddDays(1),
+            default,
+            0,
+            DateTime.UtcNow,
+            default,
+            default);
+
+        var item = new Item(itemId, ownerId, "Title", "Desc", Category.Books, Condition.New, 10, null, true, DateTime.UtcNow);
+        _context.Items.Add(item);
+        _context.Bookings.Add(booking);
+        await _context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = ownerId;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(itemId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("Conflict", result.GetType().Name);
+        var itemStillThere = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        Assert.NotNull(itemStillThere);
+    }
+
+    [Fact]
+    public async Task Handle_With_Multiple_Bookings_ReturnsConflict()
+    {
+        // Arrange
+        var ownerId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        
+        var booking1 = new Booking(
+            Guid.NewGuid(),
+            itemId,
+            Guid.NewGuid(),
+            ownerId,
+            Status.Pending,
+            DateTime.UtcNow.Date,
+            DateTime.UtcNow.Date.AddDays(1),
+            default,
+            0,
+            DateTime.UtcNow,
+            default,
+            default);
+
+        var booking2 = new Booking(
+            Guid.NewGuid(),
+            itemId,
+            Guid.NewGuid(),
+            ownerId,
+            Status.Approved,
+            DateTime.UtcNow.Date,
+            DateTime.UtcNow.Date.AddDays(2),
+            default,
+            0,
+            DateTime.UtcNow,
+            DateTime.UtcNow,
+            default);
+
+        var item = new Item(itemId, ownerId, "Title", "Desc", Category.Books, Condition.New, 10, null, true, DateTime.UtcNow);
+        _context.Items.Add(item);
+        _context.Bookings.Add(booking1);
+        _context.Bookings.Add(booking2);
+        await _context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = ownerId;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(itemId);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("Conflict", result.GetType().Name);
+        var itemStillThere = await _context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        Assert.NotNull(itemStillThere);
+    }
 }
 
