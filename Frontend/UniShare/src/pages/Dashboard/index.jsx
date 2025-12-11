@@ -12,6 +12,10 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingBookings, setIsLoadingBookings] = useState(false)
   const [error, setError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [deleteMessage, setDeleteMessage] = useState('')
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState(null)
   const [bookingMessage, setBookingMessage] = useState('')
   const [bookingRequestError, setBookingRequestError] = useState('')
   const [bookingRequestMessage, setBookingRequestMessage] = useState('')
@@ -110,6 +114,63 @@ export default function DashboardPage() {
     } finally {
       setIsLoadingBookings(false)
     }
+  }
+
+  const handleDeleteItem = (item) => {
+    setDeleteError('')
+    setDeleteMessage('')
+    setItemToDelete(item)
+    setShowDeleteModal(true)
+  }
+
+  const confirmDeleteItem = async () => {
+    if (!itemToDelete) return
+    const token =
+      localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+    if (!token) {
+      setDeleteError('You need to be logged in to delete an item.')
+      return
+    }
+
+    const currentUserId = user?.Id ?? user?.id
+    const ownerId = itemToDelete.OwnerId ?? itemToDelete.ownerId
+    if (!currentUserId || currentUserId !== ownerId) {
+      setDeleteError('You can only delete items you posted.')
+      return
+    }
+
+    try {
+      setDeleteError('')
+      setDeleteMessage('')
+
+      await axios.delete(`${API_BASE_URL}/items/${itemToDelete.Id ?? itemToDelete.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      setDeleteMessage('Item deleted successfully.')
+      setShowDeleteModal(false)
+      setItemToDelete(null)
+      fetchItems()
+    } catch (err) {
+      console.error('Error deleting item:', err)
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data
+        setDeleteError(
+          errorData?.message || 'Failed to delete the item. Please try again.',
+        )
+      } else {
+        setDeleteError(err.message || 'An unexpected error occurred.')
+      }
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false)
+    setItemToDelete(null)
+    setDeleteError('')
   }
 
   const handleBorrowClick = (item) => {
@@ -349,10 +410,20 @@ export default function DashboardPage() {
               {error}
             </div>
           )}
+          {deleteError && (
+            <div className={styles.errorMessage} role="alert">
+              {deleteError}
+            </div>
+          )}
 
           {bookingMessage && !error && (
             <div className={styles.successMessage} role="status">
               {bookingMessage}
+            </div>
+          )}
+          {deleteMessage && !deleteError && (
+            <div className={styles.successMessage} role="status">
+              {deleteMessage}
             </div>
           )}
 
@@ -414,13 +485,31 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className={styles.itemFooter}>
-                    <button
-                      className={styles.borrowBtn}
-                      onClick={() => handleBorrowClick(item)}
-                      disabled={isBooking}
-                    >
-                      Borrow
-                    </button>
+                    {user && (user.Id ?? user.id) === (item.OwnerId ?? item.ownerId) ? (
+                      <>
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={() => handleDeleteItem(item)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className={styles.borrowBtn}
+                          onClick={() => handleBorrowClick(item)}
+                          disabled={isBooking}
+                        >
+                          Borrow
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className={styles.borrowBtn}
+                        onClick={() => handleBorrowClick(item)}
+                        disabled={isBooking}
+                      >
+                        Borrow
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -764,6 +853,50 @@ export default function DashboardPage() {
                 disabled={isBooking || !startDate || !endDate}
               >
                 {isBooking ? 'Processing...' : 'Confirm Booking'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className={styles.modalOverlay} onClick={cancelDelete}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Delete item</h3>
+              <button
+                className={styles.modalCloseBtn}
+                onClick={cancelDelete}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <p>
+                Are you sure you want to delete "
+                {itemToDelete?.Title || 'this item'}"?
+              </p>
+              {deleteError && (
+                <div className={styles.errorMessage} role="alert">
+                  {deleteError}
+                </div>
+              )}
+            </div>
+            <div className={styles.modalFooter}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={cancelDelete}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalSubmitBtn}
+                onClick={confirmDeleteItem}
+              >
+                Delete
               </button>
             </div>
           </div>

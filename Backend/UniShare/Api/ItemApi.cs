@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using UniShare.Infrastructure.Features.Items.CreateItem;
+using UniShare.Infrastructure.Features.Items.Delete;
 using UniShare.Infrastructure.Features.Items.GetAll;
 
 namespace UniShare.Api;
@@ -18,5 +19,13 @@ public static class ItemApi
 
         app.MapGet("/items", async (IMediator mediator) => await mediator.Send(new GetAllItems.Query()))
             .WithName("GetAllItems");
+
+        app.MapDelete("/items/{id:guid}", async (Guid id, [FromServices] DeleteItemHandler handler) =>
+                await handler.Handle(id))
+            .WithName("DeleteItem")
+            .Produces(204)
+            .Produces(401)
+            .Produces(403)
+            .Produces(404);
     }
 }
