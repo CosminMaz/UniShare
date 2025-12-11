@@ -73,7 +73,7 @@ public class UserApiTests : IClassFixture<CustomWebApplicationFactory<Program>>
     public async Task RegisterUser_WithValidData_ReturnsCreated()
     {
         // Arrange
-        var request = new RegisterUserRequest("New User", "new@test.com", "password");
+        var request = new RegisterUserRequest("New User", "new@test.com", "Password123!");
         var content = new StringContent(JsonSerializer.Serialize(request, _jsonSerializerOptions), Encoding.UTF8, "application/json");
 
         // Act
