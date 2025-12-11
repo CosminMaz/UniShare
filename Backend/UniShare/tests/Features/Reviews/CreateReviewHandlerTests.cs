@@ -169,5 +169,103 @@ public class CreateReviewHandlerTests : IDisposable
         Assert.Contains("BadRequest", result.GetType().Name);
         Assert.False(result is Created<Review>);
     }
+
+    [Fact]
+    public async Task Handle_With_Different_ReviewTypes_Creates_Review()
+    {
+        // Arrange
+        var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        
+        _context.Users.Add(reviewer);
+        _context.Items.Add(item);
+        await _context.SaveChangesAsync();
+
+        var reviewTypes = new[] { ReviewType.Bad, ReviewType.Ok, ReviewType.Good, ReviewType.VeryGood };
+
+        foreach (var reviewType in reviewTypes)
+        {
+            var request = new CreateReviewRequest(
+                Guid.NewGuid(),
+                reviewer.Id,
+                item.Id,
+                3,
+                $"Review with type {reviewType}",
+                reviewType
+            );
+            
+            _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
+            // Act
+            var result = await _handler.Handle(request);
+
+            // Assert
+            var createdResult = Assert.IsType<Created<Review>>(result);
+            Assert.Equal(reviewType, createdResult.Value!.RevType);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_With_Minimum_Rating_Creates_Review()
+    {
+        // Arrange
+        var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        
+        _context.Users.Add(reviewer);
+        _context.Items.Add(item);
+        await _context.SaveChangesAsync();
+
+        var request = new CreateReviewRequest(
+            Guid.NewGuid(),
+            reviewer.Id,
+            item.Id,
+            1, // Minimum rating
+            "Minimum rating review",
+            ReviewType.Bad
+        );
+        
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<Review>>(result);
+        Assert.Equal(1, createdResult.Value!.Rating);
+    }
+
+    [Fact]
+    public async Task Handle_With_Maximum_Rating_Creates_Review()
+    {
+        // Arrange
+        var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        
+        _context.Users.Add(reviewer);
+        _context.Items.Add(item);
+        await _context.SaveChangesAsync();
+
+        var request = new CreateReviewRequest(
+            Guid.NewGuid(),
+            reviewer.Id,
+            item.Id,
+            5, // Maximum rating
+            "Maximum rating review",
+            ReviewType.VeryGood
+        );
+        
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<Review>>(result);
+        Assert.Equal(5, createdResult.Value!.Rating);
+    }
 }
 

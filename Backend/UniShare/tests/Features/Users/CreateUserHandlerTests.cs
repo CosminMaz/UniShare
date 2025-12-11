@@ -97,4 +97,92 @@ public class CreateUserHandlerTests : IDisposable
         var validationProblemResult = Assert.IsType<ProblemHttpResult>(result);
         Assert.Equal(StatusCodes.Status409Conflict, validationProblemResult.StatusCode);
     }
+
+    [Fact]
+    public async Task Handle_Password_Is_Hashed()
+    {
+        // Arrange
+        var password = "password123";
+        var request = new RegisterUserRequest("Test User", "test@example.com", password);
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<User>>(result);
+        var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        Assert.NotNull(userInDb);
+        Assert.NotEqual(password, userInDb.PasswordHash);
+        Assert.True(BCrypt.Net.BCrypt.Verify(password, userInDb.PasswordHash));
+    }
+
+    [Fact]
+    public async Task Handle_User_Is_Created_With_User_Role()
+    {
+        // Arrange
+        var request = new RegisterUserRequest("Test User", "test@example.com", "password123");
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<User>>(result);
+        Assert.Equal(Role.User, createdResult.Value!.Role);
+        
+        var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        Assert.NotNull(userInDb);
+        Assert.Equal(Role.User, userInDb.Role);
+    }
+
+    [Fact]
+    public async Task Handle_User_Has_CreatedAt_Timestamp()
+    {
+        // Arrange
+        var beforeCreation = DateTime.UtcNow;
+        var request = new RegisterUserRequest("Test User", "test@example.com", "password123");
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+        var afterCreation = DateTime.UtcNow;
+
+        // Assert
+        var createdResult = Assert.IsType<Created<User>>(result);
+        Assert.True(createdResult.Value!.CreatedAt >= beforeCreation);
+        Assert.True(createdResult.Value!.CreatedAt <= afterCreation);
+        
+        var userInDb = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        Assert.NotNull(userInDb);
+        Assert.True(userInDb.CreatedAt >= beforeCreation);
+        Assert.True(userInDb.CreatedAt <= afterCreation);
+    }
+
+    [Fact]
+    public async Task Handle_CaseSensitive_Email_Check()
+    {
+        // Arrange
+        var existingUser = new User(Guid.NewGuid(), "Existing User", "Test@Example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        _context.Users.Add(existingUser);
+        await _context.SaveChangesAsync();
+
+        // Try to register with same email but different case
+        var request = new RegisterUserRequest("New User", "test@example.com", "password123");
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        // Note: This test depends on how the database handles case sensitivity
+        // PostgreSQL by default is case-sensitive, so this should succeed
+        // If using a case-insensitive collation, this would fail
+        var createdResult = Assert.IsType<Created<User>>(result);
+        Assert.NotNull(createdResult.Value);
+    }
 }

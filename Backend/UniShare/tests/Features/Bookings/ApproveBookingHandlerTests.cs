@@ -264,5 +264,51 @@ public class ApproveBookingHandlerTests
         // Assert
         Assert.Equal(404, (result as IStatusCodeHttpResult)?.StatusCode);
     }
+
+    [Fact]
+    public async Task Handle_Should_Mark_Item_Unavailable_When_Approved()
+    {
+        // Arrange
+        var context = CreateInMemoryContext();
+
+        var ownerId = Guid.NewGuid();
+        var borrowerId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        var bookingId = Guid.NewGuid();
+
+        context.Users.Add(new Infrastructure.Features.Users.User(ownerId, "Owner User", "owner@test.com", "hashed", Infrastructure.Features.Users.Role.User, DateTime.UtcNow));
+        context.Users.Add(new Infrastructure.Features.Users.User(borrowerId, "Borrower User", "borrower@test.com", "hashed", Infrastructure.Features.Users.Role.User, DateTime.UtcNow));
+        context.Items.Add(new Infrastructure.Features.Items.Item(itemId, ownerId, "Item", "Desc", Infrastructure.Features.Items.Category.Books, Infrastructure.Features.Items.Condition.New, 10m, null, true, DateTime.UtcNow));
+
+        var booking = new Booking(
+            bookingId,
+            itemId,
+            borrowerId,
+            ownerId,
+            Status.Pending,
+            DateTime.UtcNow.AddDays(1),
+            DateTime.UtcNow.AddDays(3),
+            default,
+            20m,
+            DateTime.UtcNow,
+            default,
+            default
+        );
+        context.Bookings.Add(booking);
+        await context.SaveChangesAsync();
+
+        var httpContextAccessor = CreateHttpContextAccessor(ownerId);
+        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var request = new ApproveBookingRequest(bookingId, true);
+
+        // Act
+        var result = await handler.Handle(request);
+
+        // Assert
+        Assert.Equal(200, (result as IStatusCodeHttpResult)?.StatusCode);
+
+        var updatedItem = await context.Items.FirstAsync(i => i.Id == itemId);
+        Assert.False(updatedItem.IsAvailable);
+    }
 }
 

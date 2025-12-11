@@ -195,5 +195,143 @@ public class CreateItemHandlerTests : IDisposable
         Assert.Contains("BadRequest", result.GetType().Name);
         Assert.False(result is Created<Item>);
     }
+
+    [Fact]
+    public async Task Handle_With_All_Categories_Creates_Item()
+    {
+        // Arrange
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        _context.Users.Add(owner);
+        await _context.SaveChangesAsync();
+
+        var categories = new[] { Category.Books, Category.Electronics, Category.Clothing, Category.Furniture, Category.Sports, Category.Other };
+
+        foreach (var category in categories)
+        {
+            var request = new CreateItemRequest(
+                $"Test {category}",
+                $"A great {category} item",
+                category,
+                Condition.New,
+                10.0m,
+                "https://example.com/image.jpg"
+            );
+
+            _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Items["UserId"] = owner.Id;
+            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+            // Act
+            var result = await _handler.Handle(request);
+
+            // Assert
+            var createdResult = Assert.IsType<Created<Item>>(result);
+            Assert.Equal(category, createdResult.Value!.Categ);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_With_All_Conditions_Creates_Item()
+    {
+        // Arrange
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        _context.Users.Add(owner);
+        await _context.SaveChangesAsync();
+
+        var conditions = new[] { Condition.New, Condition.LikeNew, Condition.WellPreserved, Condition.Acceptable, Condition.Poor };
+
+        foreach (var condition in conditions)
+        {
+            var request = new CreateItemRequest(
+                "Test Item",
+                "A test item",
+                Category.Books,
+                condition,
+                10.0m,
+                "https://example.com/image.jpg"
+            );
+
+            _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ValidationResult());
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Items["UserId"] = owner.Id;
+            _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+            // Act
+            var result = await _handler.Handle(request);
+
+            // Assert
+            var createdResult = Assert.IsType<Created<Item>>(result);
+            Assert.Equal(condition, createdResult.Value!.Cond);
+        }
+    }
+
+    [Fact]
+    public async Task Handle_With_Null_ImageUrl_Creates_Item()
+    {
+        // Arrange
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        _context.Users.Add(owner);
+        await _context.SaveChangesAsync();
+
+        var request = new CreateItemRequest(
+            "Test Book",
+            "A great book for studying",
+            Category.Books,
+            Condition.New,
+            10.0m,
+            null // Null image URL
+        );
+
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = owner.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<Item>>(result);
+        Assert.Null(createdResult.Value!.ImageUrl);
+    }
+
+    [Fact]
+    public async Task Handle_With_Null_DailyRate_Creates_Item()
+    {
+        // Arrange
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        _context.Users.Add(owner);
+        await _context.SaveChangesAsync();
+
+        var request = new CreateItemRequest(
+            "Free Item",
+            "An item with no daily rate",
+            Category.Books,
+            Condition.New,
+            null, // Null daily rate
+            "https://example.com/image.jpg"
+        );
+
+        _validatorMock.Setup(v => v.ValidateAsync(request, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult());
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = owner.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        // Act
+        var result = await _handler.Handle(request);
+
+        // Assert
+        var createdResult = Assert.IsType<Created<Item>>(result);
+        Assert.Null(createdResult.Value!.DailyRate);
+    }
 }
 
