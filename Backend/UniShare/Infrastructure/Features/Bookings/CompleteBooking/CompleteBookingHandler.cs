@@ -36,7 +36,10 @@ public class CompleteBookingHandler(UniShareContext context, IHttpContextAccesso
             CompletedAt = DateTime.UtcNow
         };
 
-        context.Bookings.Update(updatedBooking);
+        context.Entry(booking).CurrentValues.SetValues(updatedBooking);
+
+        await MarkItemAvailable(booking.ItemId);
+
         await context.SaveChangesAsync();
 
         Log.Info($"Booking {bookingId} has been marked as completed by owner {currentUserId.Value}");
@@ -52,5 +55,21 @@ public class CompleteBookingHandler(UniShareContext context, IHttpContextAccesso
             return null;
         }
         return userIdObj as Guid?;
+    }
+
+    private async Task MarkItemAvailable(Guid itemId)
+    {
+        var item = await context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        if (item is null)
+        {
+            Log.Warning($"Item {itemId} not found while completing booking.");
+            return;
+        }
+
+        if (item.IsAvailable)
+            return;
+
+        var updatedItem = item with { IsAvailable = true };
+        context.Entry(item).CurrentValues.SetValues(updatedItem);
     }
 }

@@ -10,6 +10,7 @@ export default function DashboardPage() {
   const [myItems, setMyItems] = useState([])
   const [bookings, setBookings] = useState([])
   const [ownerBookings, setOwnerBookings] = useState([])
+  const [reviews, setReviews] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingMyItems, setIsLoadingMyItems] = useState(false)
   const [isLoadingBookings, setIsLoadingBookings] = useState(false)
@@ -49,6 +50,23 @@ export default function DashboardPage() {
 
   const getBookingStatus = (booking) => booking?.Status || booking?.status || 'Pending'
 
+  const normalizeId = (value) =>
+    typeof value === 'string' ? value : value?.toString?.() ?? ''
+
+  const hasSubmittedReview = (bookingId) => {
+    const targetId = normalizeId(bookingId)
+    return reviews.some(
+      (review) => normalizeId(review.BookingId ?? review.bookingId) === targetId,
+    )
+  }
+
+  const getReviewTypeFromRating = (rating) => {
+    if (rating <= 1) return 'Bad'
+    if (rating === 2) return 'Ok'
+    if (rating === 3) return 'Good'
+    return 'VeryGood'
+  }
+
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
     if (storedUser) {
@@ -70,6 +88,7 @@ export default function DashboardPage() {
     fetchItems()
     fetchMyItems()
     fetchBookings()
+    fetchReviews()
   }, [])
 
   useEffect(() => {
@@ -172,6 +191,25 @@ export default function DashboardPage() {
       // Don't show error for bookings, just log it
     } finally {
       setIsLoadingBookings(false)
+    }
+  }
+
+  const fetchReviews = async () => {
+    try {
+      const token =
+        localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+      const response = await axios.get(`${API_BASE_URL}/reviews`, {
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
+      })
+
+      setReviews(Array.isArray(response.data) ? response.data : [])
+    } catch (err) {
+      console.error('Error fetching reviews:', err)
     }
   }
 
@@ -494,12 +532,27 @@ export default function DashboardPage() {
       return;
     }
 
+    const reviewerId = user?.Id ?? user?.id
+    if (!reviewerId) {
+      setReviewError('We could not determine your user account. Please log in again.')
+      return
+    }
+
+    const bookingId = reviewBooking.Id || reviewBooking.id
+    const itemId = reviewBooking.ItemId || reviewBooking.itemId
+    if (!itemId) {
+      setReviewError('We could not determine which item to review. Please refresh and try again.')
+      return
+    }
+
     try {
       const payload = {
-        BookingId: reviewBooking.Id || reviewBooking.id,
+        BookingId: bookingId,
+        ReviewerId: reviewerId,
+        ItemId: itemId,
         Rating: reviewRating,
         Comment: reviewComment,
-        // The backend will determine ReviewerId from token and ItemId from booking
+        RevType: getReviewTypeFromRating(reviewRating),
       };
 
       await axios.post(`${API_BASE_URL}/reviews`, payload, {
@@ -510,6 +563,7 @@ export default function DashboardPage() {
       });
 
       setReviewMessage('Thank you for your review!');
+      fetchReviews();
       setTimeout(() => {
         handleCloseReviewModal();
       }, 2000);
@@ -602,7 +656,7 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <div className={styles.marketplaceGrid}>
+        <div className={styles.marketplaceColumn}>
         <section className={`${styles.sectionCard} ${styles.itemsSection}`}>
           <div className={styles.sectionHeader}>
             <div>
@@ -739,48 +793,83 @@ export default function DashboardPage() {
               You haven't listed any items yet. Add one to start lending!
             </div>
           ) : (
-            <div className={styles.tableWrapper}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Condition</th>
-                    <th>Price/day</th>
-                    <th>Status</th>
-                    <th>Added</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {myItems.map((item) => {
-                    const isAvailable = item.IsAvailable ?? item.isAvailable ?? true
-                    return (
-                      <tr key={item.Id || item.id}>
-                        <td>{item.Title || 'No title'}</td>
-                        <td>{item.Categ || 'General'}</td>
-                        <td>{item.Cond || 'N/A'}</td>
-                        <td>{formatDailyRate(item.DailyRate ?? item.dailyRate)}</td>
-                        <td>
-                          <span
-                            className={`${styles.availabilityPill} ${
-                              isAvailable
-                                ? styles.availabilityAvailable
-                                : styles.availabilityUnavailable
-                            }`}
-                          >
-                            {isAvailable ? 'Available' : 'Booked'}
+            <div className={styles.itemsScroller}>
+              <div className={styles.itemsTrack}>
+                {myItems.map((item) => {
+                  const isAvailable = item.IsAvailable ?? item.isAvailable ?? true
+                  return (
+                    <div key={item.Id || item.id} className={styles.itemCard}>
+                      {(item.imageUrl || item.ImageUrl) && (
+                        <div className={styles.itemImage}>
+                          <img
+                            src={item.imageUrl || item.ImageUrl}
+                            alt={item.Title}
+                            onError={e => {
+                              e.target.src =
+                                'https://via.placeholder.com/200?text=No+Image'
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className={styles.itemHeader}>
+                        <h4 className={styles.itemTitle}>
+                          {item.Title || 'No title'}
+                        </h4>
+                        <span className={styles.itemBadge}>
+                          {item.Categ || 'General'}
+                        </span>
+                      </div>
+                      <p className={styles.itemDescription}>
+                        {item.Description || 'No description'}
+                      </p>
+                      <div className={styles.itemDetails}>
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Condition:</span>
+                          <span className={styles.detailValue}>
+                            {item.Cond || 'N/A'}
                           </span>
-                        </td>
-                        <td>
-                          {item.CreatedAt
-                            ? new Date(item.CreatedAt).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+                        </div>
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Price/day:</span>
+                          <span className={styles.detailValue}>
+                            {formatDailyRate(item.DailyRate ?? item.dailyRate)}
+                          </span>
+                        </div>
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Added:</span>
+                          <span className={styles.detailValue}>
+                            {item.CreatedAt
+                              ? new Date(item.CreatedAt).toLocaleDateString('en-US')
+                              : 'N/A'}
+                          </span>
+                        </div>
+                        <div className={styles.detailRow}>
+                          <span className={styles.detailLabel}>Status:</span>
+                          <span className={styles.detailValue}>
+                            <span
+                              className={`${styles.availabilityPill} ${
+                                isAvailable
+                                  ? styles.availabilityAvailable
+                                  : styles.availabilityUnavailable
+                              }`}
+                            >
+                              {isAvailable ? 'Available' : 'Booked'}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.itemFooter}>
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={() => handleDeleteItem(item)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )}
         </section>
@@ -790,6 +879,9 @@ export default function DashboardPage() {
         <div className={styles.bookingsGrid}>
         <section className={`${styles.sectionCard} ${styles.bookingsSection}`}>
           <h3 className={styles.sectionTitle}>My Bookings</h3>
+          <p className={styles.sectionSubtitle}>
+            Track the items you are borrowing from others
+          </p>
 
           {isLoadingBookings ? (
             <div className={styles.loadingMessage}>Loading bookings...</div>
@@ -877,7 +969,7 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </div>
-                    {status === 'Completed' && (
+                    {status === 'Completed' && !hasSubmittedReview(booking.Id || booking.id) && (
                       <div className={styles.bookingActions}>
                         <button
                           className={styles.reviewBtn}
@@ -930,6 +1022,7 @@ export default function DashboardPage() {
 
                 const status = getBookingStatus(booking)
                 const isPending = status === 'Pending'
+                const canComplete = status === 'Approved' || status === 'Active'
 
                 return (
                   <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -1020,6 +1113,16 @@ export default function DashboardPage() {
                             </button>
                           </>
                         )}
+                        {canComplete && (
+                          <button
+                            className={styles.completeBtn}
+                            onClick={() =>
+                              handleCompleteBooking(booking.Id || booking.id)
+                            }
+                          >
+                            Mark as Returned
+                          </button>
+                        )}
                     </div>
                   </div>
                 )
@@ -1028,6 +1131,70 @@ export default function DashboardPage() {
           )}
         </section>
         </div>
+
+        <section className={`${styles.sectionCard} ${styles.reviewsSection}`}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h3 className={styles.sectionTitle}>Community Stories</h3>
+              <p className={styles.sectionSubtitle}>
+                Borrower feedback keeps UniShare trustworthy
+              </p>
+            </div>
+          </div>
+
+          {reviews.length === 0 ? (
+            <div className={styles.emptyMessage}>
+              No reviews yet. Complete a booking to be the first.
+            </div>
+          ) : (
+            <div className={styles.reviewsGrid}>
+              {reviews.slice(0, 6).map((review) => {
+                const rating = review.Rating ?? review.rating ?? 0
+                const reviewerName =
+                  review.Reviewer?.FullName ||
+                  review.reviewer?.fullName ||
+                  review.ReviewerName ||
+                  'Anonymous'
+                const comment = review.Comment || review.comment || 'No comment provided.'
+                const createdAt = review.CreatedAt || review.createdAt
+                const itemTitle = (() => {
+                  const match = items.find(
+                    (item) =>
+                      normalizeId(item.Id ?? item.id) ===
+                      normalizeId(review.ItemId ?? review.itemId),
+                  )
+                  return match?.Title || match?.title || 'Shared item'
+                })()
+                return (
+                  <article key={review.Id || review.id} className={styles.reviewCard}>
+                    <header className={styles.reviewHeader}>
+                      <div className={styles.reviewMeta}>
+                        <span className={styles.reviewerName}>{reviewerName}</span>
+                        {createdAt && (
+                          <span className={styles.reviewDate}>
+                            {new Date(createdAt).toLocaleDateString('en-US')}
+                          </span>
+                        )}
+                      </div>
+                      <div className={styles.ratingBadge}>{Number(rating).toFixed(1)} ★</div>
+                    </header>
+                    <p className={styles.reviewComment}>{comment}</p>
+                    <footer className={styles.reviewFooter}>
+                      <div className={styles.reviewFooterContent}>
+                        <span className={styles.reviewTag}>
+                          {review.RevType || review.revType || 'Review'}
+                        </span>
+                        <span className={styles.reviewItemLabel}>
+                          for {itemTitle}
+                        </span>
+                      </div>
+                    </footer>
+                  </article>
+                )
+              })}
+            </div>
+          )}
+        </section>
 
         {user && (
           <section className={`${styles.sectionCard} ${styles.userInfo}`}>

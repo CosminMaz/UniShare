@@ -187,7 +187,13 @@
 
 .marketplaceGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.marketplaceColumn {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
 }
 
@@ -237,6 +243,35 @@
 .addItemBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 15px 35px rgba(124, 58, 237, 0.45);
+}
+
+.itemsScroller {
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin: 0 -1rem;
+  padding-left: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.4) transparent;
+}
+
+.itemsScroller::-webkit-scrollbar {
+  height: 6px;
+}
+
+.itemsScroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.itemsScroller::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 999px;
+}
+
+.itemsTrack {
+  display: flex;
+  gap: 1.25rem;
+  min-width: max-content;
+  padding-right: 1rem;
 }
 
 .itemsGrid {
@@ -435,7 +470,8 @@
 }
 
 .approveBtn,
-.rejectBtn {
+.rejectBtn,
+.completeBtn {
   flex: 1;
   border: none;
   border-radius: 0.9rem;
@@ -454,6 +490,29 @@
   background: rgba(248, 113, 113, 0.18);
   color: #fecaca;
   border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.completeBtn {
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.reviewBtn {
+  width: 100%;
+  border: 1px solid rgba(124, 58, 237, 0.45);
+  border-radius: 0.9rem;
+  padding: 0.6rem 1rem;
+  background: rgba(124, 58, 237, 0.15);
+  color: #e0d4ff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reviewBtn:hover {
+  background: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 12px 25px rgba(124, 58, 237, 0.35);
 }
 
 .tableWrapper {
@@ -539,6 +598,84 @@
   font-size: 1rem;
   font-weight: 600;
   margin-top: 0.4rem;
+}
+
+.reviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.reviewCard {
+  border-radius: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 11, 29, 0.7);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.45);
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reviewMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.reviewerName {
+  font-weight: 600;
+}
+
+.reviewDate {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.ratingBadge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.reviewComment {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.85);
+  line-height: 1.5;
+}
+
+.reviewFooter {
+  margin-top: auto;
+}
+
+.reviewFooterContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.reviewTag {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.8rem;
+  color: rgba(248, 250, 252, 0.7);
+}
+
+.reviewItemLabel {
+  font-size: 0.85rem;
+  color: rgba(248, 250, 252, 0.65);
 }
 
 .modalOverlay {
