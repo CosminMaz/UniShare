@@ -27,8 +27,12 @@ public class CreateBookingHandler(
         if (item is null)
             return ItemDoesNotExistResult();
 
+        Log.Info($"Checking for self-booking: BorrowerId={borrowerId.Value}, OwnerId={item.OwnerId}");
         if (item.OwnerId == borrowerId.Value)
-            return Results.BadRequest("User cannot book their own item.");
+        {
+            Log.Warning("Self-booking detected. Denying request.");
+            return Results.BadRequest(new { error = "User cannot book their own item." });
+        }
 
         var conflictingBooking = await context.Bookings
             .AnyAsync(b => b.ItemId == request.ItemId &&
@@ -36,7 +40,7 @@ public class CreateBookingHandler(
                            request.StartDate < b.EndDate && request.EndDate > b.StartDate);
 
         if (conflictingBooking)
-            return Results.Conflict("Item is already booked for the selected dates.");
+            return Results.Conflict(new { error = "Item is already booked for the selected dates." });
 
         var ownerId = item.OwnerId;
         if (!await UserExists(ownerId))

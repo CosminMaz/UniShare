@@ -12,6 +12,7 @@ using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
 using UniShare.Common;
+using Microsoft.AspNetCore.Http; // Added using statement
 
 namespace UniShare.tests.Features.Reviews;
 
@@ -19,6 +20,7 @@ public class CreateReviewHandlerTests : IDisposable
 {
     private readonly UniShareContext _context;
     private readonly Mock<IValidator<CreateReviewRequest>> _validatorMock;
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock; // Added mock
     private readonly CreateReviewHandler _handler;
 
     public CreateReviewHandlerTests()
@@ -28,9 +30,15 @@ public class CreateReviewHandlerTests : IDisposable
             .UseInMemoryDatabase(databaseName: "TestDatabase_CreateReview")
             .Options;
         _context = new UniShareContext(options);
-        var loggerMock = new Mock<ILogger<CreateReviewHandler>>();
         _validatorMock = new Mock<IValidator<CreateReviewRequest>>();
-        _handler = new CreateReviewHandler(_context, _validatorMock.Object);
+        
+        // Setup IHttpContextAccessor mock
+        _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = Guid.NewGuid(); // Set a dummy UserId
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
+        _handler = new CreateReviewHandler(_context, _validatorMock.Object, _httpContextAccessorMock.Object);
     }
 
     public void Dispose()
