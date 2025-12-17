@@ -27,8 +27,16 @@ public class CreateBookingHandler(
         if (item is null)
             return ItemDoesNotExistResult();
 
-        if (!item.IsAvailable)
-            return ItemUnavailableResult();
+        if (item.OwnerId == borrowerId.Value)
+            return Results.BadRequest("User cannot book their own item.");
+
+        var conflictingBooking = await context.Bookings
+            .AnyAsync(b => b.ItemId == request.ItemId &&
+                           (b.Status == Status.Pending || b.Status == Status.Approved || b.Status == Status.Active) &&
+                           request.StartDate < b.EndDate && request.EndDate > b.StartDate);
+
+        if (conflictingBooking)
+            return Results.Conflict("Item is already booked for the selected dates.");
 
         var ownerId = item.OwnerId;
         if (!await UserExists(ownerId))
@@ -70,9 +78,6 @@ public class CreateBookingHandler(
 
     private static IResult ItemDoesNotExistResult()
         => Results.BadRequest(new { errors = new { ItemId = new[] { "Item does not exist." } } });
-
-    private static IResult ItemUnavailableResult()
-        => Results.BadRequest(new { errors = new { ItemId = new[] { "Item is not available." } } });
 
     private static IResult OwnerDoesNotExistResult()
         => Results.BadRequest(new { errors = new { OwnerId = new[] { "Owner does not exist." } } });
