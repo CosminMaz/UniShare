@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniShare", "UniShare\UniShare.csproj", "{EE4B4AF3-7C7E-4F71-8AE1-F029453BF8CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B79FD1EC-F5C5-44BD-8248-4B49471922A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniShare.Tests", "tests\UniShare.Tests\UniShare.Tests.csproj", "{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,12 @@ Global
 		{EE4B4AF3-7C7E-4F71-8AE1-F029453BF8CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE4B4AF3-7C7E-4F71-8AE1-F029453BF8CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE4B4AF3-7C7E-4F71-8AE1-F029453BF8CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0B6C536B-BB22-4678-9F6F-0883EA3F1EBC} = {B79FD1EC-F5C5-44BD-8248-4B49471922A0}
 	EndGlobalSection
 EndGlobal
