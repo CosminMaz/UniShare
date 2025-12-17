@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
 using UniShare.Infrastructure.Features.Bookings.GetAll;
 using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
+using UniShare.Infrastructure.Features.Bookings.CompleteBooking;
 
 namespace UniShare.Api;
 
@@ -49,6 +50,16 @@ public static class BookingApi
                     return await handler.Handle(rejectRequest);
                 })
             .WithName("RejectBooking")
+            .Produces(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(403)
+            .Produces(404);
+
+        app.MapPost("/bookings/{bookingId}/complete",
+                async (Guid bookingId, [FromServices] CompleteBookingHandler handler) =>
+                    await handler.Handle(bookingId))
+            .WithName("CompleteBooking")
             .Produces(200)
             .Produces(400)
             .Produces(401)

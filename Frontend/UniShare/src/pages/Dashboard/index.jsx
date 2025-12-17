@@ -24,6 +24,12 @@ export default function DashboardPage() {
   const [selectedItem, setSelectedItem] = useState(null)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewBooking, setReviewBooking] = useState(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewError, setReviewError] = useState('');
+  const [reviewMessage, setReviewMessage] = useState('');
 
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
@@ -259,7 +265,9 @@ export default function DashboardPage() {
         const errorData = err.response.data
         let msg = 'Failed to create booking.'
 
-        if (errorData?.errors) {
+        if (errorData?.error) {
+          msg = errorData.error
+        } else if (errorData?.errors) {
           msg = Object.entries(errorData.errors)
             .map(([key, values]) => `${key}: ${values.join(', ')}`)
             .join('; ')
@@ -366,6 +374,99 @@ export default function DashboardPage() {
       }
     }
   }
+
+  const handleCompleteBooking = async (bookingId) => {
+    try {
+      setBookingRequestError('');
+      setBookingRequestMessage('');
+
+      const token = localStorage.getItem('accessToken') ?? localStorage.getItem('token');
+      if (!token) {
+        setBookingRequestError('You need to be logged in.');
+        return;
+      }
+
+      await axios.post(
+        `${API_BASE_URL}/bookings/${bookingId}/complete`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setBookingRequestMessage('Booking marked as returned!');
+      fetchBookings(); // Refresh the bookings list
+
+      setTimeout(() => setBookingRequestMessage(''), 3000);
+    } catch (err) {
+      console.error('Error completing booking:', err);
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data;
+        setBookingRequestError(errorData?.error || 'Failed to mark booking as returned.');
+      } else {
+        setBookingRequestError(err.message || 'An unexpected error occurred.');
+      }
+    }
+  };
+
+  const handleWriteReviewClick = (booking) => {
+    setReviewBooking(booking);
+    setShowReviewModal(true);
+    setReviewError('');
+    setReviewMessage('');
+    setReviewRating(0);
+    setReviewComment('');
+  };
+
+  const handleCloseReviewModal = () => {
+    setShowReviewModal(false);
+    setReviewBooking(null);
+  };
+
+  const handleReviewSubmit = async () => {
+    if (!reviewBooking || reviewRating === 0) {
+      setReviewError('Please provide a rating.');
+      return;
+    }
+
+    const token = localStorage.getItem('accessToken') ?? localStorage.getItem('token');
+    if (!token) {
+      setReviewError('You need to be logged in to leave a review.');
+      return;
+    }
+
+    try {
+      const payload = {
+        BookingId: reviewBooking.Id || reviewBooking.id,
+        Rating: reviewRating,
+        Comment: reviewComment,
+        // The backend will determine ReviewerId from token and ItemId from booking
+      };
+
+      await axios.post(`${API_BASE_URL}/reviews`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      setReviewMessage('Thank you for your review!');
+      setTimeout(() => {
+        handleCloseReviewModal();
+      }, 2000);
+
+    } catch (err) {
+      console.error('Error submitting review:', err);
+      if (axios.isAxiosError(err) && err.response) {
+        const errorData = err.response.data;
+        setReviewError(errorData?.error || 'Failed to submit review.');
+      } else {
+        setReviewError(err.message || 'An unexpected error occurred.');
+      }
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
@@ -607,6 +708,16 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </div>
+                    {status === 'Completed' && (
+                      <div className={styles.bookingActions}>
+                        <button
+                          className={styles.reviewBtn}
+                          onClick={() => handleWriteReviewClick(booking)}
+                        >
+                          Write a Review
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -650,6 +761,7 @@ export default function DashboardPage() {
 
                 const status = booking.Status || booking.status || 'Pending'
                 const isPending = status === 'Pending'
+                const isApprovedOrActive = status === 'Approved' || status === 'Active';
 
                 return (
                   <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -719,26 +831,36 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </div>
-                    {isPending && (
-                      <div className={styles.bookingActions}>
-                        <button
-                          className={styles.approveBtn}
-                          onClick={() =>
-                            handleApproveBooking(booking.Id || booking.id)
-                          }
-                        >
-                          ✓ Approve
-                        </button>
-                        <button
-                          className={styles.rejectBtn}
-                          onClick={() =>
-                            handleRejectBooking(booking.Id || booking.id)
-                          }
-                        >
-                          ✗ Reject
-                        </button>
-                      </div>
-                    )}
+                    <div className={styles.bookingActions}>
+                        {isPending && (
+                          <>
+                            <button
+                              className={styles.approveBtn}
+                              onClick={() =>
+                                handleApproveBooking(booking.Id || booking.id)
+                              }
+                            >
+                              ✓ Approve
+                            </button>
+                            <button
+                              className={styles.rejectBtn}
+                              onClick={() =>
+                                handleRejectBooking(booking.Id || booking.id)
+                              }
+                            >
+                              ✗ Reject
+                            </button>
+                          </>
+                        )}
+                        {isApprovedOrActive && (
+                            <button
+                                className={styles.completeBtn}
+                                onClick={() => handleCompleteBooking(booking.Id || booking.id)}
+                            >
+                                Mark as Returned
+                            </button>
+                        )}
+                    </div>
                   </div>
                 )
               })}
@@ -853,6 +975,79 @@ export default function DashboardPage() {
                 disabled={isBooking || !startDate || !endDate}
               >
                 {isBooking ? 'Processing...' : 'Confirm Booking'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className={styles.modalOverlay} onClick={handleCloseReviewModal}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>
+                Write a Review for {reviewBooking?.item?.Title || 'Item'}
+              </h3>
+              <button
+                className={styles.modalCloseBtn}
+                onClick={handleCloseReviewModal}
+              >
+                ×
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              {reviewError && (
+                <div className={styles.errorMessage} role="alert">
+                  {reviewError}
+                </div>
+              )}
+              {reviewMessage && (
+                <div className={styles.successMessage} role="status">
+                  {reviewMessage}
+                </div>
+              )}
+              <div className={styles.formGroup}>
+                <label className={styles.modalLabel}>Rating</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  value={reviewRating}
+                  onChange={(e) => setReviewRating(parseInt(e.target.value, 10))}
+                  className={styles.modalInput}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="reviewComment" className={styles.modalLabel}>
+                  Comment
+                </label>
+                <textarea
+                  id="reviewComment"
+                  rows="4"
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  className={styles.modalTextarea}
+                />
+              </div>
+            </div>
+            <div className={styles.modalFooter}>
+              <button
+                className={styles.modalCancelBtn}
+                onClick={handleCloseReviewModal}
+              >
+                Cancel
+              </button>
+              <button
+                className={styles.modalSubmitBtn}
+                onClick={handleReviewSubmit}
+                disabled={reviewRating === 0}
+              >
+                Submit Review
               </button>
             </div>
           </div>

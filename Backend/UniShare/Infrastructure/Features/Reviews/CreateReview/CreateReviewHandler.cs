@@ -2,12 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Common;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Infrastructure.Features.Bookings;
 
 namespace UniShare.Infrastructure.Features.Reviews.CreateReview;
 
 public class CreateReviewHandler(
     UniShareContext context,
-    IValidator<CreateReviewRequest> validator)
+    IValidator<CreateReviewRequest> validator,
+    IHttpContextAccessor httpContextAccessor)
 {
     public async Task<IResult> Handle(CreateReviewRequest request)
     {
@@ -16,34 +18,34 @@ public class CreateReviewHandler(
         {
             var errors = validationResult.Errors
                 .GroupBy(e => e.PropertyName)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(e => e.ErrorMessage).ToArray()
-                );
-
+                .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
             Log.Error("Validation failed for CreateReviewRequest");
             return Results.ValidationProblem(errors);
         }
 
-        var reviewerCheck = await ValidateEntityExists(context.Users, request.ReviewerId, "Reviewer");
-        if (reviewerCheck is not null)
-        {
-            return reviewerCheck;
-        }
+        var currentUserId = GetUserId();
+        if (!currentUserId.HasValue)
+            return Results.Unauthorized();
 
-        var itemCheck = await ValidateEntityExists(context.Items, request.ItemId, "Item");
-        if (itemCheck is not null)
-        {
-            return itemCheck;
-        }
-     
-        // TODO: enable booking existence check after Bookings API is implemented.
+        var booking = await context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == request.BookingId);
+        if (booking is null)
+            return Results.NotFound(new { error = "Booking not found." });
 
+        if (booking.BorrowerId != currentUserId.Value)
+            return Results.Forbid();
+
+        if (booking.Status != Status.Completed)
+            return Results.BadRequest(new { error = "Reviews can only be left for completed bookings." });
+
+        var existingReview = await context.Reviews.AnyAsync(r => r.BookingId == request.BookingId);
+        if (existingReview)
+            return Results.Conflict(new { error = "A review for this booking already exists." });
+        
         var review = new Review(
             Guid.NewGuid(),
             request.BookingId,
-            request.ReviewerId,
-            request.ItemId,
+            currentUserId.Value,
+            booking.ItemId,
             request.Rating,
             request.Comment,
             request.RevType!.Value,
@@ -56,18 +58,14 @@ public class CreateReviewHandler(
         Log.Info($"Review with id: {review.Id} was created");
         return Results.Created($"/reviews/{review.Id}", review);
     }
-
-    private static async Task<IResult?> ValidateEntityExists<T>(IQueryable<T> queryable, Guid id, string entityName) where T : class
+    
+    private Guid? GetUserId()
     {
-        if (await queryable.AnyAsync(e => EF.Property<Guid>(e, "Id") == id)) return null;
-        Log.Error($"{entityName} with id: {id} does not exist");
-        return Results.BadRequest(new
+        var ctx = httpContextAccessor.HttpContext;
+        if (ctx?.Items is null || !ctx.Items.TryGetValue("UserId", out var userIdObj))
         {
-            errors = new Dictionary<string, string[]>
-            {
-                { $"{entityName}Id", [$"{entityName} does not exist."] }
-            }
-        });
-
+            return null;
+        }
+        return userIdObj as Guid?;
     }
 }
