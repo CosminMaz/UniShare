@@ -36,7 +36,7 @@ if (!string.IsNullOrWhiteSpace(connectionString))
 else
 {
     builder.Services.AddDbContext<UniShareContext>(options =>
-        options.UseInMemoryDatabase("UniShareDb")
+        options.UseNpgsql("UniShareDb")
     );
 }
 

@@ -12,7 +12,6 @@ using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
 using UniShare.Common;
-using Microsoft.AspNetCore.Http; // Added using statement
 
 namespace UniShare.tests.Features.Reviews;
 
@@ -278,4 +277,3 @@ public class CreateReviewHandlerTests : IDisposable
         Assert.Equal(5, createdResult.Value!.Rating);
     }
 }
-
