@@ -108,3 +108,5 @@ app.MapBookingEndpoints();
 app.MapReviewEndpoints();
 
 app.Run();
+
+public partial class Program { }

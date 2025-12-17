@@ -33,7 +33,7 @@ public class CreateItemHandler(
 
         var item = new Item(
             Guid.NewGuid(),
-            userId.Value,
+            userId!.Value,
             request.Title,
             request.Description,
             request.Categ,
