@@ -7,11 +7,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [items, setItems] = useState([])
+  const [myItems, setMyItems] = useState([])
   const [bookings, setBookings] = useState([])
   const [ownerBookings, setOwnerBookings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMyItems, setIsLoadingMyItems] = useState(false)
   const [isLoadingBookings, setIsLoadingBookings] = useState(false)
   const [error, setError] = useState('')
+  const [myItemsError, setMyItemsError] = useState('')
   const [deleteError, setDeleteError] = useState('')
   const [deleteMessage, setDeleteMessage] = useState('')
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -30,6 +33,19 @@ export default function DashboardPage() {
   const [reviewComment, setReviewComment] = useState('');
   const [reviewError, setReviewError] = useState('');
   const [reviewMessage, setReviewMessage] = useState('');
+
+  const formatDailyRate = (value) => {
+    if (value === null || value === undefined) {
+      return 'N/A'
+    }
+
+    const parsed = Number(value)
+    if (Number.isNaN(parsed)) {
+      return 'N/A'
+    }
+
+    return `$${parsed.toFixed(2)}`
+  }
 
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
@@ -50,6 +66,7 @@ export default function DashboardPage() {
     }
 
     fetchItems()
+    fetchMyItems()
     fetchBookings()
   }, [])
 
@@ -78,6 +95,40 @@ export default function DashboardPage() {
       console.error('Error fetching items:', err)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const fetchMyItems = async () => {
+    const token =
+      localStorage.getItem('accessToken') ?? localStorage.getItem('token')
+
+    if (!token) {
+      setMyItems([])
+      return
+    }
+
+    try {
+      setIsLoadingMyItems(true)
+      setMyItemsError('')
+      const response = await axios.get(`${API_BASE_URL}/items/mine`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = response.data
+      setMyItems(Array.isArray(data) ? data : [])
+    } catch (err) {
+      console.error('Error fetching my items:', err)
+      if (axios.isAxiosError(err) && err.response) {
+        setMyItemsError(
+          err.response.data?.message ?? 'Failed to fetch your listings.',
+        )
+      } else {
+        setMyItemsError(err.message || 'An unexpected error occurred.')
+      }
+    } finally {
+      setIsLoadingMyItems(false)
     }
   }
 
@@ -160,6 +211,7 @@ export default function DashboardPage() {
       setShowDeleteModal(false)
       setItemToDelete(null)
       fetchItems()
+      fetchMyItems()
     } catch (err) {
       console.error('Error deleting item:', err)
       if (axios.isAxiosError(err) && err.response) {
@@ -321,6 +373,7 @@ export default function DashboardPage() {
       setBookingRequestMessage('Booking approved successfully!')
       fetchBookings()
       fetchItems() // Refresh items to update availability
+      fetchMyItems()
       
       // Clear message after 3 seconds
       setTimeout(() => setBookingRequestMessage(''), 3000)
@@ -398,6 +451,8 @@ export default function DashboardPage() {
 
       setBookingRequestMessage('Booking marked as returned!');
       fetchBookings(); // Refresh the bookings list
+      fetchItems(); // Refresh availability
+      fetchMyItems();
 
       setTimeout(() => setBookingRequestMessage(''), 3000);
     } catch (err) {
@@ -587,21 +642,12 @@ export default function DashboardPage() {
                   </div>
                   <div className={styles.itemFooter}>
                     {user && (user.Id ?? user.id) === (item.OwnerId ?? item.ownerId) ? (
-                      <>
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={() => handleDeleteItem(item)}
-                        >
-                          Delete
-                        </button>
-                        <button
-                          className={styles.borrowBtn}
-                          onClick={() => handleBorrowClick(item)}
-                          disabled={isBooking}
-                        >
-                          Borrow
-                        </button>
-                      </>
+                      <button
+                        className={styles.deleteBtn}
+                        onClick={() => handleDeleteItem(item)}
+                      >
+                        Delete
+                      </button>
                     ) : (
                       <button
                         className={styles.borrowBtn}
@@ -614,6 +660,81 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </section>
+
+        <section className={styles.itemsSection}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <h3 className={styles.sectionTitle}>My Listed Items</h3>
+              <p className={styles.sectionSubtitle}>
+                Track the items you are sharing with the community
+              </p>
+            </div>
+            <button
+              className={styles.addItemBtn}
+              onClick={() => (window.location.href = '/add-item')}
+            >
+              + Add Item
+            </button>
+          </div>
+
+          {myItemsError && (
+            <div className={styles.errorMessage} role="alert">
+              {myItemsError}
+            </div>
+          )}
+
+          {isLoadingMyItems ? (
+            <div className={styles.loadingMessage}>Loading your listings...</div>
+          ) : myItems.length === 0 ? (
+            <div className={styles.emptyMessage}>
+              You haven't listed any items yet. Add one to start lending!
+            </div>
+          ) : (
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Condition</th>
+                    <th>Price/day</th>
+                    <th>Status</th>
+                    <th>Added</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {myItems.map((item) => {
+                    const isAvailable = item.IsAvailable ?? item.isAvailable ?? true
+                    return (
+                      <tr key={item.Id || item.id}>
+                        <td>{item.Title || 'No title'}</td>
+                        <td>{item.Categ || 'General'}</td>
+                        <td>{item.Cond || 'N/A'}</td>
+                        <td>{formatDailyRate(item.DailyRate ?? item.dailyRate)}</td>
+                        <td>
+                          <span
+                            className={`${styles.availabilityPill} ${
+                              isAvailable
+                                ? styles.availabilityAvailable
+                                : styles.availabilityUnavailable
+                            }`}
+                          >
+                            {isAvailable ? 'Available' : 'Booked'}
+                          </span>
+                        </td>
+                        <td>
+                          {item.CreatedAt
+                            ? new Date(item.CreatedAt).toLocaleDateString('en-US')
+                            : 'N/A'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </section>
@@ -761,7 +882,6 @@ export default function DashboardPage() {
 
                 const status = booking.Status || booking.status || 'Pending'
                 const isPending = status === 'Pending'
-                const isApprovedOrActive = status === 'Approved' || status === 'Active';
 
                 return (
                   <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -851,14 +971,6 @@ export default function DashboardPage() {
                               ✗ Reject
                             </button>
                           </>
-                        )}
-                        {isApprovedOrActive && (
-                            <button
-                                className={styles.completeBtn}
-                                onClick={() => handleCompleteBooking(booking.Id || booking.id)}
-                            >
-                                Mark as Returned
-                            </button>
                         )}
                     </div>
                   </div>

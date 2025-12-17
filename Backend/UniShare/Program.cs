@@ -4,6 +4,7 @@ using UniShare.Infrastructure.Features.Reviews.CreateReview;
 using UniShare.Infrastructure.Features.Users.Login;
 using UniShare.Infrastructure.Features.Users.Register;
 using UniShare.Infrastructure.Features.Items.Delete;
+using UniShare.Infrastructure.Features.Bookings;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
 using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 using UniShare.Infrastructure.Features.Bookings.CompleteBooking;
@@ -59,6 +60,7 @@ builder.Services.AddScoped<CompleteBookingHandler>();
 builder.Services.AddScoped<IValidator<CreateBookingRequest>, CreateBookingValidator>();
 builder.Services.AddScoped<IValidator<ApproveBookingRequest>, ApproveBookingValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddHostedService<BookingBackgroundService>();
 
 
 // CORS: allow the frontend dev server (Vite) during development
