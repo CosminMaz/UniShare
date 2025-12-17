@@ -611,11 +611,6 @@ export default function DashboardPage() {
                 Discover what the UniShare community is lending today
               </p>
             </div>
-            <div className={styles.sectionHeaderActions}>
-              <button className={styles.addItemBtn} onClick={handleNavigateToAddItem}>
-                + Add Item
-              </button>
-            </div>
           </div>
 
           {error && (
@@ -728,11 +723,6 @@ export default function DashboardPage() {
               <p className={styles.sectionSubtitle}>
                 Track the items you are sharing with the community
               </p>
-            </div>
-            <div className={styles.sectionHeaderActions}>
-              <button className={styles.addItemBtn} onClick={handleNavigateToAddItem}>
-                + Add Item
-              </button>
             </div>
           </div>
 

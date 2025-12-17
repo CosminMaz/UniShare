@@ -32,6 +32,8 @@ body {
     var(--bg);
   color: var(--text);
   letter-spacing: -0.01em;
+  position: relative;
+  overflow-x: hidden;
 }
 
 #root {
@@ -47,4 +49,37 @@ textarea {
 
 a {
   color: inherit;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.3), transparent 45%),
+              radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.25), transparent 40%),
+              radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.25), transparent 45%);
+  animation: backgroundFlow 18s ease-in-out infinite alternate;
+  filter: blur(4px);
+  opacity: 0.7;
+}
+
+body::after {
+  animation-duration: 22s;
+  animation-delay: -5s;
+  mix-blend-mode: screen;
+}
+
+@keyframes backgroundFlow {
+  0% {
+    transform: translate3d(-5%, -3%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5%, 4%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-2%, 3%, 0) scale(0.98);
+  }
 }
