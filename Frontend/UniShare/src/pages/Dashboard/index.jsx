@@ -47,6 +47,8 @@ export default function DashboardPage() {
     return `$${parsed.toFixed(2)}`
   }
 
+  const getBookingStatus = (booking) => booking?.Status || booking?.status || 'Pending'
+
   useEffect(() => {
     const storedUser = localStorage.getItem('currentUser')
     if (storedUser) {
@@ -523,6 +525,35 @@ export default function DashboardPage() {
     }
   };
 
+  const handleNavigateToAddItem = () => {
+    window.location.href = '/add-item'
+  }
+
+  const handleRefreshMarketplace = () => {
+    fetchItems()
+    fetchMyItems()
+    fetchBookings()
+  }
+
+  const formatStatValue = (value) =>
+    Number(value ?? 0).toLocaleString('en-US')
+
+  const activeBorrowings = bookings.filter((booking) => {
+    const status = getBookingStatus(booking)
+    return status === 'Approved' || status === 'Active'
+  }).length
+
+  const pendingOwnerRequests = ownerBookings.filter(
+    (booking) => getBookingStatus(booking) === 'Pending',
+  ).length
+
+  const dashboardStats = [
+    { label: 'Marketplace Items', value: items.length, hint: 'Live listings' },
+    { label: 'My Listings', value: myItems.length, hint: 'Shared with students' },
+    { label: 'Active Borrowings', value: activeBorrowings, hint: 'In progress' },
+    { label: 'Pending Requests', value: pendingOwnerRequests, hint: 'Need review' },
+  ]
+
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('currentUser')
@@ -541,24 +572,50 @@ export default function DashboardPage() {
       </nav>
 
       <main className={styles.main}>
-        <section className={styles.welcome}>
-          <h2 className={styles.welcomeTitle}>
-            Welcome, {user?.FullName || user?.Email || 'User'}!
-          </h2>
-          <p className={styles.welcomeSubtitle}>
-            Hello! You are connected on UniShare.
-          </p>
+        <section className={styles.hero}>
+          <div className={styles.heroContent}>
+            <p className={styles.heroEyebrow}>Dashboard</p>
+            <h2 className={styles.heroTitle}>
+              Welcome, {user?.FullName || user?.Email || 'UniShare member'} 👋
+            </h2>
+            <p className={styles.heroSubtitle}>
+              Keep lending momentum going—review requests, connect with borrowers,
+              and showcase the items that make life easier for fellow students.
+            </p>
+            <div className={styles.heroActions}>
+              <button className={styles.primaryBtn} onClick={handleNavigateToAddItem}>
+                List a New Item
+              </button>
+              <button className={styles.secondaryBtn} onClick={handleRefreshMarketplace}>
+                Refresh Data
+              </button>
+            </div>
+          </div>
+          <div className={styles.heroStats}>
+            {dashboardStats.map((stat) => (
+              <div key={stat.label} className={styles.statCard}>
+                <span className={styles.statLabel}>{stat.label}</span>
+                <span className={styles.statValue}>{formatStatValue(stat.value)}</span>
+                <span className={styles.statHint}>{stat.hint}</span>
+              </div>
+            ))}
+          </div>
         </section>
 
-        <section className={styles.itemsSection}>
+        <div className={styles.marketplaceGrid}>
+        <section className={`${styles.sectionCard} ${styles.itemsSection}`}>
           <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Items available</h3>
-            <button
-              className={styles.addItemBtn}
-              onClick={() => (window.location.href = '/add-item')}
-            >
-              + Add Item
-            </button>
+            <div>
+              <h3 className={styles.sectionTitle}>Items available</h3>
+              <p className={styles.sectionSubtitle}>
+                Discover what the UniShare community is lending today
+              </p>
+            </div>
+            <div className={styles.sectionHeaderActions}>
+              <button className={styles.addItemBtn} onClick={handleNavigateToAddItem}>
+                + Add Item
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -592,7 +649,7 @@ export default function DashboardPage() {
           ) : (
             <div className={styles.itemsGrid}>
               {items.map(item => (
-                <div key={item.Id} className={styles.itemCard}>
+                <div key={item.Id || item.id} className={styles.itemCard}>
                   {(item.imageUrl || item.ImageUrl) && (
                     <div className={styles.itemImage}>
                       <img
@@ -664,7 +721,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <section className={styles.itemsSection}>
+        <section className={`${styles.sectionCard} ${styles.itemsSection}`}>
           <div className={styles.sectionHeader}>
             <div>
               <h3 className={styles.sectionTitle}>My Listed Items</h3>
@@ -672,12 +729,11 @@ export default function DashboardPage() {
                 Track the items you are sharing with the community
               </p>
             </div>
-            <button
-              className={styles.addItemBtn}
-              onClick={() => (window.location.href = '/add-item')}
-            >
-              + Add Item
-            </button>
+            <div className={styles.sectionHeaderActions}>
+              <button className={styles.addItemBtn} onClick={handleNavigateToAddItem}>
+                + Add Item
+              </button>
+            </div>
           </div>
 
           {myItemsError && (
@@ -738,9 +794,11 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+        </div>
 
         {/* My Bookings Section */}
-        <section className={styles.bookingsSection}>
+        <div className={styles.bookingsGrid}>
+        <section className={`${styles.sectionCard} ${styles.bookingsSection}`}>
           <h3 className={styles.sectionTitle}>My Bookings</h3>
 
           {isLoadingBookings ? (
@@ -767,7 +825,7 @@ export default function DashboardPage() {
                   Rejected: '#dc3545',
                 }
 
-                const status = booking.Status || booking.status || 'Pending'
+                const status = getBookingStatus(booking)
                 const statusColor = statusColors[status] || '#6c757d'
 
                 return (
@@ -847,7 +905,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Booking Requests Section (where user is owner) */}
-        <section className={styles.bookingsSection}>
+        <section className={`${styles.sectionCard} ${styles.bookingsSection}`}>
           <h3 className={styles.sectionTitle}>Booking Requests</h3>
           <p className={styles.sectionSubtitle}>
             Requests for items you're lending out
@@ -880,7 +938,7 @@ export default function DashboardPage() {
                     item.Id === booking.ItemId || item.id === booking.ItemId
                 )
 
-                const status = booking.Status || booking.status || 'Pending'
+                const status = getBookingStatus(booking)
                 const isPending = status === 'Pending'
 
                 return (
@@ -979,9 +1037,10 @@ export default function DashboardPage() {
             </div>
           )}
         </section>
+        </div>
 
         {user && (
-          <section className={styles.userInfo}>
+          <section className={`${styles.sectionCard} ${styles.userInfo}`}>
             <h3 className={styles.infoTitle}>Personal Information</h3>
             <div className={styles.infoGrid}>
               <div className={styles.infoItem}>

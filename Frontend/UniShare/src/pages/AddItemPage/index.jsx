@@ -40,6 +40,16 @@ export default function AddItemPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const creationSteps = [
+    'Describe what you are lending with a memorable title.',
+    'Share the exact condition and daily rate to set expectations.',
+    'Provide a hosted image link so your listing stands out.',
+  ]
+  const quickTips = [
+    'Use daylight photos for better visibility.',
+    'Add pickup instructions inside the description field.',
+    'Pause or edit listings whenever availability changes.',
+  ]
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -218,7 +228,37 @@ export default function AddItemPage() {
       </nav>
 
       <main className={styles.main}>
-        <div className={styles.formCard}>
+        <section className={styles.infoPanel}>
+          <span className={styles.infoBadge}>Share smarter</span>
+          <h2 className={styles.infoTitle}>Add new gear to your lending vault</h2>
+          <p className={styles.infoSubtitle}>
+            Every listing powers a new project. Keep details crisp so borrowers know exactly what to expect.
+          </p>
+          <div>
+            <h3>How it works</h3>
+            <ul className={styles.stepsList}>
+              {creationSteps.map((step, index) => (
+                <li key={step}>
+                  <div className={styles.stepIndex}>{index + 1}</div>
+                  <p>{step}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Pro tips</h3>
+            <ul className={styles.tipsList}>
+              {quickTips.map((tip) => (
+                <li key={tip}>
+                  <div className={styles.stepIndex}>★</div>
+                  <p>{tip}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className={styles.formCard}>
           <div className={styles.formHeader}>
             <h2 className={styles.formTitle}>Add a New Item</h2>
             <p className={styles.formSubtitle}>
@@ -238,7 +278,7 @@ export default function AddItemPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formGroup}>
               <label htmlFor="title" className={styles.label}>
                 Item Name
@@ -377,7 +417,7 @@ export default function AddItemPage() {
               </button>
             </div>
           </form>
-        </div>
+        </section>
       </main>
     </div>
   )
