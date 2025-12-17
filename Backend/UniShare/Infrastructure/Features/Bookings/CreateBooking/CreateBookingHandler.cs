@@ -27,6 +27,9 @@ public class CreateBookingHandler(
         if (item is null)
             return ItemDoesNotExistResult();
 
+        if (!item.IsAvailable)
+            return Results.BadRequest(new { error = "Item is not available for booking." });
+
         Log.Info($"Checking for self-booking: BorrowerId={borrowerId.Value}, OwnerId={item.OwnerId}");
         if (item.OwnerId == borrowerId.Value)
         {
@@ -40,7 +43,7 @@ public class CreateBookingHandler(
                            request.StartDate < b.EndDate && request.EndDate > b.StartDate);
 
         if (conflictingBooking)
-            return Results.Conflict(new { error = "Item is already booked for the selected dates." });
+            return Results.BadRequest(new { error = "Item is already booked for the selected dates." });
 
         var ownerId = item.OwnerId;
         if (!await UserExists(ownerId))

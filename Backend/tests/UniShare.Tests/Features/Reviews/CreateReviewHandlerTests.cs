@@ -9,6 +9,7 @@ using UniShare.Infrastructure.Features.Reviews.CreateReview;
 using UniShare.Infrastructure.Features.Reviews;
 using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users;
+using UniShare.Infrastructure.Features.Bookings;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
 using UniShare.Common;
@@ -51,14 +52,23 @@ public class CreateReviewHandlerTests : IDisposable
     {
         // Arrange
         var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
-        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), owner.Id, "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var bookingId = Guid.NewGuid();
+        var booking = new Booking(bookingId, item.Id, reviewer.Id, owner.Id, Status.Completed, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(-2), 30m, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-4), DateTime.UtcNow.AddDays(-2));
         
         _context.Users.Add(reviewer);
+        _context.Users.Add(owner);
         _context.Items.Add(item);
+        _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = reviewer.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
         var request = new CreateReviewRequest(
-            Guid.NewGuid(), // BookingId
+            bookingId,
             reviewer.Id,
             item.Id,
             5,
@@ -184,18 +194,29 @@ public class CreateReviewHandlerTests : IDisposable
     {
         // Arrange
         var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
-        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), owner.Id, "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
         
         _context.Users.Add(reviewer);
+        _context.Users.Add(owner);
         _context.Items.Add(item);
         await _context.SaveChangesAsync();
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = reviewer.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
 
         var reviewTypes = new[] { ReviewType.Bad, ReviewType.Ok, ReviewType.Good, ReviewType.VeryGood };
 
         foreach (var reviewType in reviewTypes)
         {
+            var bookingId = Guid.NewGuid();
+            var booking = new Booking(bookingId, item.Id, reviewer.Id, owner.Id, Status.Completed, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(-2), 30m, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-4), DateTime.UtcNow.AddDays(-2));
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+
             var request = new CreateReviewRequest(
-                Guid.NewGuid(),
+                bookingId,
                 reviewer.Id,
                 item.Id,
                 3,
@@ -220,14 +241,23 @@ public class CreateReviewHandlerTests : IDisposable
     {
         // Arrange
         var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
-        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), owner.Id, "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var bookingId = Guid.NewGuid();
+        var booking = new Booking(bookingId, item.Id, reviewer.Id, owner.Id, Status.Completed, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(-2), 30m, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-4), DateTime.UtcNow.AddDays(-2));
         
         _context.Users.Add(reviewer);
+        _context.Users.Add(owner);
         _context.Items.Add(item);
+        _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = reviewer.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
         var request = new CreateReviewRequest(
-            Guid.NewGuid(),
+            bookingId,
             reviewer.Id,
             item.Id,
             1, // Minimum rating
@@ -251,14 +281,23 @@ public class CreateReviewHandlerTests : IDisposable
     {
         // Arrange
         var reviewer = new User(Guid.NewGuid(), "Reviewer User", "reviewer@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
-        var item = new Item(Guid.NewGuid(), Guid.NewGuid(), "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var owner = new User(Guid.NewGuid(), "Owner User", "owner@example.com", "hashedpassword", Role.User, DateTime.UtcNow);
+        var item = new Item(Guid.NewGuid(), owner.Id, "Test Item", "Description", Category.Books, Condition.New, 10.0m, "image.jpg", true, DateTime.UtcNow);
+        var bookingId = Guid.NewGuid();
+        var booking = new Booking(bookingId, item.Id, reviewer.Id, owner.Id, Status.Completed, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-2), DateTime.UtcNow.AddDays(-2), 30m, DateTime.UtcNow.AddDays(-5), DateTime.UtcNow.AddDays(-4), DateTime.UtcNow.AddDays(-2));
         
         _context.Users.Add(reviewer);
+        _context.Users.Add(owner);
         _context.Items.Add(item);
+        _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["UserId"] = reviewer.Id;
+        _httpContextAccessorMock.Setup(x => x.HttpContext).Returns(httpContext);
+
         var request = new CreateReviewRequest(
-            Guid.NewGuid(),
+            bookingId,
             reviewer.Id,
             item.Id,
             5, // Maximum rating
