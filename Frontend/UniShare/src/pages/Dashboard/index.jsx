@@ -1170,6 +1170,7 @@ export default function DashboardPage() {
                     <header className={styles.reviewHeader}>
                       <div className={styles.reviewMeta}>
                         <span className={styles.reviewerName}>{reviewerName}</span>
+                        <span className={styles.reviewItemName}>{itemTitle}</span>
                         {createdAt && (
                           <span className={styles.reviewDate}>
                             {new Date(createdAt).toLocaleDateString('en-US')}
