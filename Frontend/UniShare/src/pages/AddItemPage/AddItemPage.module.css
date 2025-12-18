@@ -6,9 +6,9 @@
 }
 
 .navbar {
-  background: rgba(5, 8, 22, 0.65);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(149, 193, 255, 0.3);
+  backdrop-filter: blur(12px);
   padding: 1rem 0;
 }
 
@@ -29,8 +29,8 @@
 }
 
 .backBtn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #fff;
+  border: 1px solid rgba(149, 193, 255, 0.45);
   border-radius: 999px;
   padding: 0.5rem 1.4rem;
   color: var(--text);
@@ -39,7 +39,7 @@
 }
 
 .backBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(149, 193, 255, 0.15);
   transform: translateY(-1px);
 }
 
@@ -55,23 +55,24 @@
 }
 
 .infoPanel {
-  background: linear-gradient(160deg, rgba(124, 58, 237, 0.25), rgba(14, 165, 233, 0.18));
+  background: linear-gradient(160deg, rgba(147, 210, 255, 0.45), rgba(221, 241, 255, 0.9));
   border-radius: 1.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(149, 193, 255, 0.35);
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.5);
+  box-shadow: 0 25px 60px rgba(119, 153, 199, 0.35);
 }
 
 .infoBadge {
   align-self: flex-start;
   padding: 0.4rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
   letter-spacing: 0.2em;
+  color: var(--brand-strong);
 }
 
 .infoTitle {
@@ -81,7 +82,7 @@
 
 .infoSubtitle {
   margin: 0;
-  color: rgba(248, 250, 252, 0.75);
+  color: rgba(18, 50, 92, 0.75);
   line-height: 1.6;
 }
 
@@ -101,28 +102,28 @@
   gap: 1rem;
   padding: 1rem;
   border-radius: 1rem;
-  background: rgba(5, 11, 32, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(149, 193, 255, 0.15);
+  border: 1px solid rgba(149, 193, 255, 0.3);
 }
 
 .stepIndex {
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(79, 140, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  color: var(--brand-strong);
 }
 
 .formCard {
-  background: rgba(8, 12, 34, 0.75);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 1.4rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(149, 193, 255, 0.35);
   padding: 2.5rem;
-  box-shadow: 0 25px 70px rgba(2, 6, 23, 0.65);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 25px 60px rgba(119, 153, 199, 0.35);
 }
 
 .formHeader {
@@ -136,7 +137,7 @@
 
 .formSubtitle {
   margin: 0.5rem 0 0;
-  color: rgba(248, 250, 252, 0.7);
+  color: rgba(18, 50, 92, 0.7);
 }
 
 .form {
@@ -165,8 +166,8 @@
 .select,
 .textarea {
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(149, 193, 255, 0.35);
+  background: #fff;
   color: var(--text);
   padding: 0.85rem 1.1rem;
   font-size: 1rem;
@@ -177,8 +178,8 @@
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: rgba(124, 58, 237, 0.8);
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+  border-color: var(--brand-strong);
+  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.18);
 }
 
 .textarea {
@@ -209,24 +210,25 @@
 }
 
 .cancelBtn {
-  background: rgba(255, 255, 255, 0.08);
+  background: #fff;
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(149, 193, 255, 0.35);
 }
 
 .cancelBtn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(119, 153, 199, 0.2);
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+  background: linear-gradient(135deg, #8fd3ff, #4c9fff);
   color: #fff;
   min-width: 170px;
 }
 
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 20px 40px rgba(76, 159, 255, 0.35);
 }
 
 .submitBtn:disabled {
@@ -248,13 +250,13 @@
 .errorMessage {
   border-color: rgba(248, 113, 113, 0.45);
   background: rgba(248, 113, 113, 0.08);
-  color: #fecaca;
+  color: #b71c1c;
 }
 
 .successMessage {
   border-color: rgba(34, 197, 94, 0.45);
   background: rgba(34, 197, 94, 0.08);
-  color: #bbf7d0;
+  color: #146c43;
 }
 
 .loadingSpinner {

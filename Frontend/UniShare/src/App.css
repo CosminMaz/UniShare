@@ -1,18 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg: #050816;
-  --bg-accent: #0f172a;
-  --card: rgba(15, 23, 42, 0.78);
-  --card-border: rgba(148, 163, 184, 0.2);
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --brand: #7c3aed;
-  --brand-strong: #a855f7;
-  --brand-soft: rgba(124, 58, 237, 0.12);
+  --bg: #e6f3ff;
+  --bg-accent: #f8fbff;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(111, 181, 255, 0.25);
+  --text: #12325c;
+  --muted: #6f7c99;
+  --brand: #6fb5ff;
+  --brand-strong: #4c9fff;
+  --brand-soft: rgba(111, 181, 255, 0.2);
   --danger: #f87171;
-  --success: #34d399;
-  --warning: #fbbf24;
+  --success: #2fb67c;
+  --warning: #f7c948;
 }
 
 *,
@@ -26,9 +26,9 @@ body {
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background:
-    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.15), transparent 45%),
-    radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.12), transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.15), transparent 45%),
+    radial-gradient(circle at 15% 20%, rgba(175, 211, 255, 0.7), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(167, 215, 255, 0.6), transparent 40%),
+    radial-gradient(circle at 60% 80%, rgba(186, 232, 255, 0.7), transparent 45%),
     var(--bg);
   color: var(--text);
   letter-spacing: -0.01em;
@@ -58,9 +58,9 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: -1;
-  background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.3), transparent 45%),
-              radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.25), transparent 40%),
-              radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.25), transparent 45%);
+  background: radial-gradient(circle at 20% 20%, rgba(133, 180, 255, 0.35), transparent 45%),
+              radial-gradient(circle at 80% 0%, rgba(144, 224, 239, 0.3), transparent 40%),
+              radial-gradient(circle at 50% 80%, rgba(215, 233, 255, 0.6), transparent 45%);
   animation: backgroundFlow 18s ease-in-out infinite alternate;
   filter: blur(4px);
   opacity: 0.7;
