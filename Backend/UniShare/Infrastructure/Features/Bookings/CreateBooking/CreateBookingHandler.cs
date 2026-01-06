@@ -1,15 +1,18 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Common;
 using UniShare.Infrastructure.Features.Items;
+using UniShare.RealTime;
 
 namespace UniShare.Infrastructure.Features.Bookings.CreateBooking;
 
 public class CreateBookingHandler(
     UniShareContext context,
     IValidator<CreateBookingRequest> validator,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IHubContext<NotificationsHub> hubContext)
 {
     public async Task<IResult> Handle(CreateBookingRequest request)
     {
@@ -47,6 +50,13 @@ public class CreateBookingHandler(
             return OwnerDoesNotExistResult();
 
         var booking = await CreateBooking(request, borrowerId.Value, ownerId, item);
+        var updatedItem = item with { IsAvailable = false };
+        context.Entry(item).CurrentValues.SetValues(updatedItem);
+
+        await context.SaveChangesAsync();
+
+        await hubContext.Clients.All.SendAsync("BookingUpdated", booking);
+        await hubContext.Clients.All.SendAsync("ItemUpdated", updatedItem);
 
         return Results.Created($"/bookings/{booking.Id}", booking);
     }
@@ -110,7 +120,6 @@ public class CreateBookingHandler(
         );
 
         context.Bookings.Add(booking);
-        await context.SaveChangesAsync();
 
         Log.Info($"Booking created: {booking.Id}");
         return booking;

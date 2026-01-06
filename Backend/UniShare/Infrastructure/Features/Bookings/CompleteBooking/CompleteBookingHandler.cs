@@ -1,10 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using UniShare.Common;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Infrastructure.Features.Items;
+using UniShare.RealTime;
 
 namespace UniShare.Infrastructure.Features.Bookings.CompleteBooking;
 
-public class CompleteBookingHandler(UniShareContext context, IHttpContextAccessor httpContextAccessor)
+public class CompleteBookingHandler(
+    UniShareContext context,
+    IHttpContextAccessor httpContextAccessor,
+    IHubContext<NotificationsHub> hubContext)
 {
     public async Task<IResult> Handle(Guid bookingId)
     {
@@ -38,9 +44,15 @@ public class CompleteBookingHandler(UniShareContext context, IHttpContextAccesso
 
         context.Entry(booking).CurrentValues.SetValues(updatedBooking);
 
-        await MarkItemAvailable(booking.ItemId);
+        var updatedItem = await MarkItemAvailable(booking.ItemId);
 
         await context.SaveChangesAsync();
+
+        await hubContext.Clients.All.SendAsync("BookingUpdated", updatedBooking);
+        if (updatedItem is not null)
+        {
+            await hubContext.Clients.All.SendAsync("ItemUpdated", updatedItem);
+        }
 
         Log.Info($"Booking {bookingId} has been marked as completed by owner {currentUserId.Value}");
 
@@ -57,19 +69,20 @@ public class CompleteBookingHandler(UniShareContext context, IHttpContextAccesso
         return userIdObj as Guid?;
     }
 
-    private async Task MarkItemAvailable(Guid itemId)
+    private async Task<Item?> MarkItemAvailable(Guid itemId)
     {
         var item = await context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
         if (item is null)
         {
             Log.Warning($"Item {itemId} not found while completing booking.");
-            return;
+            return null;
         }
 
         if (item.IsAvailable)
-            return;
+            return item;
 
         var updatedItem = item with { IsAvailable = true };
         context.Entry(item).CurrentValues.SetValues(updatedItem);
+        return updatedItem;
     }
 }
