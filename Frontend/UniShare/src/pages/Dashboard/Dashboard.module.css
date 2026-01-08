@@ -1,5 +1,10 @@
 .container {
   min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.15), transparent 45%),
+    radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.12), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.15), transparent 45%),
+    var(--bg);
   color: var(--text);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   display: flex;
@@ -10,8 +15,8 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(240, 242, 245, 0.8);
-  border-bottom: 1px solid var(--card-border);
+  background: rgba(5, 8, 22, 0.6);
+  border-bottom: 1px solid rgba(248, 250, 252, 0.08);
   backdrop-filter: blur(22px);
   padding: 1rem 0;
 }
@@ -30,13 +35,13 @@
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.02em;
-  color: var(--text);
+  color: #fff;
 }
 
 .logoutBtn {
   background: transparent;
-  border: 1px solid var(--card-border);
-  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
   padding: 0.65rem 1.5rem;
   border-radius: 999px;
   cursor: pointer;
@@ -45,9 +50,9 @@
 }
 
 .logoutBtn:hover {
-  border-color: var(--brand);
+  border-color: #fff;
   transform: translateY(-1px);
-  background: var(--brand-soft);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .main {
@@ -62,14 +67,15 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, var(--brand-soft), rgba(59, 130, 246, 0.05));
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(14, 165, 233, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.5rem;
   padding: 2.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 25px 60px rgba(8, 4, 35, 0.35);
+  backdrop-filter: blur(18px);
 }
 
 .heroContent {
@@ -82,7 +88,7 @@
   text-transform: uppercase;
   font-size: 0.85rem;
   letter-spacing: 0.24em;
-  color: var(--brand);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
 
@@ -91,11 +97,10 @@
   margin: 0;
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--text);
 }
 
 .heroSubtitle {
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.8);
   line-height: 1.6;
   margin: 0;
 }
@@ -121,7 +126,7 @@
 .primaryBtn {
   background: linear-gradient(135deg, var(--brand), var(--brand-strong));
   color: #fff;
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.45);
 }
 
 .primaryBtn:hover {
@@ -129,13 +134,13 @@
 }
 
 .secondaryBtn {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--card-border);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5edff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .secondaryBtn:hover {
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .heroStats {
@@ -145,8 +150,8 @@
 }
 
 .statCard {
-  background: var(--bg);
-  border: 1px solid var(--card-border);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1rem;
   padding: 1.25rem;
   display: flex;
@@ -164,20 +169,20 @@
 .statValue {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--brand-strong);
 }
 
 .statHint {
   font-size: 0.9rem;
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.7);
 }
 
 .sectionCard {
-  background: var(--bg-accent);
+  background: var(--card);
   border-radius: 1.25rem;
   padding: 2rem;
   border: 1px solid var(--card-border);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 18px 45px rgba(3, 7, 18, 0.55);
+  backdrop-filter: blur(20px);
 }
 
 .marketplaceGrid {
@@ -211,7 +216,6 @@
   font-size: 1.4rem;
   margin: 0;
   font-weight: 600;
-  color: var(--text);
 }
 
 .sectionSubtitle {
@@ -238,7 +242,7 @@
 
 .addItemBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 15px 35px rgba(124, 58, 237, 0.45);
 }
 
 .itemsScroller {
@@ -247,7 +251,7 @@
   margin: 0 -1rem;
   padding-left: 1rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--brand-soft) transparent;
+  scrollbar-color: rgba(124, 58, 237, 0.4) transparent;
 }
 
 .itemsScroller::-webkit-scrollbar {
@@ -259,7 +263,7 @@
 }
 
 .itemsScroller::-webkit-scrollbar-thumb {
-  background: var(--brand-soft);
+  background: rgba(124, 58, 237, 0.4);
   border-radius: 999px;
 }
 
@@ -277,8 +281,8 @@
 }
 
 .itemCard {
-  background: var(--bg);
-  border: 1px solid var(--card-border);
+  background: rgba(7, 11, 29, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1.1rem;
   overflow: hidden;
   display: flex;
@@ -287,14 +291,14 @@
 }
 
 .itemCard:hover {
-  border-color: var(--brand);
+  border-color: rgba(124, 58, 237, 0.8);
   transform: translateY(-6px);
 }
 
 .itemImage {
   width: 100%;
   height: 200px;
-  background: var(--bg);
+  background: rgba(148, 163, 184, 0.1);
 }
 
 .itemImage img {
@@ -313,7 +317,6 @@
 .itemTitle {
   margin: 0;
   font-size: 1.1rem;
-  color: var(--text);
 }
 
 .itemBadge {
@@ -327,7 +330,7 @@
 
 .itemDescription {
   padding: 0 1.25rem;
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.75);
   line-height: 1.5;
 }
 
@@ -341,7 +344,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.9rem;
-  color: var(--text);
+  color: rgba(248, 250, 252, 0.8);
 }
 
 .detailLabel {
@@ -377,13 +380,13 @@
 }
 
 .deleteBtn {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(248, 113, 113, 0.15);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.35);
 }
 
 .deleteBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(248, 113, 113, 0.25);
 }
 
 .loadingMessage,
@@ -392,21 +395,21 @@
 .successMessage {
   padding: 1.1rem 1.35rem;
   border-radius: 1rem;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--muted);
 }
 
 .errorMessage {
-  border-color: var(--danger);
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--danger);
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.08);
+  color: #fecaca;
 }
 
 .successMessage {
-  border-color: var(--success);
-  background: rgba(34, 197, 94, 0.08);
-  color: var(--success);
+  border-color: rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.08);
+  color: #bbf7d0;
 }
 
 .bookingsList {
@@ -416,8 +419,8 @@
 }
 
 .bookingCard {
-  background: var(--bg);
-  border: 1px solid var(--card-border);
+  background: rgba(7, 11, 29, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 1.15rem;
   padding: 1.5rem;
   display: flex;
@@ -434,7 +437,6 @@
 
 .bookingItemTitle {
   margin: 0;
-  color: var(--text);
 }
 
 .bookingStatus {
@@ -442,6 +444,7 @@
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
+  color: #0f172a;
 }
 
 .bookingDetails {
@@ -459,7 +462,6 @@
 
 .bookingDetailValue {
   font-weight: 600;
-  color: var(--text);
 }
 
 .bookingActions {
@@ -479,38 +481,38 @@
 }
 
 .approveBtn {
-  background: rgba(34, 197, 94, 0.15);
-  color: var(--success);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: rgba(52, 211, 153, 0.2);
+  color: #bbf7d0;
+  border: 1px solid rgba(52, 211, 153, 0.35);
 }
 
 .rejectBtn {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(248, 113, 113, 0.18);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.35);
 }
 
 .completeBtn {
-  background: var(--brand-soft);
-  color: var(--brand);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+  border: 1px solid rgba(59, 130, 246, 0.35);
 }
 
 .reviewBtn {
   width: 100%;
-  border: 1px solid var(--brand);
+  border: 1px solid rgba(124, 58, 237, 0.45);
   border-radius: 0.9rem;
   padding: 0.6rem 1rem;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: rgba(124, 58, 237, 0.15);
+  color: #e0d4ff;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .reviewBtn:hover {
-  background: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.2);
+  background: rgba(124, 58, 237, 0.3);
+  box-shadow: 0 12px 25px rgba(124, 58, 237, 0.35);
 }
 
 .tableWrapper {
@@ -529,7 +531,7 @@
 .table td {
   padding: 0.9rem 1rem;
   text-align: left;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .table th {
@@ -540,7 +542,7 @@
 }
 
 .table tbody tr:hover {
-  background: var(--brand-soft);
+  background: rgba(124, 58, 237, 0.05);
 }
 
 .availabilityPill {
@@ -554,13 +556,13 @@
 }
 
 .availabilityAvailable {
-  background: rgba(34, 197, 94, 0.15);
-  color: var(--success);
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
 }
 
 .availabilityUnavailable {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--danger);
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
 }
 
 .userInfo {
@@ -571,7 +573,6 @@
 .infoTitle {
   margin: 0;
   font-size: 1.3rem;
-  color: var(--text);
 }
 
 .infoGrid {
@@ -581,8 +582,8 @@
 }
 
 .infoItem {
-  background: var(--bg);
-  border: 1px solid var(--card-border);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 0.9rem;
   padding: 1rem;
 }
@@ -597,7 +598,6 @@
   font-size: 1rem;
   font-weight: 600;
   margin-top: 0.4rem;
-  color: var(--text);
 }
 
 .reviewsGrid {
@@ -608,13 +608,13 @@
 
 .reviewCard {
   border-radius: 1.1rem;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 11, 29, 0.7);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.45);
 }
 
 .reviewHeader {
@@ -632,7 +632,6 @@
 
 .reviewerName {
   font-weight: 600;
-  color: var(--text);
 }
 
 .reviewDate {
@@ -643,14 +642,14 @@
 .ratingBadge {
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  background: rgba(249, 115, 22, 0.1);
-  color: var(--warning);
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
   font-weight: 600;
 }
 
 .reviewComment {
   margin: 0;
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.85);
   line-height: 1.5;
 }
 
@@ -669,20 +668,20 @@
 .reviewTag {
   padding: 0.3rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 0.8rem;
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.7);
 }
 
 .reviewItemLabel {
   font-size: 0.85rem;
-  color: var(--muted);
+  color: rgba(248, 250, 252, 0.65);
 }
 
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(240, 242, 245, 0.75);
+  background: rgba(5, 8, 22, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -691,12 +690,12 @@
 }
 
 .modalContent {
-  background: var(--bg-accent);
-  border: 1px solid var(--card-border);
+  background: rgba(8, 15, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 1.2rem;
   width: 100%;
   max-width: 520px;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 25px 70px rgba(3, 7, 18, 0.65);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -705,11 +704,11 @@
 .modalHeader,
 .modalFooter {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .modalFooter {
-  border-top: 1px solid var(--card-border);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   border-bottom: none;
   display: flex;
   gap: 1rem;
@@ -723,7 +722,6 @@
 
 .modalTitle {
   margin: 0;
-  color: var(--text);
 }
 
 .modalCloseBtn {
@@ -739,8 +737,8 @@
   width: 100%;
   padding: 0.85rem;
   border-radius: 0.9rem;
-  border: 1px solid var(--card-border);
-  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.6);
   color: var(--text);
 }
 
@@ -758,9 +756,8 @@
 }
 
 .modalCancelBtn {
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text);
-  border: 1px solid var(--card-border);
 }
 
 @media (max-width: 960px) {
