@@ -2,12 +2,15 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Moq;
 using UniShare.Infrastructure.Features.Bookings;
 using UniShare.Infrastructure.Features.Bookings.CreateBooking;
 using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
+using UniShare.RealTime;
 
 namespace UniShare.Tests.Features.Bookings;
 
@@ -30,6 +33,18 @@ public class CreateBookingHandlerTests
         return new HttpContextAccessor { HttpContext = context };
     }
 
+    private static Mock<IHubContext<NotificationsHub>> CreateHubContextMock()
+    {
+        var hubContextMock = new Mock<IHubContext<NotificationsHub>>();
+        var mockClientProxy = new Mock<IClientProxy>();
+        mockClientProxy.Setup(p => p.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var mockClients = new Mock<IHubClients>();
+        mockClients.Setup(c => c.All).Returns(mockClientProxy.Object);
+        hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
+        return hubContextMock;
+    }
+
     [Fact]
     public async Task Handle_Should_Create_Booking_When_Request_Is_Valid()
     {
@@ -49,7 +64,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(itemId, DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3));
 
@@ -82,7 +98,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = new HttpContextAccessor(); // no UserId set
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(itemId, DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3));
 
@@ -108,7 +125,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(Guid.NewGuid(), DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3));
 
@@ -139,7 +157,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(itemId, DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3));
 
@@ -169,7 +188,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(itemId, DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(2));
 
@@ -201,7 +221,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var startDate = DateTime.UtcNow.Date;
         var endDate = startDate.AddDays(4); // 4 days duration
@@ -228,7 +249,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = new HttpContextAccessor(); // should not be used because validation fails
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(Guid.Empty, DateTime.UtcNow.Date, DateTime.UtcNow.Date);
 
@@ -261,7 +283,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var date = DateTime.UtcNow.Date;
         var request = new CreateBookingRequest(itemId, date, date);
@@ -296,7 +319,8 @@ public class CreateBookingHandlerTests
         validator.RuleFor(x => x.ItemId).NotEmpty();
 
         var httpContextAccessor = CreateHttpContextAccessor(borrowerId);
-        var handler = new CreateBookingHandler(context, validator, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new CreateBookingHandler(context, validator, httpContextAccessor, hubContextMock.Object);
 
         var request = new CreateBookingRequest(itemId, DateTime.UtcNow.Date, DateTime.UtcNow.Date.AddDays(2));
 
@@ -309,4 +333,3 @@ public class CreateBookingHandlerTests
         Assert.Equal(0m, booking.TotalPrice);
     }
 }
-

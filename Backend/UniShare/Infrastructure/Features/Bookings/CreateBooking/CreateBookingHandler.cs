@@ -52,7 +52,7 @@ public class CreateBookingHandler(
         if (!await UserExists(ownerId))
             return OwnerDoesNotExistResult();
 
-        var booking = await CreateBooking(request, borrowerId.Value, ownerId, item);
+        var booking = CreateBooking(request, borrowerId.Value, ownerId, item);
         var updatedItem = item with { IsAvailable = false };
         context.Entry(item).CurrentValues.SetValues(updatedItem);
 
@@ -99,7 +99,7 @@ public class CreateBookingHandler(
     private static IResult OwnerDoesNotExistResult()
         => Results.BadRequest(new { errors = new { OwnerId = new[] { "Owner does not exist." } } });
 
-    private async Task<Booking> CreateBooking(
+    private Booking CreateBooking(
         CreateBookingRequest request,
         Guid borrowerId,
         Guid ownerId,

@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.SignalR;
 using Moq;
 using UniShare.Infrastructure.Features.Items.CreateItem;
 using UniShare.Infrastructure.Features.Items;
 using UniShare.Infrastructure.Features.Users;
 using UniShare.Infrastructure.Persistence;
 using Xunit;
+using UniShare.RealTime;
 using UniShare.Common;
 
 namespace UniShare.tests.Features.Items;
@@ -19,6 +21,7 @@ public class CreateItemHandlerTests : IDisposable
     private readonly UniShareContext _context;
     private readonly Mock<IValidator<CreateItemRequest>> _validatorMock;
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
+    private readonly Mock<IHubContext<NotificationsHub>> _hubContextMock;
     private readonly CreateItemHandler _handler;
 
     public CreateItemHandlerTests()
@@ -31,7 +34,14 @@ public class CreateItemHandlerTests : IDisposable
         var loggerMock = new Mock<ILogger<CreateItemHandler>>();
         _validatorMock = new Mock<IValidator<CreateItemRequest>>();
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        _handler = new CreateItemHandler(_context, _validatorMock.Object, _httpContextAccessorMock.Object);
+        _hubContextMock = new Mock<IHubContext<NotificationsHub>>();
+        var mockClientProxy = new Mock<IClientProxy>();
+        mockClientProxy.Setup(p => p.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var mockClients = new Mock<IHubClients>();
+        mockClients.Setup(c => c.All).Returns(mockClientProxy.Object);
+        _hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
+        _handler = new CreateItemHandler(_context, _validatorMock.Object, _httpContextAccessorMock.Object, _hubContextMock.Object);
     }
 
     public void Dispose()
@@ -336,4 +346,3 @@ public class CreateItemHandlerTests : IDisposable
         Assert.Null(createdResult.Value!.DailyRate);
     }
 }
-

@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Moq;
 using UniShare.Infrastructure.Features.Bookings;
 using UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 using UniShare.Infrastructure.Persistence;
+using UniShare.RealTime;
 using Xunit;
 
 namespace UniShare.Tests.Features.Bookings;
@@ -24,6 +27,18 @@ public class ApproveBookingHandlerTests
         context.Items["UserId"] = userId;
 
         return new HttpContextAccessor { HttpContext = context };
+    }
+
+    private static Mock<IHubContext<NotificationsHub>> CreateHubContextMock()
+    {
+        var hubContextMock = new Mock<IHubContext<NotificationsHub>>();
+        var mockClientProxy = new Mock<IClientProxy>();
+        mockClientProxy.Setup(p => p.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var mockClients = new Mock<IHubClients>();
+        mockClients.Setup(c => c.All).Returns(mockClientProxy.Object);
+        hubContextMock.Setup(h => h.Clients).Returns(mockClients.Object);
+        return hubContextMock;
     }
 
     [Fact]
@@ -59,7 +74,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(ownerId);
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(bookingId, true);
 
@@ -112,7 +128,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(ownerId);
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(bookingId, false);
 
@@ -139,7 +156,8 @@ public class ApproveBookingHandlerTests
         var bookingId = Guid.NewGuid();
 
         var httpContextAccessor = new HttpContextAccessor(); // no UserId set
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(bookingId, true);
 
@@ -185,7 +203,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(otherUserId); // Different user
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(bookingId, true);
 
@@ -232,7 +251,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(ownerId);
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(bookingId, true);
 
@@ -255,7 +275,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(ownerId);
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
 
         var request = new ApproveBookingRequest(nonExistentBookingId, true);
 
@@ -299,7 +320,8 @@ public class ApproveBookingHandlerTests
         await context.SaveChangesAsync();
 
         var httpContextAccessor = CreateHttpContextAccessor(ownerId);
-        var handler = new ApproveBookingHandler(context, httpContextAccessor);
+        var hubContextMock = CreateHubContextMock();
+        var handler = new ApproveBookingHandler(context, httpContextAccessor, hubContextMock.Object);
         var request = new ApproveBookingRequest(bookingId, true);
 
         // Act
@@ -312,4 +334,3 @@ public class ApproveBookingHandlerTests
         Assert.False(updatedItem.IsAvailable);
     }
 }
-
