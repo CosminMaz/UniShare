@@ -112,7 +112,9 @@ app.UseCors("AllowFrontend");
 // Enable authentication middleware
 app.UseAuthenticationMiddleware();
 
-app.UseHttpsRedirection();
+// In a containerized environment, the reverse proxy (Nginx) typically handles HTTPS.
+// The internal communication between the proxy and the backend can be HTTP.
+// app.UseHttpsRedirection();
 
 app.MapItemEndpoints();
 app.MapUserEndpoints();
