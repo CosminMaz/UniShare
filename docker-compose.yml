@@ -1,7 +1,7 @@
 services:
   postgres-db:
-    image: postgres:18
-    container_name: my-postgres-db
+    image: postgres:16 # Using LTS version 16, as 18 is not available
+    container_name: unishare-postgres-db
     restart: always
     environment:
       - POSTGRES_USER=${DB_USER}
@@ -10,7 +10,35 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgroot:/var/lib/postgresql
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: unishare-backend
+    restart: always
+    ports:
+      - "5222:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+    depends_on:
+      - postgres-db
+
+  frontend:
+    build:
+      context: ./Frontend/UniShare
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
+    container_name: unishare-frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
 
 volumes:
-  pgroot:
+  pgdata:
