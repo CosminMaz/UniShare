@@ -29,7 +29,7 @@ public class CreateReviewHandler(
 
         var booking = await context.Bookings.AsNoTracking().FirstOrDefaultAsync(b => b.Id == request.BookingId);
         if (booking is null)
-            return Results.NotFound(new { error = "Booking not found." });
+            return Results.BadRequest(new { error = "Booking not found." });
 
         if (booking.BorrowerId != currentUserId.Value)
             return Results.Forbid();

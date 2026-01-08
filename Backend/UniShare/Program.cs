@@ -26,18 +26,26 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 });
 
 // Database: prefer configured connection, but fall back to InMemory for local/dev/testing so Swagger works out-of-the-box
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-if (!string.IsNullOrWhiteSpace(connectionString))
+if (builder.Environment.IsEnvironment("Testing"))
 {
     builder.Services.AddDbContext<UniShareContext>(options =>
-        options.UseNpgsql(connectionString)
-    );
+        options.UseInMemoryDatabase("UserApiTestsDb"));
 }
 else
 {
-    builder.Services.AddDbContext<UniShareContext>(options =>
-        options.UseNpgsql("UniShareDb")
-    );
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        builder.Services.AddDbContext<UniShareContext>(options =>
+            options.UseNpgsql(connectionString)
+        );
+    }
+    else
+    {
+        builder.Services.AddDbContext<UniShareContext>(options =>
+            options.UseNpgsql("UniShareDb")
+        );
+    }
 }
 
 builder.Services.AddHealthChecks();
@@ -84,10 +92,13 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Apply any pending migrations at startup (creates tables if needed via migrations)
-using (var scope = app.Services.CreateScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var ctx = scope.ServiceProvider.GetRequiredService<UniShareContext>();
-    ctx.Database.Migrate();
+    using (var scope = app.Services.CreateScope())
+    {
+        var ctx = scope.ServiceProvider.GetRequiredService<UniShareContext>();
+        ctx.Database.Migrate();
+    }
 }
 
 // Configure the HTTP request pipeline.

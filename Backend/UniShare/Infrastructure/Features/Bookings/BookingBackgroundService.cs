@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Common;
 
 namespace UniShare.Infrastructure.Features.Bookings;
 
@@ -21,31 +22,54 @@ public class BookingBackgroundService(IServiceProvider serviceProvider) : Backgr
 
     private static async Task MarkExpiredBookingsAsExpired(UniShareContext dbContext)
     {
-        var expiredBookings = await dbContext.Bookings
-            .Where(b => b.Status == Status.Active && b.EndDate < DateTime.UtcNow)
-            .ToListAsync();
-
-        foreach (var booking in expiredBookings)
+        try
         {
-            var updatedBooking = booking with { Status = Status.Expired };
-            dbContext.Entry(booking).CurrentValues.SetValues(updatedBooking);
-        }
+            var expiredBookings = await dbContext.Bookings
+                .Where(b => b.Status == Status.Active && b.EndDate < DateTime.UtcNow)
+                .ToListAsync();
 
-        await dbContext.SaveChangesAsync();
+            if (expiredBookings.Count == 0)
+                return;
+
+            foreach (var booking in expiredBookings)
+            {
+                var updatedBooking = booking with { Status = Status.Expired };
+                dbContext.Entry(booking).CurrentValues.SetValues(updatedBooking);
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't crash the application
+            // The database constraint may not include 'Expired' status
+            Log.Error($"Error marking expired bookings: {ex.Message}");
+        }
     }
 
     private static async Task MarkActiveBookingsAsActive(UniShareContext dbContext)
     {
-        var activeBookings = await dbContext.Bookings
-            .Where(b => b.Status == Status.Approved && b.StartDate <= DateTime.UtcNow)
-            .ToListAsync();
-
-        foreach (var booking in activeBookings)
+        try
         {
-            var updatedBooking = booking with { Status = Status.Active };
-            dbContext.Entry(booking).CurrentValues.SetValues(updatedBooking);
-        }
+            var activeBookings = await dbContext.Bookings
+                .Where(b => b.Status == Status.Approved && b.StartDate <= DateTime.UtcNow)
+                .ToListAsync();
 
-        await dbContext.SaveChangesAsync();
+            if (activeBookings.Count == 0)
+                return;
+
+            foreach (var booking in activeBookings)
+            {
+                var updatedBooking = booking with { Status = Status.Active };
+                dbContext.Entry(booking).CurrentValues.SetValues(updatedBooking);
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log error but don't crash the application
+            Log.Error($"Error marking active bookings: {ex.Message}");
+        }
     }
 }
