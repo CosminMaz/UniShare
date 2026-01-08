@@ -14,6 +14,7 @@ using UniShare.Api;
 using UniShare.Infrastructure.Features.Users.GetAll;
 using UniShare.Common;
 using UniShare.Infrastructure.Features.Items.CreateItem;
+using UniShare.RealTime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +69,7 @@ builder.Services.AddScoped<CompleteBookingHandler>();
 builder.Services.AddScoped<IValidator<CreateBookingRequest>, CreateBookingValidator>();
 builder.Services.AddScoped<IValidator<ApproveBookingRequest>, ApproveBookingValidator>();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
-builder.Services.AddHostedService<BookingBackgroundService>();
+builder.Services.AddSignalR();
 
 
 // CORS: allow the frontend dev server (Vite) during development
@@ -117,6 +118,7 @@ app.MapItemEndpoints();
 app.MapUserEndpoints();
 app.MapBookingEndpoints();
 app.MapReviewEndpoints();
+app.MapHub<NotificationsHub>("/hub/notifications");
 
 app.Run();
 

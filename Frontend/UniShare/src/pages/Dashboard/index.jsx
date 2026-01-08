@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import * as signalR from '@microsoft/signalr'
 import styles from './Dashboard.module.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
@@ -212,6 +213,40 @@ export default function DashboardPage() {
       console.error('Error fetching reviews:', err)
     }
   }
+
+  useEffect(() => {
+    const hubUrl = `${API_BASE_URL.replace(/\/$/, '')}/hub/notifications`
+
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl(hubUrl, { withCredentials: true })
+      .withAutomaticReconnect()
+      .build()
+
+    const refreshItems = () => {
+      fetchItems()
+      fetchMyItems()
+    }
+
+    const refreshBookings = () => {
+      fetchBookings()
+      refreshItems()
+    }
+
+    connection.on('ItemCreated', refreshItems)
+    connection.on('ItemUpdated', refreshItems)
+    connection.on('BookingUpdated', refreshBookings)
+
+    connection
+      .start()
+      .catch((err) => console.error('Failed to connect to realtime hub:', err))
+
+    return () => {
+      connection.off('ItemCreated', refreshItems)
+      connection.off('ItemUpdated', refreshItems)
+      connection.off('BookingUpdated', refreshBookings)
+      connection.stop().catch(() => {})
+    }
+  }, [])
 
   const handleDeleteItem = (item) => {
     setDeleteError('')
@@ -583,12 +618,6 @@ export default function DashboardPage() {
     window.location.href = '/add-item'
   }
 
-  const handleRefreshMarketplace = () => {
-    fetchItems()
-    fetchMyItems()
-    fetchBookings()
-  }
-
   const formatStatValue = (value) =>
     Number(value ?? 0).toLocaleString('en-US')
 
@@ -639,9 +668,6 @@ export default function DashboardPage() {
             <div className={styles.heroActions}>
               <button className={styles.primaryBtn} onClick={handleNavigateToAddItem}>
                 List a New Item
-              </button>
-              <button className={styles.secondaryBtn} onClick={handleRefreshMarketplace}>
-                Refresh Data
               </button>
             </div>
           </div>

@@ -1,12 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using UniShare.Common;
 using UniShare.Infrastructure.Persistence;
+using UniShare.Infrastructure.Features.Items;
+using UniShare.RealTime;
 
 namespace UniShare.Infrastructure.Features.Bookings.ApproveBooking;
 
 public class ApproveBookingHandler(
     UniShareContext context,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IHubContext<NotificationsHub> hubContext)
 {
     public async Task<IResult> Handle(ApproveBookingRequest request)
     {
@@ -28,9 +32,14 @@ public class ApproveBookingHandler(
         if (statusValidation is not null)
             return statusValidation;
 
-        await ApplyDecisionAsync(booking, request.Approve);
+        var (updatedBooking, updatedItem) = await ApplyDecisionAsync(booking, request.Approve);
 
-        var updatedBooking = await GetBookingReadonly(request.BookingId);
+        await hubContext.Clients.All.SendAsync("BookingUpdated", updatedBooking);
+        if (updatedItem is not null)
+        {
+            await hubContext.Clients.All.SendAsync("ItemUpdated", updatedItem);
+        }
+
         return Results.Ok(updatedBooking);
     }
 
@@ -71,10 +80,11 @@ public class ApproveBookingHandler(
 
     }
 
-    private async Task ApplyDecisionAsync(Booking booking, bool approve)
+    private async Task<(Booking UpdatedBooking, Item? UpdatedItem)> ApplyDecisionAsync(Booking booking, bool approve)
     {
         var now = DateTime.UtcNow;
         var newStatus = approve ? Status.Approved : Status.Rejected;
+        Item? updatedItem = null;
 
         // Update booking
         var updatedBooking = booking with
@@ -86,20 +96,38 @@ public class ApproveBookingHandler(
         context.Entry(booking).CurrentValues.SetValues(updatedBooking);
 
         if (approve)
-            await MarkItemUnavailable(booking.ItemId);
+        {
+            updatedItem = await MarkItemUnavailable(booking.ItemId);
+        }
+        else
+        {
+            updatedItem = await MarkItemAvailable(booking.ItemId);
+        }
 
         await context.SaveChangesAsync();
 
         Log.Info($"Booking {booking.Id} was {(approve ? "approved" : "rejected")}");
+        return (updatedBooking, updatedItem);
     }
 
-    private async Task MarkItemUnavailable(Guid itemId)
+    private async Task<Item?> MarkItemUnavailable(Guid itemId)
     {
         var item = await context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
-        if (item == null) return;
+        if (item == null) return null;
 
         var updatedItem = item with { IsAvailable = false };
 
         context.Entry(item).CurrentValues.SetValues(updatedItem);
+        return updatedItem;
+    }
+
+    private async Task<Item?> MarkItemAvailable(Guid itemId)
+    {
+        var item = await context.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+        if (item == null) return null;
+
+        var updatedItem = item with { IsAvailable = true };
+        context.Entry(item).CurrentValues.SetValues(updatedItem);
+        return updatedItem;
     }
 }

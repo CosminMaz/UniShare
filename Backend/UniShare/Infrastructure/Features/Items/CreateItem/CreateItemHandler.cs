@@ -1,14 +1,17 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
 using UniShare.Infrastructure.Persistence;
 using UniShare.Common;
+using UniShare.RealTime;
 
 namespace UniShare.Infrastructure.Features.Items.CreateItem;
 
 public class CreateItemHandler(
     UniShareContext context,
     IValidator<CreateItemRequest> validator,
-    IHttpContextAccessor httpContextAccessor)
+    IHttpContextAccessor httpContextAccessor,
+    IHubContext<NotificationsHub> hubContext)
 {
     public async Task<IResult> Handle(CreateItemRequest request)
     {
@@ -46,6 +49,7 @@ public class CreateItemHandler(
 
         context.Items.Add(item);
         await context.SaveChangesAsync();
+        await hubContext.Clients.All.SendAsync("ItemCreated", item);
         
         Log.Info($"Item with id: {item.Id} was created");
         return Results.Created($"/items/{item.Id}", item);
