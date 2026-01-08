@@ -35,18 +35,14 @@ if (builder.Environment.IsEnvironment("Testing"))
 else
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (!string.IsNullOrWhiteSpace(connectionString))
+    if (string.IsNullOrWhiteSpace(connectionString))
     {
-        builder.Services.AddDbContext<UniShareContext>(options =>
-            options.UseNpgsql(connectionString)
-        );
+        throw new InvalidOperationException("Database connection string 'DefaultConnection' is not configured.");
     }
-    else
-    {
-        builder.Services.AddDbContext<UniShareContext>(options =>
-            options.UseNpgsql("UniShareDb")
-        );
-    }
+
+    builder.Services.AddDbContext<UniShareContext>(options =>
+        options.UseNpgsql(connectionString)
+    );
 }
 
 builder.Services.AddHealthChecks();
