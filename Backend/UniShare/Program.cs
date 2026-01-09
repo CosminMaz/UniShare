@@ -74,7 +74,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+            policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://91.92.142.64:5173")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
@@ -112,11 +112,11 @@ app.UseAuthenticationMiddleware();
 // The internal communication between the proxy and the backend can be HTTP.
 // app.UseHttpsRedirection();
 
+app.MapHub<NotificationsHub>("/api/hub/notifications");
 app.MapItemEndpoints();
 app.MapUserEndpoints();
 app.MapBookingEndpoints();
 app.MapReviewEndpoints();
-app.MapHub<NotificationsHub>("/api/hub/notifications");
 
 app.Run();
 
