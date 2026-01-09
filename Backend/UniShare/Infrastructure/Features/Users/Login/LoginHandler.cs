@@ -33,7 +33,6 @@ public class LoginHandler(
             return Results.Unauthorized();
         }
 
-        // TODO: Replace with real JWT generation.
         var token = $"temp-token-{user.Id}";
 
         var userDto = new UserDto(user.Id, user.FullName, user.Email, user.Role.ToString());
