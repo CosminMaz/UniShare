@@ -5,6 +5,24 @@ import styles from './Dashboard.module.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:5222'
 
+const getApiErrorMessage = (err, defaultMessage) => {
+  if (axios.isAxiosError(err) && err.response) {
+    const errorData = err.response.data
+    if (errorData?.error) return errorData.error
+    if (errorData?.errors) {
+      return Object.entries(errorData.errors)
+        .map(([key, values]) => `${key}: ${values.join(', ')}`)
+        .join('; ')
+    }
+    if (errorData?.message) return errorData.message
+    if (err.response.status === 401) {
+      return 'You are not authenticated. Please log in again.'
+    }
+    return defaultMessage
+  }
+  return err.message || 'An unexpected error occurred.'
+}
+
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [items, setItems] = useState([])
@@ -37,15 +55,10 @@ export default function DashboardPage() {
   const [reviewMessage, setReviewMessage] = useState('');
 
   const formatDailyRate = (value) => {
-    if (value === null || value === undefined) {
-      return 'N/A'
-    }
-
     const parsed = Number(value)
-    if (Number.isNaN(parsed)) {
+    if (value == null || Number.isNaN(parsed)) {
       return 'N/A'
     }
-
     return `$${parsed.toFixed(2)}`
   }
 
@@ -109,11 +122,7 @@ export default function DashboardPage() {
       console.log('Items primite de la API:', data)
       setItems(Array.isArray(data) ? data : [])
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data?.message ?? 'Failed to fetch items')
-      } else {
-        setError(err.message || 'An unexpected error occurred.')
-      }
+      setError(getApiErrorMessage(err, 'Failed to fetch items'))
       console.error('Error fetching items:', err)
     } finally {
       setIsLoading(false)
@@ -142,13 +151,7 @@ export default function DashboardPage() {
       setMyItems(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error('Error fetching my items:', err)
-      if (axios.isAxiosError(err) && err.response) {
-        setMyItemsError(
-          err.response.data?.message ?? 'Failed to fetch your listings.',
-        )
-      } else {
-        setMyItemsError(err.message || 'An unexpected error occurred.')
-      }
+      setMyItemsError(getApiErrorMessage(err, 'Failed to fetch your listings.'))
     } finally {
       setIsLoadingMyItems(false)
     }
@@ -170,20 +173,26 @@ export default function DashboardPage() {
 
       const allBookings = Array.isArray(response.data) ? response.data : []
       
-      // Filter to show only current user's bookings (as borrower and as owner)
       const storedUser = localStorage.getItem('currentUser')
-      if (storedUser) {
+      if (!storedUser) {
+        setBookings(allBookings)
+        setOwnerBookings([])
+        return
+      }
+
+      try {
         const currentUser = JSON.parse(storedUser)
         const userId = currentUser.Id ?? currentUser.id
         const myBookings = allBookings.filter(
-          (booking) => booking.BorrowerId === userId || booking.borrowerId === userId
+          (booking) => (booking.BorrowerId ?? booking.borrowerId) === userId,
         )
         const myOwnerBookings = allBookings.filter(
-          (booking) => booking.OwnerId === userId || booking.ownerId === userId
+          (booking) => (booking.OwnerId ?? booking.ownerId) === userId,
         )
         setBookings(myBookings)
         setOwnerBookings(myOwnerBookings)
-      } else {
+      } catch (e) {
+        console.error('Failed to parse user for booking filter:', e)
         setBookings(allBookings)
         setOwnerBookings([])
       }
@@ -200,13 +209,11 @@ export default function DashboardPage() {
       const token =
         localStorage.getItem('accessToken') ?? localStorage.getItem('token')
 
-      const response = await axios.get(`${API_BASE_URL}/reviews`, {
-        headers: token
-          ? {
-              Authorization: `Bearer ${token}`,
-            }
-          : undefined,
-      })
+      const config = {}
+      if (token) {
+        config.headers = { Authorization: `Bearer ${token}` }
+      }
+      const response = await axios.get(`${API_BASE_URL}/reviews`, config)
 
       setReviews(Array.isArray(response.data) ? response.data : [])
     } catch (err) {
@@ -289,14 +296,7 @@ export default function DashboardPage() {
       fetchMyItems()
     } catch (err) {
       console.error('Error deleting item:', err)
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data
-        setDeleteError(
-          errorData?.message || 'Failed to delete the item. Please try again.',
-        )
-      } else {
-        setDeleteError(err.message || 'An unexpected error occurred.')
-      }
+      setDeleteError(getApiErrorMessage(err, 'Failed to delete the item. Please try again.'))
     }
   }
 
@@ -331,32 +331,33 @@ export default function DashboardPage() {
     setBookingMessage('')
   }
 
+  const validateBookingRequest = (token, startDate, endDate) => {
+    if (!token) {
+      return 'You need to be logged in to make a booking.'
+    }
+    if (!startDate || !endDate) {
+      return 'Please select both start and end dates.'
+    }
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return 'Invalid date format.'
+    }
+    if (end <= start) {
+      return 'End date must be after start date.'
+    }
+    return null
+  }
+
   const handleBookingSubmit = async () => {
     if (!selectedItem) return
 
     const token =
       localStorage.getItem('accessToken') ?? localStorage.getItem('token')
 
-    if (!token) {
-      setError('You need to be logged in to make a booking.')
-      return
-    }
-
-    if (!startDate || !endDate) {
-      setError('Please select both start and end dates.')
-      return
-    }
-
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      setError('Invalid date format.')
-      return
-    }
-
-    if (end <= start) {
-      setError('End date must be after start date.')
+    const validationError = validateBookingRequest(token, startDate, endDate)
+    if (validationError) {
+      setError(validationError)
       return
     }
 
@@ -366,8 +367,8 @@ export default function DashboardPage() {
 
       const payload = {
         ItemId: selectedItem.Id ?? selectedItem.id,
-        StartDate: start.toISOString(),
-        EndDate: end.toISOString(),
+        StartDate: new Date(startDate).toISOString(),
+        EndDate: new Date(endDate).toISOString(),
       }
 
       await axios.post(`${API_BASE_URL}/bookings`, payload, {
@@ -388,26 +389,7 @@ export default function DashboardPage() {
       fetchBookings()
     } catch (err) {
       console.error('Error creating booking:', err)
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data
-        let msg = 'Failed to create booking.'
-
-        if (errorData?.error) {
-          msg = errorData.error
-        } else if (errorData?.errors) {
-          msg = Object.entries(errorData.errors)
-            .map(([key, values]) => `${key}: ${values.join(', ')}`)
-            .join('; ')
-        } else if (errorData?.message) {
-          msg = errorData.message
-        } else if (err.response.status === 401) {
-          msg = 'You are not authenticated. Please log in again.'
-        }
-
-        setError(msg)
-      } else {
-        setError(err.message || 'An unexpected error occurred while booking.')
-      }
+      setError(getApiErrorMessage(err, 'Failed to create booking.'))
     } finally {
       setIsBooking(false)
     }
@@ -454,12 +436,7 @@ export default function DashboardPage() {
       setTimeout(() => setBookingRequestMessage(''), 3000)
     } catch (err) {
       console.error('Error approving booking:', err)
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data
-        setBookingRequestError(errorData?.message || 'Failed to approve booking.')
-      } else {
-        setBookingRequestError(err.message || 'An unexpected error occurred.')
-      }
+      setBookingRequestError(getApiErrorMessage(err, 'Failed to approve booking.'))
     }
   }
 
@@ -494,12 +471,7 @@ export default function DashboardPage() {
       setTimeout(() => setBookingRequestMessage(''), 3000)
     } catch (err) {
       console.error('Error rejecting booking:', err)
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data
-        setBookingRequestError(errorData?.message || 'Failed to reject booking.')
-      } else {
-        setBookingRequestError(err.message || 'An unexpected error occurred.')
-      }
+      setBookingRequestError(getApiErrorMessage(err, 'Failed to reject booking.'))
     }
   }
 
@@ -532,12 +504,7 @@ export default function DashboardPage() {
       setTimeout(() => setBookingRequestMessage(''), 3000);
     } catch (err) {
       console.error('Error completing booking:', err);
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data;
-        setBookingRequestError(errorData?.error || 'Failed to mark booking as returned.');
-      } else {
-        setBookingRequestError(err.message || 'An unexpected error occurred.');
-      }
+      setBookingRequestError(getApiErrorMessage(err, 'Failed to mark booking as returned.'))
     }
   };
 
@@ -605,12 +572,7 @@ export default function DashboardPage() {
 
     } catch (err) {
       console.error('Error submitting review:', err);
-      if (axios.isAxiosError(err) && err.response) {
-        const errorData = err.response.data;
-        setReviewError(errorData?.error || 'Failed to submit review.');
-      } else {
-        setReviewError(err.message || 'An unexpected error occurred.');
-      }
+      setReviewError(getApiErrorMessage(err, 'Failed to submit review.'))
     }
   };
 
