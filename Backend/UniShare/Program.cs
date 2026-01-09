@@ -120,4 +120,4 @@ app.MapBookingEndpoints();
 app.MapReviewEndpoints();
 app.MapHub<NotificationsHub>("/hub/notifications");
 
-app.Run();
+await app.RunAsync();
