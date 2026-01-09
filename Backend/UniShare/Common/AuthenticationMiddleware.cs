@@ -8,6 +8,12 @@ public class AuthenticationMiddleware(RequestDelegate next)
         var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
         var token = authHeader?.Split(" ").LastOrDefault();
 
+        // For SignalR WebSocket connections, the token is passed in the query string.
+        if (string.IsNullOrEmpty(token) && context.Request.Query.TryGetValue("access_token", out var accessToken))
+        {
+            token = accessToken;
+        }
+
         if (!string.IsNullOrEmpty(token) && token.StartsWith("temp-token-"))
         {
             var userIdString = token.Replace("temp-token-", "");

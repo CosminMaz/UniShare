@@ -116,7 +116,7 @@ app.MapItemEndpoints();
 app.MapUserEndpoints();
 app.MapBookingEndpoints();
 app.MapReviewEndpoints();
-app.MapHub<NotificationsHub>("/hub/notifications");
+app.MapHub<NotificationsHub>("/api/hub/notifications");
 
 app.Run();
 
