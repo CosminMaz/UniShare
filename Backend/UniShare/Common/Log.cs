@@ -2,28 +2,29 @@ namespace UniShare.Common
 {
     public static class Log
     {
-        private static readonly string LogFilePath;
+        private static readonly string LogFilePath = InitializeLogFilePath();
         private static readonly object Lock = new object();
 
-        static Log()
+        private static string InitializeLogFilePath()
         {
             try
             {
                 // Go up from bin/Debug/net9.0 to the project root
                 var projectRoot = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
                 var logDirectory = projectRoot != null ? Path.Combine(projectRoot, "logs") : "logs";
-                LogFilePath = Path.Combine(logDirectory, "log.txt");
+                var logFilePath = Path.Combine(logDirectory, "log.txt");
 
                 if (!Directory.Exists(logDirectory))
                 {
                     Directory.CreateDirectory(logDirectory);
                 }
+                return logFilePath;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to create log directory: {ex.Message}");
                 // Fallback to a local log file if directory creation fails
-                LogFilePath = "log.txt";
+                return "log.txt";
             }
         }
 

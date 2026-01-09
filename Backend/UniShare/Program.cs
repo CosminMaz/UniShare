@@ -98,7 +98,7 @@ if (!app.Environment.IsEnvironment("Testing"))
     using (var scope = app.Services.CreateScope())
     {
         var ctx = scope.ServiceProvider.GetRequiredService<UniShareContext>();
-        ctx.Database.Migrate();
+        await ctx.Database.MigrateAsync();
     }
 }
 
@@ -121,5 +121,3 @@ app.MapReviewEndpoints();
 app.MapHub<NotificationsHub>("/hub/notifications");
 
 app.Run();
-
-public partial class Program { }
