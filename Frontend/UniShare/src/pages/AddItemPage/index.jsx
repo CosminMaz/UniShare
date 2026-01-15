@@ -399,7 +399,7 @@ export default function AddItemPage() {
               >
                 {isLoading ? (
                   <>
-                    <span className={styles.loadingSpinner} />
+                    <span className={styles.loadingSpinner} />{' '}
                     Adding...
                   </>
                 ) : (
