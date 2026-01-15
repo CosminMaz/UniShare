@@ -793,6 +793,247 @@ export default function DashboardPage() {
     )
   }
 
+  let myBookingsContent
+  if (isLoadingBookings) {
+    myBookingsContent = (
+      <div className={styles.loadingMessage}>Loading bookings...</div>
+    )
+  } else if (bookings.length === 0) {
+    myBookingsContent = (
+      <div className={styles.emptyMessage}>
+        You don't have any bookings yet. Borrow an item to get started!
+      </div>
+    )
+  } else {
+    myBookingsContent = (
+      <div className={styles.bookingsList}>
+        {bookings.map((booking) => {
+          // Find the item for this booking
+          const bookedItem = items.find(
+            (item) =>
+              item.Id === booking.ItemId || item.id === booking.ItemId,
+          )
+
+          const statusColors = {
+            Pending: '#ffc107',
+            Approved: '#28a745',
+            Active: '#17a2b8',
+            Completed: '#6c757d',
+            Canceled: '#dc3545',
+            Rejected: '#dc3545',
+          }
+
+          const status = getBookingStatus(booking)
+          const statusColor = statusColors[status] || '#6c757d'
+
+          return (
+            <div key={booking.Id || booking.id} className={styles.bookingCard}>
+              <div className={styles.bookingHeader}>
+                <div className={styles.bookingItemInfo}>
+                  <h4 className={styles.bookingItemTitle}>
+                    {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
+                  </h4>
+                  <span
+                    className={styles.bookingStatus}
+                    style={{ backgroundColor: statusColor }}
+                  >
+                    {status}
+                  </span>
+                </div>
+              </div>
+              <div className={styles.bookingDetails}>
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>Start Date:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.StartDate || booking.startDate
+                      ? new Date(
+                          booking.StartDate || booking.startDate,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>End Date:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.EndDate || booking.endDate
+                      ? new Date(
+                          booking.EndDate || booking.endDate,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+                {booking.TotalPrice !== undefined ||
+                booking.totalPrice !== undefined ? (
+                  <div className={styles.bookingDetailRow}>
+                    <span className={styles.bookingDetailLabel}>Total Price:</span>
+                    <span className={styles.bookingDetailValue}>
+                      $
+                      {(
+                        booking.TotalPrice || booking.totalPrice || 0
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                ) : null}
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>Requested:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.RequestedAt || booking.requestedAt
+                      ? new Date(
+                          booking.RequestedAt || booking.requestedAt,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+              </div>
+              {status === 'Completed' && !hasSubmittedReview(booking.Id || booking.id) && (
+                <div className={styles.bookingActions}>
+                  <button
+                    className={styles.reviewBtn}
+                    onClick={() => handleWriteReviewClick(booking)}
+                  >
+                    Write a Review
+                  </button>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  let ownerBookingsContent
+  if (isLoadingBookings) {
+    ownerBookingsContent = (
+      <div className={styles.loadingMessage}>Loading requests...</div>
+    )
+  } else if (ownerBookings.length === 0) {
+    ownerBookingsContent = (
+      <div className={styles.emptyMessage}>
+        No booking requests yet. When someone borrows your items, they'll appear here.
+      </div>
+    )
+  } else {
+    ownerBookingsContent = (
+      <div className={styles.bookingsList}>
+        {ownerBookings.map((booking) => {
+          // Find the item for this booking
+          const bookedItem = items.find(
+            (item) =>
+              item.Id === booking.ItemId || item.id === booking.ItemId,
+          )
+
+          const status = getBookingStatus(booking)
+          const isPending = status === 'Pending'
+          const canComplete = status === 'Approved' || status === 'Active'
+
+          return (
+            <div key={booking.Id || booking.id} className={styles.bookingCard}>
+              <div className={styles.bookingHeader}>
+                <div className={styles.bookingItemInfo}>
+                  <h4 className={styles.bookingItemTitle}>
+                    {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
+                  </h4>
+                  <span
+                    className={styles.bookingStatus}
+                    style={{
+                      backgroundColor:
+                        status === 'Pending'
+                          ? '#ffc107'
+                          : status === 'Approved'
+                            ? '#28a745'
+                            : status === 'Rejected'
+                              ? '#dc3545'
+                              : '#6c757d',
+                    }}
+                  >
+                    {status}
+                  </span>
+                </div>
+              </div>
+              <div className={styles.bookingDetails}>
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>Start Date:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.StartDate || booking.startDate
+                      ? new Date(
+                          booking.StartDate || booking.startDate,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>End Date:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.EndDate || booking.endDate
+                      ? new Date(
+                          booking.EndDate || booking.endDate,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+                {booking.TotalPrice !== undefined ||
+                booking.totalPrice !== undefined ? (
+                  <div className={styles.bookingDetailRow}>
+                    <span className={styles.bookingDetailLabel}>Total Price:</span>
+                    <span className={styles.bookingDetailValue}>
+                      $
+                      {(
+                        booking.TotalPrice || booking.totalPrice || 0
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+                ) : null}
+                <div className={styles.bookingDetailRow}>
+                  <span className={styles.bookingDetailLabel}>Requested:</span>
+                  <span className={styles.bookingDetailValue}>
+                    {booking.RequestedAt || booking.requestedAt
+                      ? new Date(
+                          booking.RequestedAt || booking.requestedAt,
+                        ).toLocaleDateString('en-US')
+                      : 'N/A'}
+                  </span>
+                </div>
+              </div>
+              <div className={styles.bookingActions}>
+                  {isPending && (
+                    <>
+                      <button
+                        className={styles.approveBtn}
+                        onClick={() =>
+                          handleApproveBooking(booking.Id || booking.id)
+                        }
+                      >
+                        ✓ Approve
+                      </button>
+                      <button
+                        className={styles.rejectBtn}
+                        onClick={() =>
+                          handleRejectBooking(booking.Id || booking.id)
+                        }
+                      >
+                        ✗ Reject
+                      </button>
+                    </>
+                  )}
+                  {canComplete && (
+                    <button
+                      className={styles.completeBtn}
+                      onClick={() =>
+                        handleCompleteBooking(booking.Id || booking.id)
+                      }
+                    >
+                      Mark as Returned
+                    </button>
+                  )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <div className={styles.container}>
       <nav className={styles.navbar}>
@@ -896,107 +1137,7 @@ export default function DashboardPage() {
             Track the items you are borrowing from others
           </p>
 
-          {isLoadingBookings ? (
-            <div className={styles.loadingMessage}>Loading bookings...</div>
-          ) : bookings.length === 0 ? (
-            <div className={styles.emptyMessage}>
-              You don't have any bookings yet. Borrow an item to get started!
-            </div>
-          ) : (
-            <div className={styles.bookingsList}>
-              {bookings.map((booking) => {
-                // Find the item for this booking
-                const bookedItem = items.find(
-                  (item) =>
-                    item.Id === booking.ItemId || item.id === booking.ItemId
-                )
-
-                const statusColors = {
-                  Pending: '#ffc107',
-                  Approved: '#28a745',
-                  Active: '#17a2b8',
-                  Completed: '#6c757d',
-                  Canceled: '#dc3545',
-                  Rejected: '#dc3545',
-                }
-
-                const status = getBookingStatus(booking)
-                const statusColor = statusColors[status] || '#6c757d'
-
-                return (
-                  <div key={booking.Id || booking.id} className={styles.bookingCard}>
-                    <div className={styles.bookingHeader}>
-                      <div className={styles.bookingItemInfo}>
-                        <h4 className={styles.bookingItemTitle}>
-                          {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
-                        </h4>
-                        <span
-                          className={styles.bookingStatus}
-                          style={{ backgroundColor: statusColor }}
-                        >
-                          {status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className={styles.bookingDetails}>
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>Start Date:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.StartDate || booking.startDate
-                            ? new Date(
-                                booking.StartDate || booking.startDate,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>End Date:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.EndDate || booking.endDate
-                            ? new Date(
-                                booking.EndDate || booking.endDate,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                      {booking.TotalPrice !== undefined ||
-                      booking.totalPrice !== undefined ? (
-                        <div className={styles.bookingDetailRow}>
-                          <span className={styles.bookingDetailLabel}>Total Price:</span>
-                          <span className={styles.bookingDetailValue}>
-                            $
-                            {(
-                              booking.TotalPrice || booking.totalPrice || 0
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                      ) : null}
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>Requested:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.RequestedAt || booking.requestedAt
-                            ? new Date(
-                                booking.RequestedAt || booking.requestedAt,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                    </div>
-                    {status === 'Completed' && !hasSubmittedReview(booking.Id || booking.id) && (
-                      <div className={styles.bookingActions}>
-                        <button
-                          className={styles.reviewBtn}
-                          onClick={() => handleWriteReviewClick(booking)}
-                        >
-                          Write a Review
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          )}
+          {myBookingsContent}
         </section>
 
         {/* Booking Requests Section (where user is owner) */}
@@ -1018,130 +1159,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {isLoadingBookings ? (
-            <div className={styles.loadingMessage}>Loading requests...</div>
-          ) : ownerBookings.length === 0 ? (
-            <div className={styles.emptyMessage}>
-              No booking requests yet. When someone borrows your items, they'll appear here.
-            </div>
-          ) : (
-            <div className={styles.bookingsList}>
-              {ownerBookings.map((booking) => {
-                // Find the item for this booking
-                const bookedItem = items.find(
-                  (item) =>
-                    item.Id === booking.ItemId || item.id === booking.ItemId
-                )
-
-                const status = getBookingStatus(booking)
-                const isPending = status === 'Pending'
-                const canComplete = status === 'Approved' || status === 'Active'
-
-                return (
-                  <div key={booking.Id || booking.id} className={styles.bookingCard}>
-                    <div className={styles.bookingHeader}>
-                      <div className={styles.bookingItemInfo}>
-                        <h4 className={styles.bookingItemTitle}>
-                          {bookedItem?.Title || bookedItem?.title || 'Unknown Item'}
-                        </h4>
-                        <span
-                          className={styles.bookingStatus}
-                          style={{
-                            backgroundColor:
-                              status === 'Pending'
-                                ? '#ffc107'
-                                : status === 'Approved'
-                                  ? '#28a745'
-                                  : status === 'Rejected'
-                                    ? '#dc3545'
-                                    : '#6c757d',
-                          }}
-                        >
-                          {status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className={styles.bookingDetails}>
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>Start Date:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.StartDate || booking.startDate
-                            ? new Date(
-                                booking.StartDate || booking.startDate,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>End Date:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.EndDate || booking.endDate
-                            ? new Date(
-                                booking.EndDate || booking.endDate,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                      {booking.TotalPrice !== undefined ||
-                      booking.totalPrice !== undefined ? (
-                        <div className={styles.bookingDetailRow}>
-                          <span className={styles.bookingDetailLabel}>Total Price:</span>
-                          <span className={styles.bookingDetailValue}>
-                            $
-                            {(
-                              booking.TotalPrice || booking.totalPrice || 0
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                      ) : null}
-                      <div className={styles.bookingDetailRow}>
-                        <span className={styles.bookingDetailLabel}>Requested:</span>
-                        <span className={styles.bookingDetailValue}>
-                          {booking.RequestedAt || booking.requestedAt
-                            ? new Date(
-                                booking.RequestedAt || booking.requestedAt,
-                              ).toLocaleDateString('en-US')
-                            : 'N/A'}
-                        </span>
-                      </div>
-                    </div>
-                    <div className={styles.bookingActions}>
-                        {isPending && (
-                          <>
-                            <button
-                              className={styles.approveBtn}
-                              onClick={() =>
-                                handleApproveBooking(booking.Id || booking.id)
-                              }
-                            >
-                              ✓ Approve
-                            </button>
-                            <button
-                              className={styles.rejectBtn}
-                              onClick={() =>
-                                handleRejectBooking(booking.Id || booking.id)
-                              }
-                            >
-                              ✗ Reject
-                            </button>
-                          </>
-                        )}
-                        {canComplete && (
-                          <button
-                            className={styles.completeBtn}
-                            onClick={() =>
-                              handleCompleteBooking(booking.Id || booking.id)
-                            }
-                          >
-                            Mark as Returned
-                          </button>
-                        )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
+          {ownerBookingsContent}
         </section>
         </div>
 
