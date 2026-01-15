@@ -31,7 +31,7 @@ export function BookingModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.modalContent} onMouseOver={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>
             Book {selectedItem?.Title || 'Item'}

@@ -38,7 +38,7 @@ export function ReviewModal({
               min="1"
               max="5"
               value={rating}
-              onChange={(e) => onRatingChange?.(parseInt(e.target.value, 10))}
+              onChange={(e) => onRatingChange?.(Number.parseInt(e.target.value, 10))}
               className={styles.modalInput}
               required
             />
