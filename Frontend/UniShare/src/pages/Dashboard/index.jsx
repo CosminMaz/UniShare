@@ -699,6 +699,100 @@ export default function DashboardPage() {
     )
   }
 
+  let myItemsContent
+  if (isLoadingMyItems) {
+    myItemsContent = (
+      <div className={styles.loadingMessage}>Loading your listings...</div>
+    )
+  } else if (myItems.length === 0) {
+    myItemsContent = (
+      <div className={styles.emptyMessage}>
+        You haven't listed any items yet. Add one to start lending!
+      </div>
+    )
+  } else {
+    myItemsContent = (
+      <div className={styles.itemsScroller}>
+        <div className={styles.itemsTrack}>
+          {myItems.map((item) => {
+            const isAvailable = item.IsAvailable ?? item.isAvailable ?? true
+            return (
+              <div key={item.Id || item.id} className={styles.itemCard}>
+                {(item.imageUrl || item.ImageUrl) && (
+                  <div className={styles.itemImage}>
+                    <img
+                      src={item.imageUrl || item.ImageUrl}
+                      alt={item.Title}
+                      onError={e => {
+                        e.target.src =
+                          'https://via.placeholder.com/200?text=No+Image'
+                      }}
+                    />
+                  </div>
+                )}
+                <div className={styles.itemHeader}>
+                  <h4 className={styles.itemTitle}>
+                    {item.Title || 'No title'}
+                  </h4>
+                  <span className={styles.itemBadge}>
+                    {item.Categ || 'General'}
+                  </span>
+                </div>
+                <p className={styles.itemDescription}>
+                  {item.Description || 'No description'}
+                </p>
+                <div className={styles.itemDetails}>
+                  <div className={styles.detailRow}>
+                    <span className={styles.detailLabel}>Condition:</span>
+                    <span className={styles.detailValue}>
+                      {item.Cond || 'N/A'}
+                    </span>
+                  </div>
+                  <div className={styles.detailRow}>
+                    <span className={styles.detailLabel}>Price/day:</span>
+                    <span className={styles.detailValue}>
+                      {formatDailyRate(item.DailyRate ?? item.dailyRate)}
+                    </span>
+                  </div>
+                  <div className={styles.detailRow}>
+                    <span className={styles.detailLabel}>Added:</span>
+                    <span className={styles.detailValue}>
+                      {item.CreatedAt
+                        ? new Date(item.CreatedAt).toLocaleDateString('en-US')
+                        : 'N/A'}
+                    </span>
+                  </div>
+                  <div className={styles.detailRow}>
+                    <span className={styles.detailLabel}>Status:</span>
+                    <span className={styles.detailValue}>
+                      <span
+                        className={`${styles.availabilityPill} ${
+                          isAvailable
+                            ? styles.availabilityAvailable
+                            : styles.availabilityUnavailable
+                        }`}
+                      >
+                        {isAvailable ? 'Available' : 'Booked'}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div className={styles.itemFooter}>
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => handleDeleteItem(item)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.container}>
       <nav className={styles.navbar}>
@@ -790,92 +884,7 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {isLoadingMyItems ? (
-            <div className={styles.loadingMessage}>Loading your listings...</div>
-          ) : myItems.length === 0 ? (
-            <div className={styles.emptyMessage}>
-              You haven't listed any items yet. Add one to start lending!
-            </div>
-          ) : (
-            <div className={styles.itemsScroller}>
-              <div className={styles.itemsTrack}>
-                {myItems.map((item) => {
-                  const isAvailable = item.IsAvailable ?? item.isAvailable ?? true
-                  return (
-                    <div key={item.Id || item.id} className={styles.itemCard}>
-                      {(item.imageUrl || item.ImageUrl) && (
-                        <div className={styles.itemImage}>
-                          <img
-                            src={item.imageUrl || item.ImageUrl}
-                            alt={item.Title}
-                            onError={e => {
-                              e.target.src =
-                                'https://via.placeholder.com/200?text=No+Image'
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div className={styles.itemHeader}>
-                        <h4 className={styles.itemTitle}>
-                          {item.Title || 'No title'}
-                        </h4>
-                        <span className={styles.itemBadge}>
-                          {item.Categ || 'General'}
-                        </span>
-                      </div>
-                      <p className={styles.itemDescription}>
-                        {item.Description || 'No description'}
-                      </p>
-                      <div className={styles.itemDetails}>
-                        <div className={styles.detailRow}>
-                          <span className={styles.detailLabel}>Condition:</span>
-                          <span className={styles.detailValue}>
-                            {item.Cond || 'N/A'}
-                          </span>
-                        </div>
-                        <div className={styles.detailRow}>
-                          <span className={styles.detailLabel}>Price/day:</span>
-                          <span className={styles.detailValue}>
-                            {formatDailyRate(item.DailyRate ?? item.dailyRate)}
-                          </span>
-                        </div>
-                        <div className={styles.detailRow}>
-                          <span className={styles.detailLabel}>Added:</span>
-                          <span className={styles.detailValue}>
-                            {item.CreatedAt
-                              ? new Date(item.CreatedAt).toLocaleDateString('en-US')
-                              : 'N/A'}
-                          </span>
-                        </div>
-                        <div className={styles.detailRow}>
-                          <span className={styles.detailLabel}>Status:</span>
-                          <span className={styles.detailValue}>
-                            <span
-                              className={`${styles.availabilityPill} ${
-                                isAvailable
-                                  ? styles.availabilityAvailable
-                                  : styles.availabilityUnavailable
-                              }`}
-                            >
-                              {isAvailable ? 'Available' : 'Booked'}
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                      <div className={styles.itemFooter}>
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={() => handleDeleteItem(item)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+          {myItemsContent}
         </section>
         </div>
 
