@@ -126,9 +126,6 @@ export default function AddItemPage() {
       setIsLoading(false)
       return
     }
-
-    const user = JSON.parse(storedUser)
-
     // 2. luam token-ul (suporta atat "accessToken" cat si "token")
     const token =
       localStorage.getItem('accessToken') ?? localStorage.getItem('token')
@@ -137,17 +134,6 @@ export default function AddItemPage() {
       setError('You are not authenticated. Please log in.')
       setIsLoading(false)
       return
-    }
-
-    // 3. construim payload-ul trimis la backend
-    const payload = {
-      ownerId: user.id ?? user.Id, // depinde cum vine din backend
-      title: formData.title.trim(),
-      description: formData.description.trim(),
-      categ: CATEGORY_MAP[formData.category],
-      cond: CONDITION_MAP[formData.condition],
-      dailyRate: Number.parseFloat(formData.dailyRate),
-      imageUrl: formData.imageUrl.trim()
     }
 
     setSuccess(true)
@@ -164,7 +150,7 @@ export default function AddItemPage() {
     localStorage.setItem('refreshItems', 'true')
 
     setTimeout(() => {
-      window.location.href = '/dashboard'
+      globalThis.location.href = '/dashboard'
     }, 1500)
   } catch (err) {
     console.error('Error adding item:', err)
@@ -197,7 +183,7 @@ export default function AddItemPage() {
 
 
   const handleCancel = () => {
-    window.location.href = '/dashboard'
+    globalThis.location.href = '/dashboard'
   }
 
   return (
