@@ -13,20 +13,27 @@ export function DeleteModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div
+      <dialog
         className={styles.modalContent}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
+        aria-modal="true"
+        aria-labelledby="delete-modal-title"
+        aria-describedby="delete-modal-description"
         tabIndex={-1}
+        role="dialog"
+        open
       >
         <div className={styles.modalHeader}>
-          <h3 className={styles.modalTitle}>Delete item</h3>
+          <h3 id="delete-modal-title" className={styles.modalTitle}>
+            Delete item
+          </h3>
           <button className={styles.modalCloseBtn} onClick={onCancel}>
             ×
           </button>
         </div>
         <div className={styles.modalBody}>
-          <p>Are you sure you want to delete "{itemTitle || 'this item'}"?</p>
+          <p id="delete-modal-description">
+            Are you sure you want to delete "{itemTitle || 'this item'}"?
+          </p>
           <MessageBanner type="error">{error}</MessageBanner>
         </div>
         <div className={styles.modalFooter}>
@@ -37,7 +44,7 @@ export function DeleteModal({
             Delete
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   )
 }
