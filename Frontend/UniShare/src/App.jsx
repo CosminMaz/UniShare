@@ -5,7 +5,7 @@ import DashboardPage from './pages/Dashboard'
 import AddItemPage from './pages/AddItemPage'
 
 function App() {
-  const path = window.location.pathname
+  const path = globalThis.location.pathname
 
   if (path === '/register') {
     return <RegisterPage />
