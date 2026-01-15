@@ -18,7 +18,11 @@ export function ReviewModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>
             Write a Review for {itemTitle || 'Item'}
