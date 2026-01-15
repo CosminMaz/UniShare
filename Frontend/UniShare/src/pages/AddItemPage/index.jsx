@@ -264,7 +264,7 @@ export default function AddItemPage() {
           )}
 
           {success && (
-            <output className={styles.successMessage} role="status">
+            <output className={styles.successMessage}>
               ✓ Item added successfully! Redirecting...
             </output>
           )}
