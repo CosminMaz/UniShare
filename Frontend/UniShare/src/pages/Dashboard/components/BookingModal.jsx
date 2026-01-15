@@ -31,11 +31,11 @@ export function BookingModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div
+      <dialog
         className={styles.modalContent}
-        role="dialog"
         aria-modal="true"
         tabIndex={-1}
+        open
       >
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>
@@ -107,7 +107,7 @@ export function BookingModal({
             {isBooking ? 'Processing...' : 'Confirm Booking'}
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   )
 }
