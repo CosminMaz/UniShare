@@ -614,6 +614,7 @@ export default function DashboardPage() {
 
   const bookingOverlayKeyDown = createOverlayKeyDownHandler(handleCloseModal)
   const reviewOverlayKeyDown = createOverlayKeyDownHandler(handleCloseReviewModal)
+  const deleteOverlayKeyDown = createOverlayKeyDownHandler(cancelDelete)
 
   const bookingStatusColors = {
     Pending: '#ffc107',
@@ -645,7 +646,7 @@ export default function DashboardPage() {
             {formatBookingDate(booking.EndDate ?? booking.endDate)}
           </span>
         </div>
-        {totalPrice !== undefined ? (
+        {totalPrice != null ? (
           <div className={styles.bookingDetailRow}>
             <span className={styles.bookingDetailLabel}>Total Price:</span>
             <span className={styles.bookingDetailValue}>
@@ -1374,7 +1375,13 @@ export default function DashboardPage() {
       )}
 
       {showDeleteModal && (
-        <div className={styles.modalOverlay} onClick={cancelDelete}>
+        <div
+          className={styles.modalOverlay}
+          onClick={cancelDelete}
+          onKeyDown={deleteOverlayKeyDown}
+          role="button"
+          tabIndex={0}
+        >
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
