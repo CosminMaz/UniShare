@@ -38,8 +38,11 @@ export function ReviewModal({
           <MessageBanner type="success">{message}</MessageBanner>
 
           <div className={styles.formGroup}>
-            <label className={styles.modalLabel}>Rating</label>
+            <label htmlFor="reviewRating" className={styles.modalLabel}>
+              Rating
+            </label>
             <input
+              id="reviewRating"
               type="number"
               min="1"
               max="5"
