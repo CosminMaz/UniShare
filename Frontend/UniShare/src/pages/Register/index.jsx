@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
       // Redirect to login page after 2 seconds
       setTimeout(() => {
-        window.location.href = '/login'
+        globalThis.location.href = '/login'
       }, 2000)
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {

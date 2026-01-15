@@ -48,7 +48,7 @@ export default function LoginPage() {
         localStorage.setItem('currentUser', JSON.stringify(user))
       }
 
-      window.location.href = '/dashboard'
+      globalThis.location.href = '/dashboard'
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         // Use the error message from the API, or a default one
