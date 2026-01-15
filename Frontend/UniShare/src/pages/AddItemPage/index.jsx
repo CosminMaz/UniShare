@@ -211,7 +211,7 @@ export default function AddItemPage() {
         <div className={styles.navContent}>
           <h1 
             className={styles.title}
-            onClick={() => window.location.href = '/dashboard'}
+            onClick={() => globalThis.location.href = '/dashboard'}
           >
             UniShare
           </h1>
