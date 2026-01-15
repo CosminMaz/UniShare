@@ -209,12 +209,9 @@ export default function AddItemPage() {
     <div className={styles.container}>
       <nav className={styles.navbar}>
         <div className={styles.navContent}>
-          <h1 
-            className={styles.title}
-            onClick={() => globalThis.location.href = '/dashboard'}
-          >
-            UniShare
-          </h1>
+          <a href="/dashboard" style={{ color: 'inherit', textDecoration: 'none' }}>
+            <h1 className={styles.title}>UniShare</h1>
+          </a>
           <button className={styles.backBtn} onClick={handleCancel}>
             ← Back to Dashboard
           </button>
