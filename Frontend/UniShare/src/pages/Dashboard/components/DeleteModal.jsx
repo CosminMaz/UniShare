@@ -13,7 +13,12 @@ export function DeleteModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        tabIndex={-1}
+      >
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>Delete item</h3>
           <button className={styles.modalCloseBtn} onClick={onCancel}>
