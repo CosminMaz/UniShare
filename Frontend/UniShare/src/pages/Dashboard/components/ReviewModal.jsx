@@ -22,9 +22,13 @@ export function ReviewModal({
         className={styles.modalContent}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reviewModalTitle"
+        tabIndex={-1}
       >
         <div className={styles.modalHeader}>
-          <h3 className={styles.modalTitle}>
+          <h3 id="reviewModalTitle" className={styles.modalTitle}>
             Write a Review for {itemTitle || 'Item'}
           </h3>
           <button className={styles.modalCloseBtn} onClick={onClose}>
