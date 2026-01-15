@@ -614,13 +614,6 @@ export default function DashboardPage() {
     globalThis.location.href = '/'
   }
 
-  const handleOverlayKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      handleCloseModal()
-    }
-  }
-
   let itemsContent
   if (isLoading) {
     itemsContent = (
@@ -1239,10 +1232,6 @@ export default function DashboardPage() {
       {showBookingModal && (
         <div
           className={styles.modalOverlay}
-          onClick={handleCloseModal}
-          onKeyDown={handleOverlayKeyDown}
-          role="button"
-          tabIndex={0}
         >
           <div
             className={styles.modalContent}
@@ -1339,7 +1328,7 @@ export default function DashboardPage() {
 
       {/* Review Modal */}
       {showReviewModal && (
-        <div className={styles.modalOverlay} onClick={handleCloseReviewModal}>
+        <div className={styles.modalOverlay}>
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
@@ -1411,7 +1400,7 @@ export default function DashboardPage() {
       )}
 
       {showDeleteModal && (
-        <div className={styles.modalOverlay} onClick={cancelDelete}>
+        <div className={styles.modalOverlay}>
           <div
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
