@@ -1145,9 +1145,9 @@ export default function DashboardPage() {
           )}
 
           {bookingRequestMessage && !bookingRequestError && (
-            <div className={styles.successMessage} role="status">
+            <output className={styles.successMessage}>
               {bookingRequestMessage}
-            </div>
+            </output>
           )}
 
           {ownerBookingsContent}
@@ -1362,9 +1362,9 @@ export default function DashboardPage() {
                 </div>
               )}
               {reviewMessage && (
-                <div className={styles.successMessage} role="status">
+                <output className={styles.successMessage}>
                   {reviewMessage}
-                </div>
+                </output>
               )}
               <div className={styles.formGroup}>
                 <label className={styles.modalLabel}>Rating</label>
