@@ -19,7 +19,6 @@ export function DeleteModal({
         aria-labelledby="delete-modal-title"
         aria-describedby="delete-modal-description"
         tabIndex={-1}
-        role="dialog"
         open
       >
         <div className={styles.modalHeader}>
