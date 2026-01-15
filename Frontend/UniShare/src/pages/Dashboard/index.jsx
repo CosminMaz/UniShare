@@ -340,7 +340,7 @@ export default function DashboardPage() {
     }
     const start = new Date(startDate)
     const end = new Date(endDate)
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
       return 'Invalid date format.'
     }
     if (end <= start) {
@@ -577,7 +577,7 @@ export default function DashboardPage() {
   };
 
   const handleNavigateToAddItem = () => {
-    window.location.href = '/add-item'
+    globalThis.location.href = '/add-item'
   }
 
   const formatStatValue = (value) =>
@@ -602,7 +602,94 @@ export default function DashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('currentUser')
-    window.location.href = '/'
+    globalThis.location.href = '/'
+  }
+
+  let itemsContent
+  if (isLoading) {
+    itemsContent = (
+      <div className={styles.loadingMessage}>Loading Items...</div>
+    )
+  } else if (items.length === 0) {
+    itemsContent = (
+      <div className={styles.emptyMessage}>
+        There are no items available at this time.
+      </div>
+    )
+  } else {
+    itemsContent = (
+      <div className={styles.itemsGrid}>
+        {items.map(item => (
+          <div key={item.Id || item.id} className={styles.itemCard}>
+            {(item.imageUrl || item.ImageUrl) && (
+              <div className={styles.itemImage}>
+                <img
+                  src={item.imageUrl || item.ImageUrl}
+                  alt={item.Title}
+                  onError={e => {
+                    e.target.src =
+                      'https://via.placeholder.com/200?text=No+Image'
+                  }}
+                />
+              </div>
+            )}
+            <div className={styles.itemHeader}>
+              <h4 className={styles.itemTitle}>
+                {item.Title || 'No title'}
+              </h4>
+              <span className={styles.itemBadge}>
+                {item.Categ || 'General'}
+              </span>
+            </div>
+            <p className={styles.itemDescription}>
+              {item.Description || 'No description'}
+            </p>
+            <div className={styles.itemDetails}>
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Condition:</span>
+                <span className={styles.detailValue}>
+                  {item.Cond || 'N/A'}
+                </span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Price/day:</span>
+                <span className={styles.detailValue}>
+                  {item.DailyRate
+                    ? `$${item.DailyRate.toFixed(2)}`
+                    : 'N/A'}
+                </span>
+              </div>
+              <div className={styles.detailRow}>
+                <span className={styles.detailLabel}>Added:</span>
+                <span className={styles.detailValue}>
+                  {item.CreatedAt
+                    ? new Date(item.CreatedAt).toLocaleDateString('en-US')
+                    : 'N/A'}
+                </span>
+              </div>
+            </div>
+            <div className={styles.itemFooter}>
+              {user && (user.Id ?? user.id) === (item.OwnerId ?? item.ownerId) ? (
+                <button
+                  className={styles.deleteBtn}
+                  onClick={() => handleDeleteItem(item)}
+                >
+                  Delete
+                </button>
+              ) : (
+                <button
+                  className={styles.borrowBtn}
+                  onClick={() => handleBorrowClick(item)}
+                  disabled={isBooking}
+                >
+                  Borrow
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   return (
@@ -667,95 +754,17 @@ export default function DashboardPage() {
           )}
 
           {bookingMessage && !error && (
-            <div className={styles.successMessage} role="status">
+            <output className={styles.successMessage}>
               {bookingMessage}
-            </div>
+            </output>
           )}
           {deleteMessage && !deleteError && (
-            <div className={styles.successMessage} role="status">
+            <output className={styles.successMessage}>
               {deleteMessage}
-            </div>
+            </output>
           )}
 
-          {isLoading ? (
-            <div className={styles.loadingMessage}>Loading Items...</div>
-          ) : items.length === 0 ? (
-            <div className={styles.emptyMessage}>
-              There are no items available at this time.
-            </div>
-          ) : (
-            <div className={styles.itemsGrid}>
-              {items.map(item => (
-                <div key={item.Id || item.id} className={styles.itemCard}>
-                  {(item.imageUrl || item.ImageUrl) && (
-                    <div className={styles.itemImage}>
-                      <img
-                        src={item.imageUrl || item.ImageUrl}
-                        alt={item.Title}
-                        onError={e => {
-                          e.target.src =
-                            'https://via.placeholder.com/200?text=No+Image'
-                        }}
-                      />
-                    </div>
-                  )}
-                  <div className={styles.itemHeader}>
-                    <h4 className={styles.itemTitle}>
-                      {item.Title || 'No title'}
-                    </h4>
-                    <span className={styles.itemBadge}>
-                      {item.Categ || 'General'}
-                    </span>
-                  </div>
-                  <p className={styles.itemDescription}>
-                    {item.Description || 'No description'}
-                  </p>
-                  <div className={styles.itemDetails}>
-                    <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Condition:</span>
-                      <span className={styles.detailValue}>
-                        {item.Cond || 'N/A'}
-                      </span>
-                    </div>
-                    <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Price/day:</span>
-                      <span className={styles.detailValue}>
-                        {item.DailyRate
-                          ? `$${item.DailyRate.toFixed(2)}`
-                          : 'N/A'}
-                      </span>
-                    </div>
-                    <div className={styles.detailRow}>
-                      <span className={styles.detailLabel}>Added:</span>
-                      <span className={styles.detailValue}>
-                        {item.CreatedAt
-                          ? new Date(item.CreatedAt).toLocaleDateString('en-US')
-                          : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className={styles.itemFooter}>
-                    {user && (user.Id ?? user.id) === (item.OwnerId ?? item.ownerId) ? (
-                      <button
-                        className={styles.deleteBtn}
-                        onClick={() => handleDeleteItem(item)}
-                      >
-                        Delete
-                      </button>
-                    ) : (
-                      <button
-                        className={styles.borrowBtn}
-                        onClick={() => handleBorrowClick(item)}
-                        disabled={isBooking}
-                      >
-                        Borrow
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          {itemsContent}
         </section>
 
         <section className={`${styles.sectionCard} ${styles.itemsSection}`}>
