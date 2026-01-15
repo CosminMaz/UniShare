@@ -605,18 +605,62 @@ export default function DashboardPage() {
     globalThis.location.href = '/'
   }
 
-  const handleOverlayKeyDown = (event) => {
+  const createOverlayKeyDownHandler = (onClose) => (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
-      handleCloseModal()
+      onClose()
     }
   }
 
-  const handleReviewOverlayKeyDown = (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      handleCloseReviewModal()
-    }
+  const bookingOverlayKeyDown = createOverlayKeyDownHandler(handleCloseModal)
+  const reviewOverlayKeyDown = createOverlayKeyDownHandler(handleCloseReviewModal)
+
+  const bookingStatusColors = {
+    Pending: '#ffc107',
+    Approved: '#28a745',
+    Active: '#17a2b8',
+    Completed: '#6c757d',
+    Canceled: '#dc3545',
+    Rejected: '#dc3545',
+  }
+
+  const getStatusColor = (status) => bookingStatusColors[status] || '#6c757d'
+
+  const formatBookingDate = (value) =>
+    value ? new Date(value).toLocaleDateString('en-US') : 'N/A'
+
+  const renderBookingDetails = (booking) => {
+    const totalPrice = booking.TotalPrice ?? booking.totalPrice
+    return (
+      <div className={styles.bookingDetails}>
+        <div className={styles.bookingDetailRow}>
+          <span className={styles.bookingDetailLabel}>Start Date:</span>
+          <span className={styles.bookingDetailValue}>
+            {formatBookingDate(booking.StartDate ?? booking.startDate)}
+          </span>
+        </div>
+        <div className={styles.bookingDetailRow}>
+          <span className={styles.bookingDetailLabel}>End Date:</span>
+          <span className={styles.bookingDetailValue}>
+            {formatBookingDate(booking.EndDate ?? booking.endDate)}
+          </span>
+        </div>
+        {totalPrice !== undefined ? (
+          <div className={styles.bookingDetailRow}>
+            <span className={styles.bookingDetailLabel}>Total Price:</span>
+            <span className={styles.bookingDetailValue}>
+              ${Number(totalPrice ?? 0).toFixed(2)}
+            </span>
+          </div>
+        ) : null}
+        <div className={styles.bookingDetailRow}>
+          <span className={styles.bookingDetailLabel}>Requested:</span>
+          <span className={styles.bookingDetailValue}>
+            {formatBookingDate(booking.RequestedAt ?? booking.requestedAt)}
+          </span>
+        </div>
+      </div>
+    )
   }
 
   let itemsContent
@@ -821,17 +865,8 @@ export default function DashboardPage() {
               item.Id === booking.ItemId || item.id === booking.ItemId
           )
 
-          const statusColors = {
-            Pending: '#ffc107',
-            Approved: '#28a745',
-            Active: '#17a2b8',
-            Completed: '#6c757d',
-            Canceled: '#dc3545',
-            Rejected: '#dc3545',
-          }
-
           const status = getBookingStatus(booking)
-          const statusColor = statusColors[status] || '#6c757d'
+          const statusColor = getStatusColor(status)
 
           return (
             <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -848,50 +883,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
               </div>
-              <div className={styles.bookingDetails}>
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>Start Date:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.StartDate || booking.startDate
-                      ? new Date(
-                          booking.StartDate || booking.startDate,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>End Date:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.EndDate || booking.endDate
-                      ? new Date(
-                          booking.EndDate || booking.endDate,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-                {booking.TotalPrice !== undefined ||
-                booking.totalPrice !== undefined ? (
-                  <div className={styles.bookingDetailRow}>
-                    <span className={styles.bookingDetailLabel}>Total Price:</span>
-                    <span className={styles.bookingDetailValue}>
-                      $
-                      {(
-                        booking.TotalPrice || booking.totalPrice || 0
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                ) : null}
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>Requested:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.RequestedAt || booking.requestedAt
-                      ? new Date(
-                          booking.RequestedAt || booking.requestedAt,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-              </div>
+              {renderBookingDetails(booking)}
               {status === 'Completed' && !hasSubmittedReview(booking.Id || booking.id) && (
                 <div className={styles.bookingActions}>
                   <button
@@ -933,12 +925,7 @@ export default function DashboardPage() {
           const status = getBookingStatus(booking)
           const isPending = status === 'Pending'
           const canComplete = status === 'Approved' || status === 'Active'
-          const statusColors = {
-            Pending: '#ffc107',
-            Approved: '#28a745',
-            Rejected: '#dc3545',
-          }
-          const statusColor = statusColors[status] || '#6c757d'
+          const statusColor = getStatusColor(status)
 
           return (
             <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -955,50 +942,7 @@ export default function DashboardPage() {
                 </span>
                 </div>
               </div>
-              <div className={styles.bookingDetails}>
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>Start Date:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.StartDate || booking.startDate
-                      ? new Date(
-                          booking.StartDate || booking.startDate,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>End Date:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.EndDate || booking.endDate
-                      ? new Date(
-                          booking.EndDate || booking.endDate,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-                {booking.TotalPrice !== undefined ||
-                booking.totalPrice !== undefined ? (
-                  <div className={styles.bookingDetailRow}>
-                    <span className={styles.bookingDetailLabel}>Total Price:</span>
-                    <span className={styles.bookingDetailValue}>
-                      $
-                      {(
-                        booking.TotalPrice || booking.totalPrice || 0
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                ) : null}
-                <div className={styles.bookingDetailRow}>
-                  <span className={styles.bookingDetailLabel}>Requested:</span>
-                  <span className={styles.bookingDetailValue}>
-                    {booking.RequestedAt || booking.requestedAt
-                      ? new Date(
-                          booking.RequestedAt || booking.requestedAt,
-                        ).toLocaleDateString('en-US')
-                      : 'N/A'}
-                  </span>
-                </div>
-              </div>
+              {renderBookingDetails(booking)}
               <div className={styles.bookingActions}>
                   {isPending && (
                     <>
@@ -1253,7 +1197,7 @@ export default function DashboardPage() {
         <div
           className={styles.modalOverlay}
           onClick={handleCloseModal}
-          onKeyDown={handleOverlayKeyDown}
+          onKeyDown={bookingOverlayKeyDown}
           role="button"
           tabIndex={0}
         >
@@ -1355,7 +1299,7 @@ export default function DashboardPage() {
         <div
           className={styles.modalOverlay}
           onClick={handleCloseReviewModal}
-          onKeyDown={handleReviewOverlayKeyDown}
+          onKeyDown={reviewOverlayKeyDown}
           role="button"
           tabIndex={0}
         >
