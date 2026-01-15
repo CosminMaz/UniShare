@@ -51,14 +51,14 @@ export function ItemsSection({
         </div>
       </div>
 
-      {errors.filter(Boolean).map((message, index) => (
-        <MessageBanner key={`error-${index}`} type="error">
+      {errors.filter(Boolean).map((message) => (
+        <MessageBanner key={`error-${message}`} type="error">
           {message}
         </MessageBanner>
       ))}
 
-      {successes.filter(Boolean).map((message, index) => (
-        <MessageBanner key={`success-${index}`} type="success">
+      {successes.filter(Boolean).map((message) => (
+        <MessageBanner key={`success-${message}`} type="success">
           {message}
         </MessageBanner>
       ))}
