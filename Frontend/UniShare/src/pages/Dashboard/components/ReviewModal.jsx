@@ -18,14 +18,12 @@ export function ReviewModal({
 
   return (
     <div className={styles.modalOverlay}>
-      <div
+      <dialog
         className={styles.modalContent}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-        role="dialog"
         aria-modal="true"
         aria-labelledby="reviewModalTitle"
         tabIndex={-1}
+        open
       >
         <div className={styles.modalHeader}>
           <h3 id="reviewModalTitle" className={styles.modalTitle}>
@@ -76,7 +74,7 @@ export function ReviewModal({
             Submit Review
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   )
 }
