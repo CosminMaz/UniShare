@@ -626,6 +626,19 @@ export default function DashboardPage() {
   const reviewOverlayClick = createOverlayClickHandler(handleCloseReviewModal)
   const deleteOverlayClick = createOverlayClickHandler(cancelDelete)
 
+  useEffect(() => {
+    const handleGlobalKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        if (showBookingModal) handleCloseModal()
+        if (showReviewModal) handleCloseReviewModal()
+        if (showDeleteModal) cancelDelete()
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [showBookingModal, showReviewModal, showDeleteModal])
+
   const bookingStatusColors = {
     Pending: '#ffc107',
     Approved: '#28a745',
@@ -1208,10 +1221,7 @@ export default function DashboardPage() {
         <div
           className={styles.modalOverlay}
           onClick={bookingOverlayClick}
-          onKeyDown={bookingOverlayKeyDown}
           aria-label="Close booking modal"
-          role="button"
-          tabIndex={0}
         >
         <div
           className={styles.modalContent}
@@ -1310,10 +1320,7 @@ export default function DashboardPage() {
         <div
           className={styles.modalOverlay}
           onClick={reviewOverlayClick}
-          onKeyDown={reviewOverlayKeyDown}
           aria-label="Close review modal"
-          role="button"
-          tabIndex={0}
         >
         <div
           className={styles.modalContent}
@@ -1389,10 +1396,7 @@ export default function DashboardPage() {
         <div
           className={styles.modalOverlay}
           onClick={deleteOverlayClick}
-          onKeyDown={deleteOverlayKeyDown}
           aria-label="Close delete confirmation"
-          role="button"
-          tabIndex={0}
         >
         <div
           className={styles.modalContent}
