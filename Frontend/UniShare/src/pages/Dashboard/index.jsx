@@ -616,6 +616,16 @@ export default function DashboardPage() {
   const reviewOverlayKeyDown = createOverlayKeyDownHandler(handleCloseReviewModal)
   const deleteOverlayKeyDown = createOverlayKeyDownHandler(cancelDelete)
 
+  const createOverlayClickHandler = (onClose) => (event) => {
+    if (event.target === event.currentTarget) {
+      onClose()
+    }
+  }
+
+  const bookingOverlayClick = createOverlayClickHandler(handleCloseModal)
+  const reviewOverlayClick = createOverlayClickHandler(handleCloseReviewModal)
+  const deleteOverlayClick = createOverlayClickHandler(cancelDelete)
+
   const bookingStatusColors = {
     Pending: '#ffc107',
     Approved: '#28a745',
@@ -1197,15 +1207,14 @@ export default function DashboardPage() {
       {showBookingModal && (
         <div
           className={styles.modalOverlay}
-          onClick={handleCloseModal}
+          onClick={bookingOverlayClick}
           onKeyDown={bookingOverlayKeyDown}
-          role="button"
+          aria-label="Close booking modal"
           tabIndex={0}
         >
-          <div
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div
+          className={styles.modalContent}
+        >
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>
                 Book {selectedItem?.Title || 'Item'}
@@ -1299,15 +1308,14 @@ export default function DashboardPage() {
       {showReviewModal && (
         <div
           className={styles.modalOverlay}
-          onClick={handleCloseReviewModal}
+          onClick={reviewOverlayClick}
           onKeyDown={reviewOverlayKeyDown}
-          role="button"
+          aria-label="Close review modal"
           tabIndex={0}
         >
-          <div
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div
+          className={styles.modalContent}
+        >
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>
                 Write a Review for {reviewBooking?.item?.Title || 'Item'}
@@ -1377,15 +1385,14 @@ export default function DashboardPage() {
       {showDeleteModal && (
         <div
           className={styles.modalOverlay}
-          onClick={cancelDelete}
+          onClick={deleteOverlayClick}
           onKeyDown={deleteOverlayKeyDown}
-          role="button"
+          aria-label="Close delete confirmation"
           tabIndex={0}
         >
-          <div
-            className={styles.modalContent}
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div
+          className={styles.modalContent}
+        >
             <div className={styles.modalHeader}>
               <h3 className={styles.modalTitle}>Delete item</h3>
               <button
