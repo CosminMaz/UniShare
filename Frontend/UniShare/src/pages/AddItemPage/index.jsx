@@ -273,7 +273,7 @@ export default function AddItemPage() {
             <div className={styles.formGroup}>
               <label htmlFor="title" className={styles.label}>
                 Item Name
-                <span className={styles.required}>*</span>
+                {' '}<span className={styles.required}>*</span>
               </label>
               <input
                 type="text"
@@ -290,7 +290,7 @@ export default function AddItemPage() {
             <div className={styles.formGroup}>
               <label htmlFor="description" className={styles.label}>
                 Description
-                <span className={styles.required}>*</span>
+                {' '}<span className={styles.required}>*</span>
               </label>
               <textarea
                 id="description"
@@ -307,7 +307,7 @@ export default function AddItemPage() {
               <div className={styles.formGroup}>
                 <label htmlFor="category" className={styles.label}>
                   Category
-                  <span className={styles.required}>*</span>
+                  {' '}<span className={styles.required}>*</span>
                 </label>
                 <select
                   id="category"
@@ -328,7 +328,7 @@ export default function AddItemPage() {
               <div className={styles.formGroup}>
                 <label htmlFor="condition" className={styles.label}>
                   Condition
-                  <span className={styles.required}>*</span>
+                  {' '}<span className={styles.required}>*</span>
                 </label>
                 <select
                   id="condition"
@@ -350,7 +350,7 @@ export default function AddItemPage() {
             <div className={styles.formGroup}>
               <label htmlFor="dailyRate" className={styles.label}>
                 Daily Rate (RON/day)
-                <span className={styles.required}>*</span>
+                {' '}<span className={styles.required}>*</span>
               </label>
               <input
                 type="number"
@@ -369,7 +369,7 @@ export default function AddItemPage() {
             <div className={styles.formGroup}>
               <label htmlFor="imageUrl" className={styles.label}>
                 Image URL
-                <span className={styles.required}>*</span>
+                {' '}<span className={styles.required}>*</span>
               </label>
               <input
                 type="url"
