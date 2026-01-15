@@ -36,8 +36,6 @@ export function BookingModal({
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
       >
         <div className={styles.modalHeader}>
           <h3 className={styles.modalTitle}>
