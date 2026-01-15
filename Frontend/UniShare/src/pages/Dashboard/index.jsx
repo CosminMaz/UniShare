@@ -656,14 +656,14 @@ export default function DashboardPage() {
             {formatBookingDate(booking.EndDate ?? booking.endDate)}
           </span>
         </div>
-        {totalPrice != null ? (
+        {totalPrice === null || totalPrice === undefined ? null : (
           <div className={styles.bookingDetailRow}>
             <span className={styles.bookingDetailLabel}>Total Price:</span>
             <span className={styles.bookingDetailValue}>
               ${Number(totalPrice ?? 0).toFixed(2)}
             </span>
           </div>
-        ) : null}
+        )}
         <div className={styles.bookingDetailRow}>
           <span className={styles.bookingDetailLabel}>Requested:</span>
           <span className={styles.bookingDetailValue}>
@@ -1210,6 +1210,7 @@ export default function DashboardPage() {
           onClick={bookingOverlayClick}
           onKeyDown={bookingOverlayKeyDown}
           aria-label="Close booking modal"
+          role="button"
           tabIndex={0}
         >
         <div
@@ -1311,6 +1312,7 @@ export default function DashboardPage() {
           onClick={reviewOverlayClick}
           onKeyDown={reviewOverlayKeyDown}
           aria-label="Close review modal"
+          role="button"
           tabIndex={0}
         >
         <div
@@ -1339,13 +1341,14 @@ export default function DashboardPage() {
                 </output>
               )}
               <div className={styles.formGroup}>
-                <label className={styles.modalLabel}>Rating</label>
+                <label htmlFor="reviewRating" className={styles.modalLabel}>Rating</label>
                 <input
+                  id="reviewRating"
                   type="number"
                   min="1"
                   max="5"
                   value={reviewRating}
-                  onChange={(e) => setReviewRating(parseInt(e.target.value, 10))}
+                  onChange={(e) => setReviewRating(Number.parseInt(e.target.value, 10))}
                   className={styles.modalInput}
                   required
                 />
@@ -1388,6 +1391,7 @@ export default function DashboardPage() {
           onClick={deleteOverlayClick}
           onKeyDown={deleteOverlayKeyDown}
           aria-label="Close delete confirmation"
+          role="button"
           tabIndex={0}
         >
         <div
