@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { BookingCard } from './BookingCard'
 import { MessageBanner } from './MessageBanner'
 import { getBookingStatus, statusColors } from '../utils'
@@ -90,4 +91,15 @@ export function OwnerRequestsSection({
       {content}
     </section>
   )
+}
+
+OwnerRequestsSection.propTypes = {
+  bookings: PropTypes.arrayOf(PropTypes.object).isRequired,
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoading: PropTypes.bool,
+  onApprove: PropTypes.func,
+  onReject: PropTypes.func,
+  onComplete: PropTypes.func,
+  error: PropTypes.node,
+  message: PropTypes.node,
 }

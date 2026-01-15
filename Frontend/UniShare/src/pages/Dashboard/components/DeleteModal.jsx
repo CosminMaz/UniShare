@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { MessageBanner } from './MessageBanner'
 import styles from '../Dashboard.module.css'
 
@@ -34,4 +35,12 @@ export function DeleteModal({
       </div>
     </div>
   )
+}
+
+DeleteModal.propTypes = {
+  isOpen: PropTypes.bool,
+  itemTitle: PropTypes.string,
+  error: PropTypes.node,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
 }

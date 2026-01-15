@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import styles from '../Dashboard.module.css'
 
 export function BookingModal({
@@ -104,4 +105,17 @@ export function BookingModal({
       </div>
     </div>
   )
+}
+
+BookingModal.propTypes = {
+  isOpen: PropTypes.bool,
+  selectedItem: PropTypes.object,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  onStartDateChange: PropTypes.func,
+  onEndDateChange: PropTypes.func,
+  onClose: PropTypes.func,
+  onSubmit: PropTypes.func,
+  isBooking: PropTypes.bool,
+  error: PropTypes.string,
 }

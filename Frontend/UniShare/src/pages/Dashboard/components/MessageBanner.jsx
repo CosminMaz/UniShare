@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import styles from '../Dashboard.module.css'
 
 export function MessageBanner({ type = 'info', children }) {
@@ -14,4 +15,9 @@ export function MessageBanner({ type = 'info', children }) {
       {children}
     </Component>
   )
+}
+
+MessageBanner.propTypes = {
+  type: PropTypes.string,
+  children: PropTypes.node,
 }

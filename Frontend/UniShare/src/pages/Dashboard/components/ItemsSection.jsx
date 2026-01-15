@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { ItemCard } from './ItemCard'
 import { MessageBanner } from './MessageBanner'
 import styles from '../Dashboard.module.css'
@@ -65,4 +66,17 @@ export function ItemsSection({
       {content}
     </section>
   )
+}
+
+ItemsSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired,
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoading: PropTypes.bool,
+  errors: PropTypes.arrayOf(PropTypes.node),
+  successes: PropTypes.arrayOf(PropTypes.node),
+  onBorrow: PropTypes.func,
+  onDelete: PropTypes.func,
+  isBooking: PropTypes.bool,
+  currentUserId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }

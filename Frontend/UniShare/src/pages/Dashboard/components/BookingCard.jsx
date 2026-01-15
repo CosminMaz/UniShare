@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import styles from '../Dashboard.module.css'
 
 const formatDate = (value) =>
@@ -75,4 +76,27 @@ export function BookingCard({
       )}
     </div>
   )
+}
+
+BookingCard.propTypes = {
+  booking: PropTypes.shape({
+    Id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    ItemId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    itemId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    StartDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    EndDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    TotalPrice: PropTypes.number,
+    totalPrice: PropTypes.number,
+    RequestedAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    requestedAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }).isRequired,
+  itemTitle: PropTypes.string,
+  status: PropTypes.string,
+  statusColor: PropTypes.string,
+  children: PropTypes.node,
+  showReviewButton: PropTypes.bool,
+  onReview: PropTypes.func,
 }

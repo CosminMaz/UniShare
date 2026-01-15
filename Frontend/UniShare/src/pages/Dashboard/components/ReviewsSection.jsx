@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { normalizeId } from '../utils'
 import styles from '../Dashboard.module.css'
 
@@ -74,4 +75,9 @@ export function ReviewsSection({ reviews, items }) {
       )}
     </section>
   )
+}
+
+ReviewsSection.propTypes = {
+  reviews: PropTypes.arrayOf(PropTypes.object).isRequired,
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
 }

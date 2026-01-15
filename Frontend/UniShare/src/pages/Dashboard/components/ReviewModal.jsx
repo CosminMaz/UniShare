@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { MessageBanner } from './MessageBanner'
 import styles from '../Dashboard.module.css'
 
@@ -70,4 +71,17 @@ export function ReviewModal({
       </div>
     </div>
   )
+}
+
+ReviewModal.propTypes = {
+  isOpen: PropTypes.bool,
+  itemTitle: PropTypes.string,
+  rating: PropTypes.number,
+  comment: PropTypes.string,
+  error: PropTypes.node,
+  message: PropTypes.node,
+  onRatingChange: PropTypes.func,
+  onCommentChange: PropTypes.func,
+  onClose: PropTypes.func,
+  onSubmit: PropTypes.func,
 }

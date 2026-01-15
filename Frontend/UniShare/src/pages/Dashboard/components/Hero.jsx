@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import styles from '../Dashboard.module.css'
 
 export function Hero({ user, stats, onAddItem }) {
@@ -29,4 +30,20 @@ export function Hero({ user, stats, onAddItem }) {
       </div>
     </section>
   )
+}
+
+Hero.propTypes = {
+  user: PropTypes.shape({
+    FullName: PropTypes.string,
+    Email: PropTypes.string,
+  }),
+  stats: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
+      hint: PropTypes.string,
+    }),
+  ).isRequired,
+  onAddItem: PropTypes.func,
 }

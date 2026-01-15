@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { ItemCard } from './ItemCard'
 import { MessageBanner } from './MessageBanner'
 import styles from '../Dashboard.module.css'
@@ -53,4 +54,11 @@ export function MyItemsSection({
       {content}
     </section>
   )
+}
+
+MyItemsSection.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoading: PropTypes.bool,
+  error: PropTypes.node,
+  onDelete: PropTypes.func,
 }

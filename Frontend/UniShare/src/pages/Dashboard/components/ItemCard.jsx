@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { formatDailyRate } from '../utils'
 import styles from '../Dashboard.module.css'
 
@@ -91,4 +92,30 @@ export function ItemCard({
       </div>
     </div>
   )
+}
+
+ItemCard.propTypes = {
+  item: PropTypes.shape({
+    Id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    Title: PropTypes.string,
+    Description: PropTypes.string,
+    imageUrl: PropTypes.string,
+    ImageUrl: PropTypes.string,
+    Categ: PropTypes.string,
+    Cond: PropTypes.string,
+    DailyRate: PropTypes.number,
+    dailyRate: PropTypes.number,
+    CreatedAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    createdAt: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    OwnerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    ownerId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    IsAvailable: PropTypes.bool,
+    isAvailable: PropTypes.bool,
+  }).isRequired,
+  isOwner: PropTypes.bool,
+  onBorrow: PropTypes.func,
+  onDelete: PropTypes.func,
+  isBooking: PropTypes.bool,
+  showAvailability: PropTypes.bool,
 }

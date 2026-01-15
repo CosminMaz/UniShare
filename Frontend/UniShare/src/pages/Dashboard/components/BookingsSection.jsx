@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { BookingCard } from './BookingCard'
 import { getBookingStatus, statusColors } from '../utils'
 import styles from '../Dashboard.module.css'
@@ -60,4 +61,12 @@ export function BookingsSection({
       {content}
     </section>
   )
+}
+
+BookingsSection.propTypes = {
+  bookings: PropTypes.arrayOf(PropTypes.object).isRequired,
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isLoading: PropTypes.bool,
+  hasSubmittedReview: PropTypes.func,
+  onWriteReview: PropTypes.func,
 }
