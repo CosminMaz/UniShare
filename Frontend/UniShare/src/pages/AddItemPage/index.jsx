@@ -264,9 +264,9 @@ export default function AddItemPage() {
           )}
 
           {success && (
-            <div className={styles.successMessage} role="status">
+            <output className={styles.successMessage} role="output">
               ✓ Item added successfully! Redirecting...
-            </div>
+            </output>
           )}
 
           <form onSubmit={handleSubmit} className={styles.form}>
