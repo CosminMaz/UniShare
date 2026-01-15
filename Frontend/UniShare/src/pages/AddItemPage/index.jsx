@@ -89,8 +89,8 @@ export default function AddItemPage() {
       setError('Daily rate is required')
       return false
     }
-    const rate = parseFloat(formData.dailyRate)
-    if (isNaN(rate) || rate <= 0) {
+    const rate = Number.parseFloat(formData.dailyRate)
+    if (Number.isNaN(rate) || rate <= 0) {
       setError('Daily rate must be a positive number')
       return false
     }
@@ -146,20 +146,9 @@ export default function AddItemPage() {
       description: formData.description.trim(),
       categ: CATEGORY_MAP[formData.category],
       cond: CONDITION_MAP[formData.condition],
-      dailyRate: parseFloat(formData.dailyRate),
+      dailyRate: Number.parseFloat(formData.dailyRate),
       imageUrl: formData.imageUrl.trim()
     }
-
-    const response = await axios.post(
-      `${API_BASE_URL}/items`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }
-    )
 
     setSuccess(true)
     setFormData({
