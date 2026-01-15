@@ -126,6 +126,8 @@ export default function AddItemPage() {
       setIsLoading(false)
       return
     }
+    const user = JSON.parse(storedUser)
+
     // 2. luam token-ul (suporta atat "accessToken" cat si "token")
     const token =
       localStorage.getItem('accessToken') ?? localStorage.getItem('token')
@@ -135,6 +137,23 @@ export default function AddItemPage() {
       setIsLoading(false)
       return
     }
+
+    const payload = {
+      ownerId: user.id ?? user.Id, // depinde cum vine din backend
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      categ: CATEGORY_MAP[formData.category],
+      cond: CONDITION_MAP[formData.condition],
+      dailyRate: Number.parseFloat(formData.dailyRate),
+      imageUrl: formData.imageUrl.trim()
+    }
+
+    await axios.post(`${API_BASE_URL}/items`, payload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
 
     setSuccess(true)
     setFormData({
