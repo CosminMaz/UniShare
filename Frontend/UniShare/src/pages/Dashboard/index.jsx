@@ -23,6 +23,15 @@ const getApiErrorMessage = (err, defaultMessage) => {
   return err.message || 'An unexpected error occurred.'
 }
 
+const statusColors = {
+  Pending: '#ffc107',
+  Approved: '#28a745',
+  Active: '#17a2b8',
+  Completed: '#6c757d',
+  Canceled: '#dc3545',
+  Rejected: '#dc3545',
+}
+
 export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [items, setItems] = useState([])
@@ -813,16 +822,6 @@ export default function DashboardPage() {
             (item) =>
               item.Id === booking.ItemId || item.id === booking.ItemId,
           )
-
-          const statusColors = {
-            Pending: '#ffc107',
-            Approved: '#28a745',
-            Active: '#17a2b8',
-            Completed: '#6c757d',
-            Canceled: '#dc3545',
-            Rejected: '#dc3545',
-          }
-
           const status = getBookingStatus(booking)
           const statusColor = statusColors[status] || '#6c757d'
 
@@ -923,9 +922,10 @@ export default function DashboardPage() {
               item.Id === booking.ItemId || item.id === booking.ItemId,
           )
 
-          const status = getBookingStatus(booking)
+          const status = getBookingStatus(booking);
+          const statusColor = statusColors[status] || '#6c757d';
           const isPending = status === 'Pending'
-          const canComplete = status === 'Approved' || status === 'Active'
+          const canComplete = status === 'Approved' || status === 'Active';
 
           return (
             <div key={booking.Id || booking.id} className={styles.bookingCard}>
@@ -936,16 +936,7 @@ export default function DashboardPage() {
                   </h4>
                   <span
                     className={styles.bookingStatus}
-                    style={{
-                      backgroundColor:
-                        status === 'Pending'
-                          ? '#ffc107'
-                          : status === 'Approved'
-                            ? '#28a745'
-                            : status === 'Rejected'
-                              ? '#dc3545'
-                              : '#6c757d',
-                    }}
+                    style={{ backgroundColor: statusColor }}
                   >
                     {status}
                   </span>
