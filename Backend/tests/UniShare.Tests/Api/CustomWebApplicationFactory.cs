@@ -8,6 +8,8 @@ namespace UniShare.Tests.Api;
 
 public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
+    private readonly string _databaseName = $"UniShareTests_{Guid.NewGuid()}";
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -25,7 +27,7 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 
             services.AddDbContext<UniShareContext>(options =>
             {
-                options.UseInMemoryDatabase("UserApiTestsDb");
+                options.UseInMemoryDatabase(_databaseName);
             });
         });
     }
