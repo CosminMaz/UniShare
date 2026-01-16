@@ -1,0 +1,519 @@
+†
+0UniShare.Infrastructure.Features.Bookings.StatusSystem.EnumSystem.ValueTypeobjectE
+Status()9UniShare.Infrastructure.Features.Bookings.Status.Status()¿
+"UniShare.RealTime.NotificationsHub#Microsoft.AspNetCore.SignalR.Hub<T> Microsoft.AspNetCore.SignalR.HubobjectK
+NotificationsHub()5UniShare.RealTime.NotificationsHub.NotificationsHub()¸
+(UniShare.Common.AuthenticationMiddlewareobject≥
+CAuthenticationMiddleware(Microsoft.AspNetCore.Http.RequestDelegate)lUniShare.Common.AuthenticationMiddleware.AuthenticationMiddleware(Microsoft.AspNetCore.Http.RequestDelegate)ë
+2InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)[UniShare.Common.AuthenticationMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)(
+&UniShare.RealTime.INotificationsClientﬁ
+:UniShare.Infrastructure.Validators.ApproveBookingValidator%FluentValidation.AbstractValidator<T>objectq
+ApproveBookingValidator()TUniShare.Infrastructure.Validators.ApproveBookingValidator.ApproveBookingValidator()1
+Programobject
+	Program()Program.Program()Œ
+6UniShare.Infrastructure.Validators.CreateItemValidator%FluentValidation.AbstractValidator<T>objecte
+CreateItemValidator()LUniShare.Infrastructure.Validators.CreateItemValidator.CreateItemValidator()⁄
+9UniShare.Infrastructure.Validators.CreateBookingValidator%FluentValidation.AbstractValidator<T>objectn
+CreateBookingValidator()RUniShare.Infrastructure.Validators.CreateBookingValidator.CreateBookingValidator()Õ
+CUniShare.Infrastructure.Features.Items.CreateItem.CreateItemHandlerobjectñ
+¶CreateItemHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)ÍUniShare.Infrastructure.Features.Items.CreateItem.CreateItemHandler.CreateItemHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)ﬂ
+KHandle(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest)èUniShare.Infrastructure.Features.Items.CreateItem.CreateItemHandler.Handle(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest)Ç
+GetAuthenticatedUserIdAsync()aUniShare.Infrastructure.Features.Items.CreateItem.CreateItemHandler.GetAuthenticatedUserIdAsync()Œ
+6UniShare.Infrastructure.Validators.CreateUserValidator%FluentValidation.AbstractValidator<T>objecte
+CreateUserValidator()LUniShare.Infrastructure.Validators.CreateUserValidator.CreateUserValidator()÷
+8UniShare.Infrastructure.Validators.CreateReviewValidator%FluentValidation.AbstractValidator<T>objectk
+CreateReviewValidator()PUniShare.Infrastructure.Validators.CreateReviewValidator.CreateReviewValidator()¯
+@UniShare.Infrastructure.Features.Users.GetAll.GetAllUsersHandlerobject‘
+GGetAllUsersHandler(UniShare.Infrastructure.Persistence.UniShareContext)àUniShare.Infrastructure.Features.Users.GetAll.GetAllUsersHandler.GetAllUsersHandler(UniShare.Infrastructure.Persistence.UniShareContext)U
+Handle()IUniShare.Infrastructure.Features.Users.GetAll.GetAllUsersHandler.Handle()€
+NUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandlerobjectÂ
+»ApproveBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)óUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.ApproveBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)Ä
+VHandle(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest)•UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.Handle(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest)i
+GetUserId()ZUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.GetUserId()Å
+GetBooking(System.Guid)fUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.GetBooking(System.Guid)ë
+GetBookingReadonly(System.Guid)nUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.GetBookingReadonly(System.Guid)Í
+KApplyDecisionAsync(UniShare.Infrastructure.Features.Bookings.Booking, bool)öUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.ApplyDecisionAsync(UniShare.Infrastructure.Features.Bookings.Booking, bool)ì
+ MarkItemUnavailable(System.Guid)oUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.MarkItemUnavailable(System.Guid)è
+MarkItemAvailable(System.Guid)mUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingHandler.MarkItemAvailable(System.Guid)÷
+8UniShare.Infrastructure.Validators.LoginRequestValidator%FluentValidation.AbstractValidator<T>objectk
+LoginRequestValidator()PUniShare.Infrastructure.Validators.LoginRequestValidator.LoginRequestValidator()È
+?UniShare.Infrastructure.Features.Items.Delete.DeleteItemHandlerobject±
+vDeleteItemHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor)∂UniShare.Infrastructure.Features.Items.Delete.DeleteItemHandler.DeleteItemHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor)j
+Handle(System.Guid)SUniShare.Infrastructure.Features.Items.Delete.DeleteItemHandler.Handle(System.Guid)“
+BUniShare.Infrastructure.Features.Bookings.BookingBackgroundService.Microsoft.Extensions.Hosting.BackgroundServiceobject©
+1BookingBackgroundService(System.IServiceProvider)tUniShare.Infrastructure.Features.Bookings.BookingBackgroundService.BookingBackgroundService(System.IServiceProvider)ß
+0ExecuteAsync(System.Threading.CancellationToken)sUniShare.Infrastructure.Features.Bookings.BookingBackgroundService.ExecuteAsync(System.Threading.CancellationToken)ƒ
+PUniShare.Infrastructure.Features.Bookings.CompleteBooking.CompleteBookingHandlerobjectÈ
+…CompleteBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)öUniShare.Infrastructure.Features.Bookings.CompleteBooking.CompleteBookingHandler.CompleteBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>){
+Handle(System.Guid)dUniShare.Infrastructure.Features.Bookings.CompleteBooking.CompleteBookingHandler.Handle(System.Guid)k
+GetUserId()\UniShare.Infrastructure.Features.Bookings.CompleteBooking.CompleteBookingHandler.GetUserId()ë
+MarkItemAvailable(System.Guid)oUniShare.Infrastructure.Features.Bookings.CompleteBooking.CompleteBookingHandler.MarkItemAvailable(System.Guid)¿
+IUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewHandlerobjectê
+‡CreateReviewHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor)™UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewHandler.CreateReviewHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor)Ò
+QHandle(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest)õUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewHandler.Handle(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest)d
+GetUserId()UUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewHandler.GetUserId()˚
+9UniShare.Infrastructure.Features.Users.Login.LoginHandlerobjectÚ
+ôLoginHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Users.Login.LoginRequest>)”UniShare.Infrastructure.Features.Users.Login.LoginHandler.LoginHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Users.Login.LoginRequest>)¿
+AHandle(UniShare.Infrastructure.Features.Users.Login.LoginRequest){UniShare.Infrastructure.Features.Users.Login.LoginHandler.Handle(UniShare.Infrastructure.Features.Users.Login.LoginRequest)Ê
+NUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequestobjectSystem.IEquatable<T>£
+(ApproveBookingRequest(System.Guid, bool)wUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.ApproveBookingRequest(System.Guid, bool)g
+
+ToString()YUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.ToString()°
+'PrintMembers(System.Text.StringBuilder)vUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.PrintMembers(System.Text.StringBuilder)m
+GetHashCode()\UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.GetHashCode()q
+Equals(object?)^UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.Equals(object?)Ç
+WEquals(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest?)¶UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.Equals(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest?)g
+
+<Clone>$()YUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.<Clone>$()û
+eApproveBookingRequest(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest)¥UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.ApproveBookingRequest(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest)ü
+&Deconstruct(out System.Guid, out bool)uUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.Deconstruct(out System.Guid, out bool){
+EqualityContract.getcUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.EqualityContract.get{
+EqualityContract.setcUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.EqualityContract.setm
+BookingId.get\UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.BookingId.geto
+BookingId.init]UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.BookingId.initi
+Approve.getZUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.Approve.getk
+Approve.init[UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingRequest.Approve.initÑ
+9UniShare.Infrastructure.Features.Users.Login.LoginRequestobjectSystem.IEquatable<T>v
+LoginRequest(string, string)VUniShare.Infrastructure.Features.Users.Login.LoginRequest.LoginRequest(string, string)R
+
+ToString()DUniShare.Infrastructure.Features.Users.Login.LoginRequest.ToString()å
+'PrintMembers(System.Text.StringBuilder)aUniShare.Infrastructure.Features.Users.Login.LoginRequest.PrintMembers(System.Text.StringBuilder)X
+GetHashCode()GUniShare.Infrastructure.Features.Users.Login.LoginRequest.GetHashCode()\
+Equals(object?)IUniShare.Infrastructure.Features.Users.Login.LoginRequest.Equals(object?)¬
+BEquals(UniShare.Infrastructure.Features.Users.Login.LoginRequest?)|UniShare.Infrastructure.Features.Users.Login.LoginRequest.Equals(UniShare.Infrastructure.Features.Users.Login.LoginRequest?)R
+
+<Clone>$()DUniShare.Infrastructure.Features.Users.Login.LoginRequest.<Clone>$()Õ
+GLoginRequest(UniShare.Infrastructure.Features.Users.Login.LoginRequest)ÅUniShare.Infrastructure.Features.Users.Login.LoginRequest.LoginRequest(UniShare.Infrastructure.Features.Users.Login.LoginRequest)Ñ
+#Deconstruct(out string, out string)]UniShare.Infrastructure.Features.Users.Login.LoginRequest.Deconstruct(out string, out string)f
+EqualityContract.getNUniShare.Infrastructure.Features.Users.Login.LoginRequest.EqualityContract.getf
+EqualityContract.setNUniShare.Infrastructure.Features.Users.Login.LoginRequest.EqualityContract.setP
+	Email.getCUniShare.Infrastructure.Features.Users.Login.LoginRequest.Email.getR
+
+Email.initDUniShare.Infrastructure.Features.Users.Login.LoginRequest.Email.initV
+Password.getFUniShare.Infrastructure.Features.Users.Login.LoginRequest.Password.getX
+Password.initGUniShare.Infrastructure.Features.Users.Login.LoginRequest.Password.initÍ
+CUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequestobjectSystem.IEquatable<T>¯
+óCreateItemRequest(string, string, UniShare.Infrastructure.Features.Items.Category, UniShare.Infrastructure.Features.Items.Condition, decimal?, string?)€UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.CreateItemRequest(string, string, UniShare.Infrastructure.Features.Items.Category, UniShare.Infrastructure.Features.Items.Condition, decimal?, string?)\
+
+ToString()NUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.ToString()ñ
+'PrintMembers(System.Text.StringBuilder)kUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.PrintMembers(System.Text.StringBuilder)b
+GetHashCode()QUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.GetHashCode()f
+Equals(object?)SUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Equals(object?)·
+LEquals(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest?)êUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Equals(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest?)\
+
+<Clone>$()NUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.<Clone>$()ı
+VCreateItemRequest(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest)öUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.CreateItemRequest(UniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest)ú
+©Deconstruct(out string, out string, out UniShare.Infrastructure.Features.Items.Category, out UniShare.Infrastructure.Features.Items.Condition, out decimal?, out string?)ÌUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Deconstruct(out string, out string, out UniShare.Infrastructure.Features.Items.Category, out UniShare.Infrastructure.Features.Items.Condition, out decimal?, out string?)p
+EqualityContract.getXUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.EqualityContract.getp
+EqualityContract.setXUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.EqualityContract.setZ
+	Title.getMUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Title.get\
+
+Title.initNUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Title.initf
+Description.getSUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Description.geth
+Description.initTUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Description.initZ
+	Categ.getMUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Categ.get\
+
+Categ.initNUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Categ.initX
+Cond.getLUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Cond.getZ
+	Cond.initMUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.Cond.initb
+DailyRate.getQUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.DailyRate.getd
+DailyRate.initRUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.DailyRate.init`
+ImageUrl.getPUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.ImageUrl.getb
+ImageUrl.initQUniShare.Infrastructure.Features.Items.CreateItem.CreateItemRequest.ImageUrl.initá
+KUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBodyobjectSystem.IEquatable<T>Ä
+ApproveBookingBody(bool)dUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.ApproveBookingBody(bool)d
+
+ToString()VUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.ToString()û
+'PrintMembers(System.Text.StringBuilder)sUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.PrintMembers(System.Text.StringBuilder)j
+GetHashCode()YUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.GetHashCode()n
+Equals(object?)[UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.Equals(object?)˘
+TEquals(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody?)†UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.Equals(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody?)d
+
+<Clone>$()VUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.<Clone>$()è
+_ApproveBookingBody(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody)´UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.ApproveBookingBody(UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody)z
+Deconstruct(out bool)aUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.Deconstruct(out bool)x
+EqualityContract.get`UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.EqualityContract.getx
+EqualityContract.set`UniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.EqualityContract.setf
+Approve.getWUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.Approve.geth
+Approve.initXUniShare.Infrastructure.Features.Bookings.ApproveBooking.ApproveBookingBody.Approve.initº 
+1UniShare.Infrastructure.Features.Bookings.BookingobjectSystem.IEquatable<T>
+‹Booking(System.Guid, System.Guid, System.Guid, System.Guid, UniShare.Infrastructure.Features.Bookings.Status, System.DateTime, System.DateTime, System.DateTime, decimal, System.DateTime, System.DateTime, System.DateTime)éUniShare.Infrastructure.Features.Bookings.Booking.Booking(System.Guid, System.Guid, System.Guid, System.Guid, UniShare.Infrastructure.Features.Bookings.Status, System.DateTime, System.DateTime, System.DateTime, decimal, System.DateTime, System.DateTime, System.DateTime)J
+
+ToString()<UniShare.Infrastructure.Features.Bookings.Booking.ToString()Ñ
+'PrintMembers(System.Text.StringBuilder)YUniShare.Infrastructure.Features.Bookings.Booking.PrintMembers(System.Text.StringBuilder)P
+GetHashCode()?UniShare.Infrastructure.Features.Bookings.Booking.GetHashCode()T
+Equals(object?)AUniShare.Infrastructure.Features.Bookings.Booking.Equals(object?)™
+:Equals(UniShare.Infrastructure.Features.Bookings.Booking?)lUniShare.Infrastructure.Features.Bookings.Booking.Equals(UniShare.Infrastructure.Features.Bookings.Booking?)J
+
+<Clone>$()<UniShare.Infrastructure.Features.Bookings.Booking.<Clone>$()™
+:Booking(UniShare.Infrastructure.Features.Bookings.Booking)lUniShare.Infrastructure.Features.Bookings.Booking.Booking(UniShare.Infrastructure.Features.Bookings.Booking)ÿ
+êDeconstruct(out System.Guid, out System.Guid, out System.Guid, out System.Guid, out UniShare.Infrastructure.Features.Bookings.Status, out System.DateTime, out System.DateTime, out System.DateTime, out decimal, out System.DateTime, out System.DateTime, out System.DateTime)¬UniShare.Infrastructure.Features.Bookings.Booking.Deconstruct(out System.Guid, out System.Guid, out System.Guid, out System.Guid, out UniShare.Infrastructure.Features.Bookings.Status, out System.DateTime, out System.DateTime, out System.DateTime, out decimal, out System.DateTime, out System.DateTime, out System.DateTime)^
+EqualityContract.getFUniShare.Infrastructure.Features.Bookings.Booking.EqualityContract.get^
+EqualityContract.setFUniShare.Infrastructure.Features.Bookings.Booking.EqualityContract.setB
+Id.get8UniShare.Infrastructure.Features.Bookings.Booking.Id.getD
+Id.init9UniShare.Infrastructure.Features.Bookings.Booking.Id.initJ
+
+ItemId.get<UniShare.Infrastructure.Features.Bookings.Booking.ItemId.getL
+ItemId.init=UniShare.Infrastructure.Features.Bookings.Booking.ItemId.initR
+BorrowerId.get@UniShare.Infrastructure.Features.Bookings.Booking.BorrowerId.getT
+BorrowerId.initAUniShare.Infrastructure.Features.Bookings.Booking.BorrowerId.initL
+OwnerId.get=UniShare.Infrastructure.Features.Bookings.Booking.OwnerId.getN
+OwnerId.init>UniShare.Infrastructure.Features.Bookings.Booking.OwnerId.initJ
+
+Status.get<UniShare.Infrastructure.Features.Bookings.Booking.Status.getL
+Status.init=UniShare.Infrastructure.Features.Bookings.Booking.Status.initP
+StartDate.get?UniShare.Infrastructure.Features.Bookings.Booking.StartDate.getR
+StartDate.init@UniShare.Infrastructure.Features.Bookings.Booking.StartDate.initL
+EndDate.get=UniShare.Infrastructure.Features.Bookings.Booking.EndDate.getN
+EndDate.init>UniShare.Infrastructure.Features.Bookings.Booking.EndDate.init^
+ActualReturnDate.getFUniShare.Infrastructure.Features.Bookings.Booking.ActualReturnDate.get`
+ActualReturnDate.initGUniShare.Infrastructure.Features.Bookings.Booking.ActualReturnDate.initR
+TotalPrice.get@UniShare.Infrastructure.Features.Bookings.Booking.TotalPrice.getT
+TotalPrice.initAUniShare.Infrastructure.Features.Bookings.Booking.TotalPrice.initT
+RequestedAt.getAUniShare.Infrastructure.Features.Bookings.Booking.RequestedAt.getV
+RequestedAt.initBUniShare.Infrastructure.Features.Bookings.Booking.RequestedAt.initR
+ApprovedAt.get@UniShare.Infrastructure.Features.Bookings.Booking.ApprovedAt.getT
+ApprovedAt.initAUniShare.Infrastructure.Features.Bookings.Booking.ApprovedAt.initT
+CompletedAt.getAUniShare.Infrastructure.Features.Bookings.Booking.CompletedAt.getV
+CompletedAt.initBUniShare.Infrastructure.Features.Bookings.Booking.CompletedAt.initµ
+IUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequestobjectSystem.IEquatable<T>…
+}CreateReviewRequest(System.Guid, System.Guid, System.Guid, int, string, UniShare.Infrastructure.Features.Reviews.ReviewType?)«UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.CreateReviewRequest(System.Guid, System.Guid, System.Guid, int, string, UniShare.Infrastructure.Features.Reviews.ReviewType?)b
+
+ToString()TUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.ToString()ú
+'PrintMembers(System.Text.StringBuilder)qUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.PrintMembers(System.Text.StringBuilder)h
+GetHashCode()WUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.GetHashCode()l
+Equals(object?)YUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Equals(object?)Û
+REquals(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest?)úUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Equals(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest?)b
+
+<Clone>$()TUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.<Clone>$()ã
+^CreateReviewRequest(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest)®UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.CreateReviewRequest(UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest)Í
+çDeconstruct(out System.Guid, out System.Guid, out System.Guid, out int, out string, out UniShare.Infrastructure.Features.Reviews.ReviewType?)◊UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Deconstruct(out System.Guid, out System.Guid, out System.Guid, out int, out string, out UniShare.Infrastructure.Features.Reviews.ReviewType?)v
+EqualityContract.get^UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.EqualityContract.getv
+EqualityContract.set^UniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.EqualityContract.seth
+BookingId.getWUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.BookingId.getj
+BookingId.initXUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.BookingId.initj
+ReviewerId.getXUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.ReviewerId.getl
+ReviewerId.initYUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.ReviewerId.initb
+
+ItemId.getTUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.ItemId.getd
+ItemId.initUUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.ItemId.initb
+
+Rating.getTUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Rating.getd
+Rating.initUUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Rating.initd
+Comment.getUUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Comment.getf
+Comment.initVUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.Comment.initd
+RevType.getUUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.RevType.getf
+RevType.initVUniShare.Infrastructure.Features.Reviews.CreateReview.CreateReviewRequest.RevType.init¢
+/UniShare.Infrastructure.Features.Items.CategorySystem.EnumSystem.ValueTypeobjectH
+
+Category():UniShare.Infrastructure.Features.Items.Category.Category()õ
+LUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandlerobject∑
+≤CreateBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)ˇUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.CreateBookingHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Microsoft.AspNetCore.SignalR.IHubContext<UniShare.RealTime.NotificationsHub>)˙
+THandle(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)°UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.Handle(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)å
+]ValidateRequest(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)™UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.ValidateRequest(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)g
+GetUserId()XUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.GetUserId()
+UserExists(System.Guid)dUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.UserExists(System.Guid)y
+GetItem(System.Guid)aUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.GetItem(System.Guid)ó
+¢CreateBooking(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest, System.Guid, System.Guid, UniShare.Infrastructure.Features.Items.Item)ÔUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingHandler.CreateBooking(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest, System.Guid, System.Guid, UniShare.Infrastructure.Features.Items.Item)Ø	
+3UniShare.Infrastructure.Persistence.UniShareContext'Microsoft.EntityFrameworkCore.DbContextobject°
+tUniShareContext(Microsoft.EntityFrameworkCore.DbContextOptions<UniShare.Infrastructure.Persistence.UniShareContext>)®UniShare.Infrastructure.Persistence.UniShareContext.UniShareContext(Microsoft.EntityFrameworkCore.DbContextOptions<UniShare.Infrastructure.Persistence.UniShareContext>)Æ
+;OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)oUniShare.Infrastructure.Persistence.UniShareContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)J
+	Users.get=UniShare.Infrastructure.Persistence.UniShareContext.Users.getJ
+	Users.set=UniShare.Infrastructure.Persistence.UniShareContext.Users.setJ
+	Items.get=UniShare.Infrastructure.Persistence.UniShareContext.Items.getJ
+	Items.set=UniShare.Infrastructure.Persistence.UniShareContext.Items.setN
+Reviews.get?UniShare.Infrastructure.Persistence.UniShareContext.Reviews.getN
+Reviews.set?UniShare.Infrastructure.Persistence.UniShareContext.Reviews.setP
+Bookings.get@UniShare.Infrastructure.Persistence.UniShareContext.Bookings.getP
+Bookings.set@UniShare.Infrastructure.Persistence.UniShareContext.Bookings.set–
+@UniShare.Infrastructure.Features.Items.GetAll.GetAllItemsRequestobjectÉ
+GetAllItemsRequest(System.Guid)`UniShare.Infrastructure.Features.Items.GetAll.GetAllItemsRequest.GetAllItemsRequest(System.Guid)¶
+0UniShare.Infrastructure.Features.Items.ConditionSystem.EnumSystem.ValueTypeobjectK
+Condition()<UniShare.Infrastructure.Features.Items.Condition.Condition()í
++UniShare.Infrastructure.Features.Users.RoleSystem.EnumSystem.ValueTypeobject<
+Role()2UniShare.Infrastructure.Features.Users.Role.Role()«
+:UniShare.Infrastructure.Features.Users.Login.LoginResponseobjectSystem.IEquatable<T>÷
+KLoginResponse(string, UniShare.Infrastructure.Features.Users.Login.UserDto)ÜUniShare.Infrastructure.Features.Users.Login.LoginResponse.LoginResponse(string, UniShare.Infrastructure.Features.Users.Login.UserDto)S
+
+ToString()EUniShare.Infrastructure.Features.Users.Login.LoginResponse.ToString()ç
+'PrintMembers(System.Text.StringBuilder)bUniShare.Infrastructure.Features.Users.Login.LoginResponse.PrintMembers(System.Text.StringBuilder)Y
+GetHashCode()HUniShare.Infrastructure.Features.Users.Login.LoginResponse.GetHashCode()]
+Equals(object?)JUniShare.Infrastructure.Features.Users.Login.LoginResponse.Equals(object?)≈
+CEquals(UniShare.Infrastructure.Features.Users.Login.LoginResponse?)~UniShare.Infrastructure.Features.Users.Login.LoginResponse.Equals(UniShare.Infrastructure.Features.Users.Login.LoginResponse?)S
+
+<Clone>$()EUniShare.Infrastructure.Features.Users.Login.LoginResponse.<Clone>$()“
+ILoginResponse(UniShare.Infrastructure.Features.Users.Login.LoginResponse)ÑUniShare.Infrastructure.Features.Users.Login.LoginResponse.LoginResponse(UniShare.Infrastructure.Features.Users.Login.LoginResponse)‚
+QDeconstruct(out string, out UniShare.Infrastructure.Features.Users.Login.UserDto)åUniShare.Infrastructure.Features.Users.Login.LoginResponse.Deconstruct(out string, out UniShare.Infrastructure.Features.Users.Login.UserDto)g
+EqualityContract.getOUniShare.Infrastructure.Features.Users.Login.LoginResponse.EqualityContract.getg
+EqualityContract.setOUniShare.Infrastructure.Features.Users.Login.LoginResponse.EqualityContract.setQ
+	Token.getDUniShare.Infrastructure.Features.Users.Login.LoginResponse.Token.getS
+
+Token.initEUniShare.Infrastructure.Features.Users.Login.LoginResponse.Token.initO
+User.getCUniShare.Infrastructure.Features.Users.Login.LoginResponse.User.getQ
+	User.initDUniShare.Infrastructure.Features.Users.Login.LoginResponse.User.initÑ
+LUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequestobjectSystem.IEquatable<T>ÿ
+CCreateBookingRequest(System.Guid, System.DateTime, System.DateTime)êUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.CreateBookingRequest(System.Guid, System.DateTime, System.DateTime)e
+
+ToString()WUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.ToString()ü
+'PrintMembers(System.Text.StringBuilder)tUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.PrintMembers(System.Text.StringBuilder)k
+GetHashCode()ZUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.GetHashCode()o
+Equals(object?)\UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.Equals(object?)¸
+UEquals(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest?)¢UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.Equals(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest?)e
+
+<Clone>$()WUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.<Clone>$()ñ
+bCreateBookingRequest(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)ØUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.CreateBookingRequest(UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest)ﬁ
+FDeconstruct(out System.Guid, out System.DateTime, out System.DateTime)ìUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.Deconstruct(out System.Guid, out System.DateTime, out System.DateTime)y
+EqualityContract.getaUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.EqualityContract.gety
+EqualityContract.setaUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.EqualityContract.sete
+
+ItemId.getWUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.ItemId.getg
+ItemId.initXUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.ItemId.initk
+StartDate.getZUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.StartDate.getm
+StartDate.init[UniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.StartDate.initg
+EndDate.getXUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.EndDate.geti
+EndDate.initYUniShare.Infrastructure.Features.Bookings.CreateBooking.CreateBookingRequest.EndDate.initÆ
+3UniShare.Infrastructure.Features.Reviews.ReviewTypeSystem.EnumSystem.ValueTypeobjectP
+ReviewType()@UniShare.Infrastructure.Features.Reviews.ReviewType.ReviewType()˛
++UniShare.Infrastructure.Features.Users.UserobjectSystem.IEquatable<T>ˇ
+gUser(System.Guid, string, string, string, UniShare.Infrastructure.Features.Users.Role, System.DateTime)ìUniShare.Infrastructure.Features.Users.User.User(System.Guid, string, string, string, UniShare.Infrastructure.Features.Users.Role, System.DateTime)D
+
+ToString()6UniShare.Infrastructure.Features.Users.User.ToString()~
+'PrintMembers(System.Text.StringBuilder)SUniShare.Infrastructure.Features.Users.User.PrintMembers(System.Text.StringBuilder)J
+GetHashCode()9UniShare.Infrastructure.Features.Users.User.GetHashCode()N
+Equals(object?);UniShare.Infrastructure.Features.Users.User.Equals(object?)ò
+4Equals(UniShare.Infrastructure.Features.Users.User?)`UniShare.Infrastructure.Features.Users.User.Equals(UniShare.Infrastructure.Features.Users.User?)D
+
+<Clone>$()6UniShare.Infrastructure.Features.Users.User.<Clone>$()í
+1User(UniShare.Infrastructure.Features.Users.User)]UniShare.Infrastructure.Features.Users.User.User(UniShare.Infrastructure.Features.Users.User)æ
+ÜDeconstruct(out System.Guid, out string, out string, out string, out UniShare.Infrastructure.Features.Users.Role, out System.DateTime)≤UniShare.Infrastructure.Features.Users.User.Deconstruct(out System.Guid, out string, out string, out string, out UniShare.Infrastructure.Features.Users.Role, out System.DateTime)X
+EqualityContract.get@UniShare.Infrastructure.Features.Users.User.EqualityContract.getX
+EqualityContract.set@UniShare.Infrastructure.Features.Users.User.EqualityContract.set<
+Id.get2UniShare.Infrastructure.Features.Users.User.Id.get>
+Id.init3UniShare.Infrastructure.Features.Users.User.Id.initH
+FullName.get8UniShare.Infrastructure.Features.Users.User.FullName.getJ
+FullName.init9UniShare.Infrastructure.Features.Users.User.FullName.initB
+	Email.get5UniShare.Infrastructure.Features.Users.User.Email.getD
+
+Email.init6UniShare.Infrastructure.Features.Users.User.Email.initP
+PasswordHash.get<UniShare.Infrastructure.Features.Users.User.PasswordHash.getR
+PasswordHash.init=UniShare.Infrastructure.Features.Users.User.PasswordHash.init@
+Role.get4UniShare.Infrastructure.Features.Users.User.Role.getB
+	Role.init5UniShare.Infrastructure.Features.Users.User.Role.initJ
+CreatedAt.get9UniShare.Infrastructure.Features.Users.User.CreatedAt.getL
+CreatedAt.init:UniShare.Infrastructure.Features.Users.User.CreatedAt.init√
++UniShare.Infrastructure.Features.Items.ItemobjectSystem.IEquatable<T>®
+ªItem(System.Guid, System.Guid, string, string, UniShare.Infrastructure.Features.Items.Category, UniShare.Infrastructure.Features.Items.Condition, decimal?, string?, bool, System.DateTime)ÁUniShare.Infrastructure.Features.Items.Item.Item(System.Guid, System.Guid, string, string, UniShare.Infrastructure.Features.Items.Category, UniShare.Infrastructure.Features.Items.Condition, decimal?, string?, bool, System.DateTime)D
+
+ToString()6UniShare.Infrastructure.Features.Items.Item.ToString()~
+'PrintMembers(System.Text.StringBuilder)SUniShare.Infrastructure.Features.Items.Item.PrintMembers(System.Text.StringBuilder)J
+GetHashCode()9UniShare.Infrastructure.Features.Items.Item.GetHashCode()N
+Equals(object?);UniShare.Infrastructure.Features.Items.Item.Equals(object?)ò
+4Equals(UniShare.Infrastructure.Features.Items.Item?)`UniShare.Infrastructure.Features.Items.Item.Equals(UniShare.Infrastructure.Features.Items.Item?)D
+
+<Clone>$()6UniShare.Infrastructure.Features.Items.Item.<Clone>$()í
+1Item(UniShare.Infrastructure.Features.Items.Item)]UniShare.Infrastructure.Features.Items.Item.Item(UniShare.Infrastructure.Features.Items.Item)Ü
+ÍDeconstruct(out System.Guid, out System.Guid, out string, out string, out UniShare.Infrastructure.Features.Items.Category, out UniShare.Infrastructure.Features.Items.Condition, out decimal?, out string?, out bool, out System.DateTime)ñUniShare.Infrastructure.Features.Items.Item.Deconstruct(out System.Guid, out System.Guid, out string, out string, out UniShare.Infrastructure.Features.Items.Category, out UniShare.Infrastructure.Features.Items.Condition, out decimal?, out string?, out bool, out System.DateTime)X
+EqualityContract.get@UniShare.Infrastructure.Features.Items.Item.EqualityContract.getX
+EqualityContract.set@UniShare.Infrastructure.Features.Items.Item.EqualityContract.set<
+Id.get2UniShare.Infrastructure.Features.Items.Item.Id.get>
+Id.init3UniShare.Infrastructure.Features.Items.Item.Id.initF
+OwnerId.get7UniShare.Infrastructure.Features.Items.Item.OwnerId.getH
+OwnerId.init8UniShare.Infrastructure.Features.Items.Item.OwnerId.initB
+	Title.get5UniShare.Infrastructure.Features.Items.Item.Title.getD
+
+Title.init6UniShare.Infrastructure.Features.Items.Item.Title.initN
+Description.get;UniShare.Infrastructure.Features.Items.Item.Description.getP
+Description.init<UniShare.Infrastructure.Features.Items.Item.Description.initB
+	Categ.get5UniShare.Infrastructure.Features.Items.Item.Categ.getD
+
+Categ.init6UniShare.Infrastructure.Features.Items.Item.Categ.init@
+Cond.get4UniShare.Infrastructure.Features.Items.Item.Cond.getB
+	Cond.init5UniShare.Infrastructure.Features.Items.Item.Cond.initJ
+DailyRate.get9UniShare.Infrastructure.Features.Items.Item.DailyRate.getL
+DailyRate.init:UniShare.Infrastructure.Features.Items.Item.DailyRate.initH
+ImageUrl.get8UniShare.Infrastructure.Features.Items.Item.ImageUrl.getJ
+ImageUrl.init9UniShare.Infrastructure.Features.Items.Item.ImageUrl.initN
+IsAvailable.get;UniShare.Infrastructure.Features.Items.Item.IsAvailable.getP
+IsAvailable.init<UniShare.Infrastructure.Features.Items.Item.IsAvailable.initJ
+CreatedAt.get9UniShare.Infrastructure.Features.Items.Item.CreatedAt.getL
+CreatedAt.init:UniShare.Infrastructure.Features.Items.Item.CreatedAt.initò
+4UniShare.Infrastructure.Features.Users.Login.UserDtoobjectSystem.IEquatable<T>ë
+,UserDto(System.Guid, string, string, string)aUniShare.Infrastructure.Features.Users.Login.UserDto.UserDto(System.Guid, string, string, string)M
+
+ToString()?UniShare.Infrastructure.Features.Users.Login.UserDto.ToString()á
+'PrintMembers(System.Text.StringBuilder)\UniShare.Infrastructure.Features.Users.Login.UserDto.PrintMembers(System.Text.StringBuilder)S
+GetHashCode()BUniShare.Infrastructure.Features.Users.Login.UserDto.GetHashCode()W
+Equals(object?)DUniShare.Infrastructure.Features.Users.Login.UserDto.Equals(object?)≥
+=Equals(UniShare.Infrastructure.Features.Users.Login.UserDto?)rUniShare.Infrastructure.Features.Users.Login.UserDto.Equals(UniShare.Infrastructure.Features.Users.Login.UserDto?)M
+
+<Clone>$()?UniShare.Infrastructure.Features.Users.Login.UserDto.<Clone>$()≥
+=UserDto(UniShare.Infrastructure.Features.Users.Login.UserDto)rUniShare.Infrastructure.Features.Users.Login.UserDto.UserDto(UniShare.Infrastructure.Features.Users.Login.UserDto)π
+@Deconstruct(out System.Guid, out string, out string, out string)uUniShare.Infrastructure.Features.Users.Login.UserDto.Deconstruct(out System.Guid, out string, out string, out string)a
+EqualityContract.getIUniShare.Infrastructure.Features.Users.Login.UserDto.EqualityContract.geta
+EqualityContract.setIUniShare.Infrastructure.Features.Users.Login.UserDto.EqualityContract.setE
+Id.get;UniShare.Infrastructure.Features.Users.Login.UserDto.Id.getG
+Id.init<UniShare.Infrastructure.Features.Users.Login.UserDto.Id.initQ
+FullName.getAUniShare.Infrastructure.Features.Users.Login.UserDto.FullName.getS
+FullName.initBUniShare.Infrastructure.Features.Users.Login.UserDto.FullName.initK
+	Email.get>UniShare.Infrastructure.Features.Users.Login.UserDto.Email.getM
+
+Email.init?UniShare.Infrastructure.Features.Users.Login.UserDto.Email.initI
+Role.get=UniShare.Infrastructure.Features.Users.Login.UserDto.Role.getK
+	Role.init>UniShare.Infrastructure.Features.Users.Login.UserDto.Role.init–
+CUniShare.Infrastructure.Features.Users.Register.RegisterUserHandlerobjectû
+™RegisterUserHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest>)ÓUniShare.Infrastructure.Features.Users.Register.RegisterUserHandler.RegisterUserHandler(UniShare.Infrastructure.Persistence.UniShareContext, FluentValidation.IValidator<UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest>)ﬂ
+KHandle(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest)èUniShare.Infrastructure.Features.Users.Register.RegisterUserHandler.Handle(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest)Ë
+GUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequestobjectSystem.IEquatable<T>í
+#GettAllBookingsRequest(System.Guid)kUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.GettAllBookingsRequest(System.Guid)`
+
+ToString()RUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.ToString()ö
+'PrintMembers(System.Text.StringBuilder)oUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.PrintMembers(System.Text.StringBuilder)f
+GetHashCode()UUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.GetHashCode()j
+Equals(object?)WUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.Equals(object?)Ì
+PEquals(UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest?)òUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.Equals(UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest?)`
+
+<Clone>$()RUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.<Clone>$()ã
+_GettAllBookingsRequest(UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest)ßUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.GettAllBookingsRequest(UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest)Ñ
+Deconstruct(out System.Guid)dUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.Deconstruct(out System.Guid)t
+EqualityContract.get\UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.EqualityContract.gett
+EqualityContract.set\UniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.EqualityContract.set`
+
+UserId.getRUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.UserId.getb
+UserId.initSUniShare.Infrastructure.Features.Bookings.GetAll.GettAllBookingsRequest.UserId.initÿ
+CUniShare.Infrastructure.Features.Users.Register.RegisterUserRequestobjectSystem.IEquatable<T>û
++RegisterUserRequest(string, string, string)oUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.RegisterUserRequest(string, string, string)\
+
+ToString()NUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.ToString()ñ
+'PrintMembers(System.Text.StringBuilder)kUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.PrintMembers(System.Text.StringBuilder)b
+GetHashCode()QUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.GetHashCode()f
+Equals(object?)SUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Equals(object?)·
+LEquals(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest?)êUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Equals(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest?)\
+
+<Clone>$()NUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.<Clone>$()˘
+XRegisterUserRequest(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest)úUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.RegisterUserRequest(UniShare.Infrastructure.Features.Users.Register.RegisterUserRequest)¶
+/Deconstruct(out string, out string, out string)sUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Deconstruct(out string, out string, out string)p
+EqualityContract.getXUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.EqualityContract.getp
+EqualityContract.setXUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.EqualityContract.set`
+Fullname.getPUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Fullname.getb
+Fullname.initQUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Fullname.initZ
+	Email.getMUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Email.get\
+
+Email.initNUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Email.init`
+Password.getPUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Password.getb
+Password.initQUniShare.Infrastructure.Features.Users.Register.RegisterUserRequest.Password.init‘
+/UniShare.Infrastructure.Features.Reviews.ReviewobjectSystem.IEquatable<T>–
+çReview(System.Guid, System.Guid, System.Guid, System.Guid, int, string, UniShare.Infrastructure.Features.Reviews.ReviewType, System.DateTime)ΩUniShare.Infrastructure.Features.Reviews.Review.Review(System.Guid, System.Guid, System.Guid, System.Guid, int, string, UniShare.Infrastructure.Features.Reviews.ReviewType, System.DateTime)H
+
+ToString():UniShare.Infrastructure.Features.Reviews.Review.ToString()Ç
+'PrintMembers(System.Text.StringBuilder)WUniShare.Infrastructure.Features.Reviews.Review.PrintMembers(System.Text.StringBuilder)N
+GetHashCode()=UniShare.Infrastructure.Features.Reviews.Review.GetHashCode()R
+Equals(object?)?UniShare.Infrastructure.Features.Reviews.Review.Equals(object?)§
+8Equals(UniShare.Infrastructure.Features.Reviews.Review?)hUniShare.Infrastructure.Features.Reviews.Review.Equals(UniShare.Infrastructure.Features.Reviews.Review?)H
+
+<Clone>$():UniShare.Infrastructure.Features.Reviews.Review.<Clone>$()¢
+7Review(UniShare.Infrastructure.Features.Reviews.Review)gUniShare.Infrastructure.Features.Reviews.Review.Review(UniShare.Infrastructure.Features.Reviews.Review)ö
+≤Deconstruct(out System.Guid, out System.Guid, out System.Guid, out System.Guid, out int, out string, out UniShare.Infrastructure.Features.Reviews.ReviewType, out System.DateTime)‚UniShare.Infrastructure.Features.Reviews.Review.Deconstruct(out System.Guid, out System.Guid, out System.Guid, out System.Guid, out int, out string, out UniShare.Infrastructure.Features.Reviews.ReviewType, out System.DateTime)\
+EqualityContract.getDUniShare.Infrastructure.Features.Reviews.Review.EqualityContract.get\
+EqualityContract.setDUniShare.Infrastructure.Features.Reviews.Review.EqualityContract.set@
+Id.get6UniShare.Infrastructure.Features.Reviews.Review.Id.getB
+Id.init7UniShare.Infrastructure.Features.Reviews.Review.Id.initN
+BookingId.get=UniShare.Infrastructure.Features.Reviews.Review.BookingId.getP
+BookingId.init>UniShare.Infrastructure.Features.Reviews.Review.BookingId.initP
+ReviewerId.get>UniShare.Infrastructure.Features.Reviews.Review.ReviewerId.getR
+ReviewerId.init?UniShare.Infrastructure.Features.Reviews.Review.ReviewerId.initH
+
+ItemId.get:UniShare.Infrastructure.Features.Reviews.Review.ItemId.getJ
+ItemId.init;UniShare.Infrastructure.Features.Reviews.Review.ItemId.initH
+
+Rating.get:UniShare.Infrastructure.Features.Reviews.Review.Rating.getJ
+Rating.init;UniShare.Infrastructure.Features.Reviews.Review.Rating.initJ
+Comment.get;UniShare.Infrastructure.Features.Reviews.Review.Comment.getL
+Comment.init<UniShare.Infrastructure.Features.Reviews.Review.Comment.initJ
+RevType.get;UniShare.Infrastructure.Features.Reviews.Review.RevType.getL
+RevType.init<UniShare.Infrastructure.Features.Reviews.Review.RevType.initN
+CreatedAt.get=UniShare.Infrastructure.Features.Reviews.Review.CreatedAt.getP
+CreatedAt.init>UniShare.Infrastructure.Features.Reviews.Review.CreatedAt.init°
+CUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.QueryobjectMediatR.IRequest<TResponse>System.IEquatable<T>\
+
+ToString()NUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.ToString()ñ
+'PrintMembers(System.Text.StringBuilder)kUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.PrintMembers(System.Text.StringBuilder)b
+GetHashCode()QUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.GetHashCode()f
+Equals(object?)SUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.Equals(object?)·
+LEquals(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query?)êUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.Equals(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query?)\
+
+<Clone>$()NUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.<Clone>$()›
+JQuery(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query)éUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.Query(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query)V
+Query()KUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.Query()p
+EqualityContract.getXUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.EqualityContract.getp
+EqualityContract.setXUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query.EqualityContract.setø
+EUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.QueryobjectMediatR.IRequest<TResponse>System.IEquatable<T>^
+
+ToString()PUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.ToString()ò
+'PrintMembers(System.Text.StringBuilder)mUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.PrintMembers(System.Text.StringBuilder)d
+GetHashCode()SUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.GetHashCode()h
+Equals(object?)UUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.Equals(object?)Á
+NEquals(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query?)îUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.Equals(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query?)^
+
+<Clone>$()PUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.<Clone>$()„
+LQuery(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query)íUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.Query(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query)X
+Query()MUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.Query()r
+EqualityContract.getZUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.EqualityContract.getr
+EqualityContract.setZUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query.EqualityContract.set¢
+DUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequestobjectSystem.IEquatable<T>ã
+!GetAllReviewsRequest(System.Guid)fUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.GetAllReviewsRequest(System.Guid)]
+
+ToString()OUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.ToString()ó
+'PrintMembers(System.Text.StringBuilder)lUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.PrintMembers(System.Text.StringBuilder)c
+GetHashCode()RUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.GetHashCode()g
+Equals(object?)TUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.Equals(object?)‰
+MEquals(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest?)íUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.Equals(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest?)]
+
+<Clone>$()OUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.<Clone>$()˛
+ZGetAllReviewsRequest(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest)üUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.GetAllReviewsRequest(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest)Å
+Deconstruct(out System.Guid)aUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.Deconstruct(out System.Guid)q
+EqualityContract.getYUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.EqualityContract.getq
+EqualityContract.setYUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.EqualityContract.setY
+Item.getMUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.Item.get[
+	Item.initNUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviewsRequest.Item.initÂ
+
+?UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.QueryobjectMediatR.IRequest<TResponse>System.IEquatable<T>X
+
+ToString()JUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.ToString()í
+'PrintMembers(System.Text.StringBuilder)gUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.PrintMembers(System.Text.StringBuilder)^
+GetHashCode()MUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.GetHashCode()b
+Equals(object?)OUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.Equals(object?)’
+HEquals(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query?)àUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.Equals(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query?)X
+
+<Clone>$()JUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.<Clone>$()—
+FQuery(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query)ÜUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.Query(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query)R
+Query()GUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.Query()l
+EqualityContract.getTUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.EqualityContract.getl
+EqualityContract.setTUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query.EqualityContract.setƒ
+GUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.QueryobjectMediatR.IRequest<TResponse>System.IEquatable<T>p
+Query(System.Guid)ZUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.Query(System.Guid)`
+
+ToString()RUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.ToString()ö
+'PrintMembers(System.Text.StringBuilder)oUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.PrintMembers(System.Text.StringBuilder)f
+GetHashCode()UUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.GetHashCode()j
+Equals(object?)WUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.Equals(object?)Ì
+PEquals(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query?)òUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.Equals(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query?)`
+
+<Clone>$()RUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.<Clone>$()È
+NQuery(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query)ñUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.Query(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query)Ñ
+Deconstruct(out System.Guid)dUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.Deconstruct(out System.Guid)t
+EqualityContract.get\UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.EqualityContract.gett
+EqualityContract.set\UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.EqualityContract.setb
+OwnerId.getSUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.OwnerId.getd
+OwnerId.initTUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query.OwnerId.initÔ
+EUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Handlerobject,MediatR.IRequestHandler<TRequest, TResponse>√
+<Handler(UniShare.Infrastructure.Persistence.UniShareContext)ÇUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Handler.Handler(UniShare.Infrastructure.Persistence.UniShareContext)©
+oHandle(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query, System.Threading.CancellationToken)µUniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Handler.Handle(UniShare.Infrastructure.Features.Reviews.GetAll.GetAllReviews.Query, System.Threading.CancellationToken)˘
+GUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Handlerobject,MediatR.IRequestHandler<TRequest, TResponse>≈
+<Handler(UniShare.Infrastructure.Persistence.UniShareContext)ÑUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Handler.Handler(UniShare.Infrastructure.Persistence.UniShareContext)Ø
+qHandle(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query, System.Threading.CancellationToken)πUniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Handler.Handle(UniShare.Infrastructure.Features.Bookings.GetAll.GetAllBookings.Query, System.Threading.CancellationToken)É
+IUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Handlerobject,MediatR.IRequestHandler<TRequest, TResponse>«
+<Handler(UniShare.Infrastructure.Persistence.UniShareContext)ÜUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Handler.Handler(UniShare.Infrastructure.Persistence.UniShareContext)µ
+sHandle(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query, System.Threading.CancellationToken)ΩUniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Handler.Handle(UniShare.Infrastructure.Features.Items.GetByOwner.GetItemsByOwner.Query, System.Threading.CancellationToken)⁄
+AUniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Handlerobject,MediatR.IRequestHandler<TRequest, TResponse>æ
+<Handler(UniShare.Infrastructure.Persistence.UniShareContext)~UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Handler.Handler(UniShare.Infrastructure.Persistence.UniShareContext)ù
+kHandle(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query, System.Threading.CancellationToken)≠UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Handler.Handle(UniShare.Infrastructure.Features.Items.GetAll.GetAllItems.Query, System.Threading.CancellationToken)

@@ -1,0 +1,7 @@
+organization=cosminmaz
+projectKey=CosminMaz_UniShare
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.78371
+dashboardUrl=https://sonarcloud.io/dashboard?id=CosminMaz_UniShare
+ceTaskId=AZvFFoVXTPHagKN2fHzX
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZvFFoVXTPHagKN2fHzX

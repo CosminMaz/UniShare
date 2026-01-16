@@ -1,0 +1,1 @@
+/home/cossi/Code/UniShare/.sonarqube/out/1

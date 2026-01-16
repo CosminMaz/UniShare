@@ -121,3 +121,5 @@ app.MapReviewEndpoints();
 app.MapHub<NotificationsHub>("/hub/notifications");
 
 await app.RunAsync();
+
+public partial class Program { }

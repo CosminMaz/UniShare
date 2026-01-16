@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>UniShare.Tests</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Test</ProjectType>
+  <ProjectGuid>0b6c536b-bb22-4678-9f6f-0883ea3f1ebc</ProjectGuid>
+  <FullPath>/home/cossi/Code/UniShare/Backend/tests/UniShare.Tests/UniShare.Tests.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResultFiles>
+    <AnalysisResultFile Id="FilesToAnalyze" Location="/home/cossi/Code/UniShare/.sonarqube/conf/1/FilesToAnalyze.txt" />
+  </AnalysisResultFiles>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePaths">/home/cossi/Code/UniShare/.sonarqube/out/1/Issues.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPaths">/home/cossi/Code/UniShare/.sonarqube/out/1</Property>
+    <Property Name="sonar.cs.scanner.telemetry">/home/cossi/Code/UniShare/.sonarqube/out/1/Telemetry.json</Property>
+  </AnalysisSettings>
+  <Configuration>Debug</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>net9.0</TargetFramework>
+</ProjectInfo>
